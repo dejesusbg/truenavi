@@ -1,25 +1,25 @@
-import { Text as RNText, TextProps as RNTextProps } from 'react-native';
+import { Platform, Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
 
 interface TextProps extends RNTextProps {
   children: React.ReactNode;
-  className?: string;
 }
 
-const Text = ({ className, children, ...props }: TextProps) => {
+const Text = ({ children, ...props }: TextProps) => {
   return (
-    <RNText
-      className={className}
-      style={[
-        {
-          fontFamily: 'Inter',
-          fontFeatureSettings: "'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13'",
-        },
-        props.style,
-      ]}
-      {...props}>
+    <RNText style={[styles.text, props.style]} {...props}>
       {children}
     </RNText>
   );
 };
+
+export const fontStyle = {
+  fontFamily: Platform.OS === 'web' ? 'Inter' : 'Ubuntu',
+  fontFeatureSettings: "'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13'",
+  letterSpacing: Platform.OS === 'android' ? -0.5 : 0,
+};
+
+const styles = StyleSheet.create({
+  text: fontStyle,
+});
 
 export default Text;

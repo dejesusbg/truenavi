@@ -1,13 +1,74 @@
-import { View } from 'react-native';
-import Text from './Text';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import Text, { fontStyle } from './Text';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
 
-const Header = ({ title }: { title: string }) => {
+interface HeaderProps {
+  title: string;
+  goBack?: boolean;
+  icons?: {
+    name: string;
+    onPress?: () => void;
+  }[];
+}
+
+const Header = ({ title, icons, goBack = false }: HeaderProps) => {
+  const router = useRouter();
+
   return (
-    <View className="flex-row items-center justify-between w-full h-16 px-4 bg-tn-purple backdrop-blur">
-      <Text className="text-xl font-medium tracking-tight text-tn-white">{title}</Text>
-      <Text className="text-xl font-medium tracking-tight text-tn-white">X</Text>
+    <View style={styles.header}>
+      <View style={styles.leftSection}>
+        {goBack && (
+          <TouchableOpacity style={styles.button} onPress={router.back} activeOpacity={0.7}>
+            <MaterialIcons style={styles.buttonIcon} name="arrow-back-ios-new" size={24} />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      {icons &&
+        icons.length > 0 &&
+        icons.map(({ name, onPress }, index) => (
+          <TouchableOpacity key={index} style={styles.button} onPress={onPress} activeOpacity={0.7}>
+            <MaterialIcons style={styles.buttonIcon} name={name} size={24} />
+          </TouchableOpacity>
+        ))}
     </View>
   );
 };
 
 export default Header;
+
+const styles = StyleSheet.create({
+  header: {
+    padding: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  leftSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 600,
+    color: '#fff',
+    ...fontStyle,
+  },
+  button: {
+    width: 30,
+    height: 30,
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    color: '#fff',
+  },
+});
