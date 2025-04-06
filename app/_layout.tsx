@@ -12,14 +12,17 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [loaded, error] = useFonts({
     Inter: require('../assets/fonts/InterVariable.ttf'),
-    Ubuntu: require('../assets/fonts/Ubuntu-Medium.ttf'),
+    "Ubuntu-600": require('../assets/fonts/Ubuntu-Bold.ttf'),
+    "Ubuntu-500": require('../assets/fonts/Ubuntu-Medium.ttf'),
+    "Ubuntu-400": require('../assets/fonts/Ubuntu-Regular.ttf'),
+    "Ubuntu-300": require('../assets/fonts/Ubuntu-Light.ttf'),
   });
 
   useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
-      NavigationBar.setVisibilityAsync('hidden');
-      NavigationBar.setBehaviorAsync('overlay-swipe');
+      // NavigationBar.setVisibilityAsync('hidden');
+      // NavigationBar.setBehaviorAsync('overlay-swipe');
     }
   }, [loaded, error]);
 
@@ -35,6 +38,9 @@ export default function App() {
         screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0d1634' } }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="map" />
+        <Stack.Screen name="admin" />
       </Stack>
     </SafeAreaProvider>
   );
