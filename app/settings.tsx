@@ -123,8 +123,8 @@ const Settings = () => {
   return (
     <ScreenView title="settings" goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {renderSettingsGroup(settingsData.switches, true)}
-        {renderSettingsGroup(settingsData.links, false)}
+        {!isAdmin && renderSettingsGroup(settingsData.switches, true)}
+        {!isAdmin && renderSettingsGroup(settingsData.links, false)}
 
         <TouchableOpacity style={styles.dangerButton} onPress={() => router.push("/")}>
           <MaterialIcons

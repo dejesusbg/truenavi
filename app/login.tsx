@@ -4,11 +4,9 @@ import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Login = () => {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -40,9 +38,9 @@ const Login = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScreenView title="login" goBack={true}>
-        <View style={[styles.container, { paddingBottom: insets.top + 40 }]}>
+    <ScreenView title="login" goBack={true}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
           <View style={styles.logoContainer}>
             <MaterialIcons name="admin-panel-settings"
               style={[styles.logoIcon, { opacity: keyboardOpen ? 0 : 1 }]} />
@@ -101,8 +99,8 @@ const Login = () => {
             access restricted to authorized personnel only
           </Text>
         </View>
-      </ScreenView>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </ScreenView>
   );
 };
 

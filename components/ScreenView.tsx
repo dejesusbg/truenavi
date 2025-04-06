@@ -27,7 +27,7 @@ const ScreenView = ({ title, icons, children, goBack }: ScreenViewProps) => {
           styles.body,
           {
             paddingTop: insets.top + 10,
-            paddingBottom: insets.bottom + 10,
+            paddingBottom: insets.bottom + 70,
             paddingLeft: insets.left + 10,
             paddingRight: insets.right + 10,
           },

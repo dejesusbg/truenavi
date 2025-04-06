@@ -8,13 +8,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Home = () => {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   return (
     <ScreenView
       title="truenavi"
       icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
-      <View style={[styles.container, { paddingBottom: insets.top + 40 }]}>
+      <View style={styles.container}>
         {/* Question */}
         <View style={styles.subContainer}>
           <Text style={styles.questionText}>where would you like to go today?</Text>
