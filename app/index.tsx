@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   subContainer: {
-    display: 'flex',
     paddingVertical: 16,
     paddingHorizontal: 24,
     flexDirection: 'row',

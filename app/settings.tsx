@@ -4,6 +4,7 @@ import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
 
 interface SettingsItemProps {
   title: string;
@@ -44,6 +45,7 @@ const SettingItem = ({
 
 const Settings = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState(true);
   const [weather, setWeather] = useState(true);
@@ -51,84 +53,88 @@ const Settings = () => {
   const [vibration, setVibration] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const settingsGroups = [
-    {
-      title: 'General',
-      items: [
-        {
-          icon: 'dark-mode',
-          title: 'turn on dark mode',
-          isSwitch: true,
-          value: darkMode,
-          onValueChange: setDarkMode,
-        },
-        {
-          icon: 'language',
-          title: 'set language to spanish',
-          isSwitch: true,
-          value: language,
-          onValueChange: setLanguage,
-        },
-        {
-          icon: 'thermostat',
-          title: 'say weather',
-          isSwitch: true,
-          value: weather,
-          onValueChange: setWeather,
-        },
-        {
-          icon: 'notifications',
-          title: 'allow notifications',
-          isSwitch: true,
-          value: notifications,
-          onValueChange: setNotifications,
-        },
-        {
-          icon: 'vibration',
-          title: 'allow vibration',
-          isSwitch: true,
-          value: vibration,
-          onValueChange: setVibration,
-        },
-      ],
-    },
-  ];
+  const settingsData = {
+    switches: [
+      {
+        icon: 'dark-mode',
+        title: 'turn on dark mode',
+        value: darkMode,
+        onValueChange: setDarkMode,
+      },
+      {
+        icon: 'language',
+        title: 'set language to spanish',
+        value: language,
+        onValueChange: setLanguage,
+      },
+      {
+        icon: 'thermostat',
+        title: 'say weather',
+        value: weather,
+        onValueChange: setWeather,
+      },
+      {
+        icon: 'notifications',
+        title: 'allow notifications',
+        value: notifications,
+        onValueChange: setNotifications,
+      },
+      {
+        icon: 'vibration',
+        title: 'allow vibration',
+        value: vibration,
+        onValueChange: setVibration,
+      },
+    ],
+    links: [
+      {
+        icon: 'admin-panel-settings',
+        title: 'admin',
+        onPress: () => router.push("/login"),
+      },
+      {
+        icon: 'privacy-tip',
+        title: 'privacy policy',
+        onPress: () => router.push("/"),
+      },
+    ]
+  };
+
+  const renderSettingsGroup = (items: SettingsItemProps[], isSwitch: boolean) => (
+    <View style={styles.settingsGroup}>
+      <View style={styles.settingsGroupItems}>
+        {items.map((item, index) => (
+          <React.Fragment key={`item-${item.title}`}>
+            <SettingItem
+              icon={item.icon}
+              title={item.title}
+              isSwitch={isSwitch}
+              value={isSwitch ? item.value : undefined}
+              onValueChange={isSwitch ? item.onValueChange : undefined}
+              onPress={!isSwitch ? item.onPress : undefined}
+            />
+            {index < items.length - 1 && <View style={styles.itemSeparator} />}
+          </React.Fragment>
+        ))}
+      </View>
+    </View>
+  );
 
   return (
     <ScreenView title="settings" goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {settingsGroups.map((group, groupIndex) => (
-          <View key={`group-${groupIndex}`} style={styles.settingsGroup}>
-            <View style={styles.settingsGroupItems}>
-              {group.items.map((item, itemIndex) => (
-                <React.Fragment key={`item-${groupIndex}-${itemIndex}`}>
-                  <SettingItem
-                    icon={item.icon}
-                    title={item.title}
-                    isSwitch={item.isSwitch}
-                    value={item.value}
-                    onValueChange={item.onValueChange}
-                  />
-                  {itemIndex < group.items.length - 1 && <View style={styles.itemSeparator} />}
-                </React.Fragment>
-              ))}
-            </View>
+        {renderSettingsGroup(settingsData.switches, true)}
+        {renderSettingsGroup(settingsData.links, false)}
 
-            {groupIndex < settingsGroups.length - 1 && <View style={styles.groupSeparator} />}
-          </View>
-        ))}
-
-        {isAdmin ? (
-          <TouchableOpacity style={styles.dangerButton}>
-            <MaterialIcons name="logout" style={styles.dangerIcon} />
-            <Text style={styles.signOutText}>sign out</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.dangerButton}>
-            <MaterialIcons name="delete" style={styles.dangerIcon} />
-            <Text style={styles.signOutText}>erase all data</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.dangerButton} onPress={() => router.push("/")}>
+          <MaterialIcons
+            name={isAdmin ? "logout" : "delete"}
+            style={styles.dangerIcon}
+          />
+          <Text style={styles.dangerText}>
+            {isAdmin ? "sign out" : "erase all data"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScreenView>
   );
@@ -142,14 +148,6 @@ const styles = StyleSheet.create({
   },
   settingsGroup: {
     width: '100%',
-  },
-  settingsGroupTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 12,
-    paddingHorizontal: 16,
-    ...fontStyle,
   },
   settingsGroupItems: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -187,11 +185,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     marginHorizontal: 16,
   },
-  groupSeparator: {
-    height: 1,
-    backgroundColor: 'transparent',
-    marginVertical: 12,
-  },
   dangerButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -205,7 +198,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#ff4646',
   },
-  signOutText: {
+  dangerText: {
     fontSize: 16,
     color: '#ff4646',
     fontWeight: '600',

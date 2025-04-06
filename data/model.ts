@@ -26,7 +26,7 @@ interface Edges {
 interface Preferences {
   // Configuraciones
   language: 'es' | 'en';
-  dark_mode: boolean;
+  dark_mode: boolean; 
   showWeather: boolean;
   notifications: boolean;
   vibration: boolean;

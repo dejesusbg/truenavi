@@ -17,7 +17,7 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
 
   return (
     <View style={styles.header}>
-      <View style={styles.leftSection}>
+      <View style={styles.section}>
         {goBack && (
           <TouchableOpacity style={styles.button} onPress={router.back} activeOpacity={0.7}>
             <MaterialIcons style={styles.buttonIcon} name="arrow-back-ios-new" size={24} />
@@ -25,13 +25,15 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
         )}
         <Text style={styles.title}>{title}</Text>
       </View>
-      {icons &&
-        icons.length > 0 &&
-        icons.map(({ name, onPress }, index) => (
-          <TouchableOpacity key={index} style={styles.button} onPress={onPress} activeOpacity={0.7}>
-            <MaterialIcons style={styles.buttonIcon} name={name} size={24} />
-          </TouchableOpacity>
-        ))}
+      <View style={styles.section}>
+        {icons &&
+          icons.length > 0 &&
+          icons.map(({ name, onPress }, index) => (
+            <TouchableOpacity key={index} style={styles.button} onPress={onPress} activeOpacity={0.7}>
+              <MaterialIcons style={styles.buttonIcon} name={name} size={24} />
+            </TouchableOpacity>
+          ))}
+      </View>
     </View>
   );
 };
@@ -41,14 +43,12 @@ export default Header;
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  leftSection: {
-    display: 'flex',
+  section: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     height: 30,
     backgroundColor: 'rgba(0, 0, 0, 0.04)',
     borderRadius: 9,
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
