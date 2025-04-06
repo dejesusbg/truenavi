@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
+} from 'react-native';
 import Text, { TextInput, fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
@@ -42,8 +49,10 @@ const Login = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View style={styles.logoContainer}>
-            <MaterialIcons name="admin-panel-settings"
-              style={[styles.logoIcon, { opacity: keyboardOpen ? 0 : 1 }]} />
+            <MaterialIcons
+              name="admin-panel-settings"
+              style={[styles.logoIcon, { opacity: keyboardOpen ? 0 : 1 }]}
+            />
             <Text style={styles.logoText}>truenavi admin</Text>
           </View>
 
@@ -73,20 +82,16 @@ const Login = () => {
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialIcons
-                  name={showPassword ? "visibility-off" : "visibility"}
+                  name={showPassword ? 'visibility-off' : 'visibility'}
                   style={styles.visibilityIcon}
                 />
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.loginButton,
-                (!username || !password) && styles.loginButtonDisabled
-              ]}
+              style={[styles.loginButton, (!username || !password) && styles.loginButtonDisabled]}
               onPress={handleLogin}
-              disabled={!username || !password || isLoading}
-            >
+              disabled={!username || !password || isLoading}>
               {isLoading ? (
                 <Text style={styles.loginButtonText}>authenticating...</Text>
               ) : (
@@ -95,9 +100,7 @@ const Login = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.securityNote}>
-            access restricted to authorized personnel only
-          </Text>
+          <Text style={styles.securityNote}>access restricted to authorized personnel only</Text>
         </View>
       </TouchableWithoutFeedback>
     </ScreenView>

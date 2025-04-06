@@ -83,14 +83,14 @@ const Settings = () => {
       {
         icon: 'admin-panel-settings',
         title: 'admin',
-        onPress: () => router.push("/login"),
+        onPress: () => router.push('/login'),
       },
       {
         icon: 'privacy-tip',
         title: 'privacy policy',
-        onPress: () => router.push("/"),
+        onPress: () => router.push('/'),
       },
-    ]
+    ],
   };
 
   const renderSettingsGroup = (items: SettingsItemProps[], isSwitch: boolean) => (
@@ -119,14 +119,9 @@ const Settings = () => {
         {!isAdmin && renderSettingsGroup(settingsData.switches, true)}
         {!isAdmin && renderSettingsGroup(settingsData.links, false)}
 
-        <TouchableOpacity style={styles.dangerButton} onPress={() => router.push("/")}>
-          <MaterialIcons
-            name={isAdmin ? "logout" : "delete"}
-            style={styles.dangerIcon}
-          />
-          <Text style={styles.dangerText}>
-            {isAdmin ? "sign out" : "erase all data"}
-          </Text>
+        <TouchableOpacity style={styles.dangerButton} onPress={() => router.push('/')}>
+          <MaterialIcons name={isAdmin ? 'logout' : 'delete'} style={styles.dangerIcon} />
+          <Text style={styles.dangerText}>{isAdmin ? 'sign out' : 'erase all data'}</Text>
         </TouchableOpacity>
       </View>
     </ScreenView>

@@ -29,7 +29,11 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
         {icons &&
           icons.length > 0 &&
           icons.map(({ name, onPress }, index) => (
-            <TouchableOpacity key={index} style={styles.button} onPress={onPress} activeOpacity={0.7}>
+            <TouchableOpacity
+              key={index}
+              style={styles.button}
+              onPress={onPress}
+              activeOpacity={0.7}>
               <MaterialIcons style={styles.buttonIcon} name={name} size={24} />
             </TouchableOpacity>
           ))}

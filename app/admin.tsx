@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, FlatList, Modal, Alert } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  Modal,
+  Alert,
+} from 'react-native';
 import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
@@ -19,7 +27,12 @@ const Admin = () => {
   ]);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingAdmin, setEditingAdmin] = useState<{ id: string; name: string; email: string; password: string } | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<{
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+  } | null>(null);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -37,7 +50,7 @@ const Admin = () => {
     setFormData({
       name: admin.name,
       email: admin.email,
-      password: admin.password
+      password: admin.password,
     });
     setModalVisible(true);
   };
@@ -57,14 +70,14 @@ const Admin = () => {
 
     if (editingAdmin) {
       // Update existing admin
-      setAdmins(admins.map(admin =>
-        admin.id === editingAdmin.id ? { ...admin, ...formData } : admin
-      ));
+      setAdmins(
+        admins.map((admin) => (admin.id === editingAdmin.id ? { ...admin, ...formData } : admin))
+      );
     } else {
       // Add new admin
       const newAdmin = {
         id: Date.now().toString(),
-        ...formData
+        ...formData,
       };
       setAdmins([...admins, newAdmin]);
     }
@@ -74,26 +87,23 @@ const Admin = () => {
 
   // Handle admin deletion
   const handleDeleteAdmin = (adminId: any) => {
-    Alert.alert(
-      'confirm deletion',
-      'are you sure you want to delete this admin?',
-      [
-        { text: 'cancel', style: 'cancel' },
-        {
-          text: 'delete',
-          style: 'destructive',
-          onPress: () => {
-            setAdmins(admins.filter(admin => admin.id !== adminId));
-          }
-        }
-      ]
-    );
+    Alert.alert('confirm deletion', 'are you sure you want to delete this admin?', [
+      { text: 'cancel', style: 'cancel' },
+      {
+        text: 'delete',
+        style: 'destructive',
+        onPress: () => {
+          setAdmins(admins.filter((admin) => admin.id !== adminId));
+        },
+      },
+    ]);
   };
 
   // Filter admins based on search query
-  const filteredAdmins = admins.filter(admin =>
-    admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    admin.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAdmins = admins.filter(
+    (admin) =>
+      admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      admin.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Render each admin in the list
@@ -120,10 +130,9 @@ const Admin = () => {
       title="manage"
       icons={[
         { name: 'map', onPress: () => router.push('/map') },
-        { name: 'settings', onPress: () => router.push('/settings') }
+        { name: 'settings', onPress: () => router.push('/settings') },
       ]}
-      goBack={true}
-    >
+      goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         {/* Search and add row */}
         <View style={styles.searchRow}>
@@ -155,7 +164,7 @@ const Admin = () => {
             <FlatList
               data={filteredAdmins}
               renderItem={renderAdminItem}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator={false}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -173,8 +182,7 @@ const Admin = () => {
           transparent={true}
           animationType="fade"
           onRequestClose={() => setModalVisible(false)}
-          statusBarTranslucent
-        >
+          statusBarTranslucent>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <View style={styles.modalHeader}>
@@ -224,9 +232,7 @@ const Admin = () => {
                 </View>
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                  <Text style={styles.submitButtonText}>
-                    {editingAdmin ? 'update' : 'create'}
-                  </Text>
+                  <Text style={styles.submitButtonText}>{editingAdmin ? 'update' : 'create'}</Text>
                 </TouchableOpacity>
               </View>
             </View>

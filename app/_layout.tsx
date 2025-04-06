@@ -3,7 +3,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import * as NavigationBar from 'expo-navigation-bar';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -12,17 +11,15 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [loaded, error] = useFonts({
     Inter: require('../assets/fonts/InterVariable.ttf'),
-    "Ubuntu-600": require('../assets/fonts/Ubuntu-Bold.ttf'),
-    "Ubuntu-500": require('../assets/fonts/Ubuntu-Medium.ttf'),
-    "Ubuntu-400": require('../assets/fonts/Ubuntu-Regular.ttf'),
-    "Ubuntu-300": require('../assets/fonts/Ubuntu-Light.ttf'),
+    'Ubuntu-600': require('../assets/fonts/Ubuntu-Bold.ttf'),
+    'Ubuntu-500': require('../assets/fonts/Ubuntu-Medium.ttf'),
+    'Ubuntu-400': require('../assets/fonts/Ubuntu-Regular.ttf'),
+    'Ubuntu-300': require('../assets/fonts/Ubuntu-Light.ttf'),
   });
 
   useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
-      // NavigationBar.setVisibilityAsync('hidden');
-      // NavigationBar.setBehaviorAsync('overlay-swipe');
     }
   }, [loaded, error]);
 

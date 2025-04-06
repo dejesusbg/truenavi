@@ -11,8 +11,7 @@ const Home = () => {
   return (
     <ScreenView
       title="truenavi"
-      icons={[{ name: 'settings', onPress: () => router.push('/settings') }
-      ]}>
+      icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
       <View style={styles.container}>
         {/* Question */}
         <View style={styles.subContainer}>

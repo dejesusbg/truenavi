@@ -50,8 +50,7 @@ const Map = () => {
         { name: 'admin-panel-settings', onPress: () => router.push('/admin') },
         { name: 'settings', onPress: () => router.push('/settings') },
       ]}
-      goBack={true}
-    >
+      goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={styles.mapContainer}>
           {region && (
@@ -61,9 +60,7 @@ const Map = () => {
               userInterfaceStyle="dark"
               showsUserLocation
               showsCompass
-              showsScale
-            >
-            </MapView>
+              showsScale></MapView>
           )}
           <View style={styles.mapOverlay}>
             <Text style={styles.mapInstructionText}>
@@ -77,12 +74,8 @@ const Map = () => {
 
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
-            style={[
-              styles.actionButton,
-              selectedTool === 'add_node' && styles.selectedButton
-            ]}
-            onPress={() => handleToolSelect('add_node')}
-          >
+            style={[styles.actionButton, selectedTool === 'add_node' && styles.selectedButton]}
+            onPress={() => handleToolSelect('add_node')}>
             <MaterialIcons name="add-location" style={styles.actionButtonIcon} />
             <Text style={styles.actionButtonText}>node</Text>
           </TouchableOpacity>
@@ -90,21 +83,16 @@ const Map = () => {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              selectedTool === 'add_connection' && styles.selectedButton
+              selectedTool === 'add_connection' && styles.selectedButton,
             ]}
-            onPress={() => handleToolSelect('add_connection')}
-          >
+            onPress={() => handleToolSelect('add_connection')}>
             <MaterialIcons name="timeline" style={styles.actionButtonIcon} />
             <Text style={styles.actionButtonText}>connection</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.actionButton,
-              selectedTool === 'delete' && styles.selectedDeleteButton
-            ]}
-            onPress={() => handleToolSelect('delete')}
-          >
+            style={[styles.actionButton, selectedTool === 'delete' && styles.selectedDeleteButton]}
+            onPress={() => handleToolSelect('delete')}>
             <MaterialIcons name="delete" style={styles.actionButtonIcon} />
             <Text style={styles.actionButtonText}>delete</Text>
           </TouchableOpacity>
