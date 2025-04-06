@@ -46,7 +46,6 @@ const SettingItem = ({
 const Settings = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState(true);
   const [weather, setWeather] = useState(true);
   const [notifications, setNotifications] = useState(true);
@@ -55,12 +54,6 @@ const Settings = () => {
 
   const settingsData = {
     switches: [
-      {
-        icon: 'dark-mode',
-        title: 'turn on dark mode',
-        value: darkMode,
-        onValueChange: setDarkMode,
-      },
       {
         icon: 'language',
         title: 'set language to spanish',
@@ -143,7 +136,7 @@ const Settings = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    marginTop: 16,
     gap: 24,
   },
   settingsGroup: {

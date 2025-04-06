@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Home = () => {
@@ -12,7 +11,8 @@ const Home = () => {
   return (
     <ScreenView
       title="truenavi"
-      icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
+      icons={[{ name: 'settings', onPress: () => router.push('/settings') }
+      ]}>
       <View style={styles.container}>
         {/* Question */}
         <View style={styles.subContainer}>
