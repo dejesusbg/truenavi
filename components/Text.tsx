@@ -15,7 +15,7 @@ interface BaseTextProps extends TextProps {
 const BaseText = ({ TextComponent, children, style, ...props }: BaseTextProps) => {
   const fontFamily = {
     fontFamily:
-      Platform.OS === 'android' ? 'Ubuntu-' + ((style as TextStyle)?.fontWeight || '500') : 'Inter',
+      Platform.OS === 'android' ? 'Inter-' + ((style as TextStyle)?.fontWeight || '500') : 'Inter',
   };
 
   return (

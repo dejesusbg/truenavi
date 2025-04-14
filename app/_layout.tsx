@@ -11,10 +11,10 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [loaded, error] = useFonts({
     Inter: require('../assets/fonts/InterVariable.ttf'),
-    'Ubuntu-600': require('../assets/fonts/Ubuntu-Bold.ttf'),
-    'Ubuntu-500': require('../assets/fonts/Ubuntu-Medium.ttf'),
-    'Ubuntu-400': require('../assets/fonts/Ubuntu-Regular.ttf'),
-    'Ubuntu-300': require('../assets/fonts/Ubuntu-Light.ttf'),
+    'Inter-600': require('../assets/fonts/Inter-Bold.ttf'),
+    'Inter-500': require('../assets/fonts/Inter-Medium.ttf'),
+    'Inter-400': require('../assets/fonts/Inter-Regular.ttf'),
+    'Inter-300': require('../assets/fonts/Inter-Light.ttf'),
   });
 
   useEffect(() => {
