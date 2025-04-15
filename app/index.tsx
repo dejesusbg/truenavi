@@ -1,28 +1,53 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { conversationFlow, handleConversationInput, ConversationTurn } from '~/conversation';
+import usePermissions from '~/hooks/usePermissions';
 
 const Home = () => {
   const router = useRouter();
+  const permissionsGranted = usePermissions();
+  const [step, setStep] = useState<ConversationTurn>(conversationFlow.config);
+  const [lastInput, setLastInput] = useState<string>('edificio bienestar'); // hardcoded for now
+
+  // simular un input al iniciar el componente (puedes poner esto tras un botón también)
+  useEffect(() => {
+    if (step !== conversationFlow.config) return;
+    const nextStep = handleConversationInput(step, lastInput);
+    setStep(nextStep);
+  }, [step]);
 
   return (
     <ScreenView
       title="truenavi"
       icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
       <View style={styles.container}>
-        {/* Question */}
-        <View style={styles.subContainer}>
-          <Text style={styles.questionText}>where would you like to go today?</Text>
-        </View>
-        <View style={styles.separator}></View>
-        {/* Answer */}
-        <View style={styles.subContainer}>
-          <MaterialIcons style={styles.answerIcon} name="place" />
-          <Text style={styles.answerText}>edificio bienestar</Text>
-        </View>
+        {permissionsGranted ? (
+          <>
+            {/* question */}
+            <View style={styles.subContainer}>
+              <MaterialIcons style={styles.sectionIcon} name={step.output.icon} />
+              <Text style={styles.sectionText}>{step.output.en}</Text>
+            </View>
+            <View style={styles.separator}></View>
+            {/* answer */}
+            <View style={styles.subContainer}>
+              <Text style={styles.sectionText}>{lastInput}</Text>
+            </View>
+          </>
+        ) : (
+          <View style={styles.subContainer}>
+            <MaterialIcons name="location-off" style={styles.sectionIcon} />
+            <TouchableOpacity onPress={() => Linking.openSettings()}>
+              <Text style={styles.sectionText}>
+                abre los ajustes para activar los permisos necesarios para que truenavi funcione
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </ScreenView>
   );
@@ -31,39 +56,33 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 'auto',
-    gap: 20,
   },
   subContainer: {
     paddingVertical: 16,
-    paddingHorizontal: 24,
-    flexDirection: 'row',
+    paddingHorizontal: 16,
+    flexDirection: Platform.OS == 'web' ? 'row' : 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    gap: Platform.OS === 'web' ? 16 : 32,
   },
   separator: {
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, .08)',
     height: 2,
+    marginVertical: Platform.OS == 'web' ? 8 : 16,
+    borderRadius: 1,
   },
-  questionText: {
-    fontSize: 30,
-    lineHeight: 38,
+  sectionText: {
+    fontSize: 24,
+    lineHeight: 36,
     fontWeight: 600,
+    color: '#fff',
     textAlign: 'center',
-    color: '#fff',
     ...fontStyle,
   },
-  answerIcon: {
-    fontSize: 24,
-    color: '#fff',
-    ...fontStyle,
-  },
-  answerText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 500,
-    ...fontStyle,
+  sectionIcon: {
+    fontSize: Platform.OS === 'web' ? 32 : 48,
+    color: 'rgba(255, 255, 255, 0.7)',
   },
 });
 
