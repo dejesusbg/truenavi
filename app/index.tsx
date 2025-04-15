@@ -10,7 +10,7 @@ import usePermissions from '~/hooks/usePermissions';
 const Home = () => {
   const router = useRouter();
   const permissionsGranted = usePermissions();
-  const [step, setStep] = useState<ConversationTurn>(conversationFlow.config);
+  const [step, setStep] = useState<ConversationTurn>(conversationFlow.navigation);
   const [lastInput, setLastInput] = useState<string>('edificio bienestar'); // hardcoded for now
 
   // simular un input al iniciar el componente (puedes poner esto tras un botón también)
@@ -20,34 +20,34 @@ const Home = () => {
     setStep(nextStep);
   }, [step]);
 
-  return (
+  return permissionsGranted ? (
     <ScreenView
       title="truenavi"
       icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
       <View style={styles.container}>
-        {permissionsGranted ? (
-          <>
-            {/* question */}
-            <View style={styles.subContainer}>
-              <MaterialIcons style={styles.sectionIcon} name={step.output.icon} />
-              <Text style={styles.sectionText}>{step.output.en}</Text>
-            </View>
-            <View style={styles.separator}></View>
-            {/* answer */}
-            <View style={styles.subContainer}>
-              <Text style={styles.sectionText}>{lastInput}</Text>
-            </View>
-          </>
-        ) : (
-          <View style={styles.subContainer}>
-            <MaterialIcons name="location-off" style={styles.sectionIcon} />
-            <TouchableOpacity onPress={() => Linking.openSettings()}>
-              <Text style={styles.sectionText}>
-                abre los ajustes para activar los permisos necesarios para que truenavi funcione
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        {/* question */}
+        <View style={styles.subContainer}>
+          <MaterialIcons style={styles.sectionIcon} name={step.output.icon} />
+          <Text style={styles.sectionText}>{step.output.es}</Text>
+        </View>
+        <View style={styles.separator}></View>
+        {/* answer */}
+        <View style={styles.subContainer}>
+          <Text style={styles.sectionText}>{lastInput}</Text>
+        </View>
+      </View>
+    </ScreenView>
+  ) : (
+    <ScreenView>
+      <View style={styles.container}>
+        <View style={styles.subContainer}>
+          <MaterialIcons name="location-off" style={styles.sectionIcon} />
+          <TouchableOpacity onPress={() => Linking.openSettings()}>
+            <Text style={styles.sectionText}>
+              abre los ajustes para activar los permisos necesarios para que truenavi funcione
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScreenView>
   );
