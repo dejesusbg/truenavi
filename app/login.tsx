@@ -100,7 +100,7 @@ const Login = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.securityNote}>access restricted to authorized personnel only</Text>
+          <Text style={styles.securityNote}>authorized personnel only</Text>
         </View>
       </TouchableWithoutFeedback>
     </ScreenView>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: 28,
-    fontWeight: '600',
+    fontWeight: 600,
     color: '#fff',
     ...fontStyle,
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 600,
     ...fontStyle,
   },
   securityNote: {

@@ -48,7 +48,7 @@ const Map = () => {
       title="map"
       icons={[
         { name: 'admin-panel-settings', onPress: () => router.push('/admin') },
-        { name: 'settings', onPress: () => router.push('/settings') },
+        { name: 'exit-to-app', onPress: () => router.push('/') },
       ]}
       goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>

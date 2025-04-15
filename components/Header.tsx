@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 
 interface HeaderProps {
-  title: string;
+  title?: string;
   goBack?: boolean;
   icons?: {
     name: string;
@@ -20,7 +20,7 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
       <View style={styles.section}>
         {goBack && (
           <TouchableOpacity style={styles.button} onPress={router.back} activeOpacity={0.7}>
-            <MaterialIcons style={styles.buttonIcon} name="arrow-back-ios-new" size={24} />
+            <MaterialIcons style={styles.buttonIcon} name="arrow-back-ios" size={24} />
           </TouchableOpacity>
         )}
         <Text style={styles.title}>{title}</Text>
@@ -46,7 +46,8 @@ export default Header;
 
 const styles = StyleSheet.create({
   header: {
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    paddingHorizontal: 3,
     fontWeight: 600,
     color: '#fff',
     ...fontStyle,

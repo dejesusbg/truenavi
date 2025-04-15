@@ -27,6 +27,5 @@ interface Preferences {
   // Configuraciones
   language: 'es' | 'en';
   showWeather: boolean;
-  notifications: boolean;
   vibration: boolean;
 }

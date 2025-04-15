@@ -1,10 +1,9 @@
 import { ImageBackground, Platform, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from './Header';
-import { BlurView } from 'expo-blur';
 
 interface ScreenViewProps {
-  title: string;
+  title?: string;
   icons?: {
     name: string;
     onPress?: () => void;

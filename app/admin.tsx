@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-  Modal,
-  Alert,
-} from 'react-native';
-import Text, { fontStyle } from '~/components/Text';
+import { View, StyleSheet, TouchableOpacity, FlatList, Modal, Alert, Platform } from 'react-native';
+import Text, { TextInput, fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -130,7 +122,7 @@ const Admin = () => {
       title="manage"
       icons={[
         { name: 'map', onPress: () => router.push('/map') },
-        { name: 'settings', onPress: () => router.push('/settings') },
+        { name: 'exit-to-app', onPress: () => router.push('/') },
       ]}
       goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
@@ -272,6 +264,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#fff',
     fontSize: 16,
+    ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
     ...fontStyle,
   },
   clearIcon: {
@@ -298,7 +291,7 @@ const styles = StyleSheet.create({
   },
   listTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 600,
     color: '#fff',
     marginBottom: 16,
     ...fontStyle,
@@ -317,7 +310,7 @@ const styles = StyleSheet.create({
   },
   adminName: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 500,
     color: '#fff',
     ...fontStyle,
   },
@@ -384,7 +377,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: 600,
     color: '#fff',
     ...fontStyle,
   },
@@ -422,7 +415,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 600,
     ...fontStyle,
   },
 });
