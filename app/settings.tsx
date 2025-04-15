@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Switch, TouchableOpacity, Platform } from 'react-native';
 import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,6 +35,7 @@ const SettingItem = ({
           onValueChange={onValueChange}
           trackColor={{ false: '#767577', true: '#a2c3fc' }}
           thumbColor={value ? '#3365a6' : '#f4f3f4'}
+          style={Platform.OS == 'web' ? {} : styles.settingSwitch}
         />
       ) : (
         <MaterialIcons name="chevron-right" style={styles.chevronIcon} />
@@ -48,9 +49,7 @@ const Settings = () => {
   const router = useRouter();
   const [language, setLanguage] = useState(true);
   const [weather, setWeather] = useState(true);
-  const [notifications, setNotifications] = useState(true);
   const [vibration, setVibration] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const settingsData = {
     switches: [
@@ -67,12 +66,6 @@ const Settings = () => {
         onValueChange: setWeather,
       },
       {
-        icon: 'notifications',
-        title: 'allow notifications',
-        value: notifications,
-        onValueChange: setNotifications,
-      },
-      {
         icon: 'vibration',
         title: 'allow vibration',
         value: vibration,
@@ -86,7 +79,7 @@ const Settings = () => {
         onPress: () => router.push('/login'),
       },
       {
-        icon: 'privacy-tip',
+        icon: 'gavel',
         title: 'privacy policy',
         onPress: () => router.push('/'),
       },
@@ -116,12 +109,12 @@ const Settings = () => {
   return (
     <ScreenView title="settings" goBack={true}>
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {!isAdmin && renderSettingsGroup(settingsData.switches, true)}
-        {!isAdmin && renderSettingsGroup(settingsData.links, false)}
+        {renderSettingsGroup(settingsData.switches, true)}
+        {renderSettingsGroup(settingsData.links, false)}
 
         <TouchableOpacity style={styles.dangerButton} onPress={() => router.push('/')}>
-          <MaterialIcons name={isAdmin ? 'logout' : 'delete'} style={styles.dangerIcon} />
-          <Text style={styles.dangerText}>{isAdmin ? 'sign out' : 'erase all data'}</Text>
+          <MaterialIcons name="delete" style={styles.dangerIcon} />
+          <Text style={styles.dangerText}>erase all data</Text>
         </TouchableOpacity>
       </View>
     </ScreenView>
@@ -156,13 +149,17 @@ const styles = StyleSheet.create({
   },
   settingIcon: {
     fontSize: 22,
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.7)',
     ...fontStyle,
   },
   settingText: {
     fontSize: 16,
     color: '#fff',
     ...fontStyle,
+  },
+  settingSwitch: {
+    height: 0,
+    paddingVertical: 12,
   },
   chevronIcon: {
     fontSize: 22,
@@ -189,7 +186,7 @@ const styles = StyleSheet.create({
   dangerText: {
     fontSize: 16,
     color: '#ff4646',
-    fontWeight: '600',
+    fontWeight: 600,
     ...fontStyle,
   },
 });

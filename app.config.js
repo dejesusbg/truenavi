@@ -16,10 +16,13 @@ module.exports = {
         {
           fonts: [
             './assets/fonts/InterVariable.ttf',
-            './assets/fonts/Ubuntu-Bold.ttf',
-            './assets/fonts/Ubuntu-Medium.ttf',
-            './assets/fonts/Ubuntu-Regular.ttf',
-            './assets/fonts/Ubuntu-Light.ttf',
+            './assets/fonts/Inter-ExtraBold.ttf',
+            './assets/fonts/Inter-Bold.ttf',
+            './assets/fonts/Inter-SemiBold.ttf',
+            './assets/fonts/Inter-Medium.ttf',
+            './assets/fonts/Inter-Regular.ttf',
+            './assets/fonts/Inter-Light.ttf',
+            './assets/fonts/Inter-Thin.ttf',
           ],
         },
       ],
@@ -46,6 +49,7 @@ module.exports = {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
+      permissions: ['ACCESS_FINE_LOCATION', 'RECORD_AUDIO'],
     },
     androidNavigationBar: {
       backgroundColor: '#0d1634',
