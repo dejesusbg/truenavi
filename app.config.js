@@ -38,7 +38,7 @@ module.exports = {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#0d1634',
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -47,7 +47,7 @@ module.exports = {
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#0d1634',
       },
       permissions: ['ACCESS_FINE_LOCATION', 'RECORD_AUDIO'],
     },
