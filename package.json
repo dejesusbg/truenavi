@@ -12,8 +12,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-voice/voice": "^3.1.5",
     "expo": "^52.0.42",
-    "expo-av": "^15.0.2",
+    "expo-av": "~15.0.2",
     "expo-blur": "^14.0.3",
     "expo-constants": "~17.0.8",
     "expo-linear-gradient": "^14.0.2",
@@ -21,6 +22,7 @@
     "expo-location": "^18.0.10",
     "expo-navigation-bar": "~4.0.9",
     "expo-router": "~4.0.20",
+    "expo-speech": "~13.0.1",
     "expo-splash-screen": "^0.29.22",
     "expo-status-bar": "~2.0.1",
     "react": "^18.3.1",

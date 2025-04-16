@@ -26,6 +26,12 @@ module.exports = {
           ],
         },
       ],
+      [
+        'expo-av',
+        {
+          microphonePermission: 'Allow truenavi to access your microphone for voice commands.',
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

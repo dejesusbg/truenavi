@@ -35,7 +35,7 @@ const SettingItem = ({
           onValueChange={onValueChange}
           trackColor={{ false: '#767577', true: '#a2c3fc' }}
           thumbColor={value ? '#3365a6' : '#f4f3f4'}
-          style={Platform.OS == 'web' ? {} : styles.settingSwitch}
+          style={Platform.OS === 'web' ? {} : styles.settingSwitch}
         />
       ) : (
         <MaterialIcons name="chevron-right" style={styles.chevronIcon} />

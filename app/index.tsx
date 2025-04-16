@@ -4,7 +4,7 @@ import Text, { fontStyle } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { conversationFlow, handleConversationInput, ConversationTurn } from '~/conversation';
+import { conversationFlow, handleConversationInput, ConversationTurn } from '~/utils/conversation';
 import usePermissions from '~/hooks/usePermissions';
 
 const Home = () => {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   subContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
-    flexDirection: Platform.OS == 'web' ? 'row' : 'column',
+    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
     justifyContent: 'center',
     alignItems: 'center',
     gap: Platform.OS === 'web' ? 16 : 32,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, .08)',
     height: 2,
-    marginVertical: Platform.OS == 'web' ? 8 : 16,
+    marginVertical: Platform.OS === 'web' ? 8 : 16,
     borderRadius: 1,
   },
   sectionText: {
