@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Switch, TouchableOpacity, Platform } from 'react-native';
-import Text, { fontStyle } from '~/components/Text';
+import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import Text from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -35,7 +35,7 @@ const SettingItem = ({
           onValueChange={onValueChange}
           trackColor={{ false: '#767577', true: '#a2c3fc' }}
           thumbColor={value ? '#3365a6' : '#f4f3f4'}
-          style={Platform.OS === 'web' ? {} : styles.settingSwitch}
+          style={styles.settingSwitch}
         />
       ) : (
         <MaterialIcons name="chevron-right" style={styles.chevronIcon} />
@@ -150,12 +150,10 @@ const styles = StyleSheet.create({
   settingIcon: {
     fontSize: 22,
     color: 'rgba(255, 255, 255, 0.7)',
-    ...fontStyle,
   },
   settingText: {
     fontSize: 16,
     color: '#fff',
-    ...fontStyle,
   },
   settingSwitch: {
     height: 0,
@@ -187,7 +185,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ff4646',
     fontWeight: 600,
-    ...fontStyle,
   },
 });
 

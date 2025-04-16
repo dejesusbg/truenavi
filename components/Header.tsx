@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import Text, { fontStyle } from './Text';
+import Text from './Text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     fontWeight: 600,
     color: '#fff',
-    ...fontStyle,
   },
   button: {
     width: 30,

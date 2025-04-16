@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 1,
-    width: Platform.OS === 'web' ? 800 : 340,
+    width: 340,
   },
 });

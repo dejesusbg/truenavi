@@ -41,13 +41,11 @@ export const TextInput = ({ children, ...props }: TextInputProps) => {
   );
 };
 
-export const fontStyle = {
-  fontFeatureSettings: "'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13'",
-  letterSpacing: Platform.OS === 'android' ? -0.5 : 0,
-};
-
 const styles = StyleSheet.create({
-  text: fontStyle,
+  text: {
+    fontFeatureSettings: "'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13'",
+    letterSpacing: Platform.OS === 'android' ? -0.5 : 0,
+  },
 });
 
 export default Text;

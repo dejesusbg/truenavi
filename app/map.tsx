@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import Text, { fontStyle } from '~/components/Text';
+import Text from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
-    ...fontStyle,
   },
   actionButtonsContainer: {
     flexDirection: 'row',
@@ -177,7 +176,6 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
-    ...fontStyle,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -198,7 +196,6 @@ const styles = StyleSheet.create({
   statText: {
     color: '#fff',
     fontSize: 14,
-    ...fontStyle,
   },
 });
 

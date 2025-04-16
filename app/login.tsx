@@ -5,9 +5,8 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
-  Platform,
 } from 'react-native';
-import Text, { TextInput, fontStyle } from '~/components/Text';
+import Text, { TextInput } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -127,7 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 600,
     color: '#fff',
-    ...fontStyle,
   },
   formContainer: {
     width: '100%',
@@ -150,8 +148,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#fff',
     fontSize: 16,
-    ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
-    ...fontStyle,
   },
   visibilityIcon: {
     fontSize: 24,
@@ -172,13 +168,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 600,
-    ...fontStyle,
   },
   securityNote: {
     color: 'rgba(255, 255, 255, 0.5)',
     fontSize: 14,
     textAlign: 'center',
-    ...fontStyle,
   },
 });
 

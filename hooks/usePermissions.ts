@@ -11,7 +11,6 @@ export default function usePermissions() {
       const audioStatus = await Audio.requestPermissionsAsync();
 
       const allGranted = locationStatus.status === 'granted' && audioStatus.status === 'granted';
-
       setGranted(allGranted);
     } catch (err) {
       console.error('Permission error:', err);

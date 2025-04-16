@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, Modal, Alert, Platform } from 'react-native';
-import Text, { TextInput, fontStyle } from '~/components/Text';
+import { View, StyleSheet, TouchableOpacity, FlatList, Modal, Alert } from 'react-native';
+import Text, { TextInput } from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -264,8 +264,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#fff',
     fontSize: 16,
-    ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
-    ...fontStyle,
   },
   clearIcon: {
     fontSize: 20,
@@ -294,7 +292,6 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: '#fff',
     marginBottom: 16,
-    ...fontStyle,
   },
   listContent: {
     paddingBottom: 12,
@@ -312,13 +309,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 500,
     color: '#fff',
-    ...fontStyle,
   },
   adminEmail: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.7)',
     marginTop: 4,
-    ...fontStyle,
   },
   adminActions: {
     flexDirection: 'row',
@@ -351,7 +346,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.5)',
     textAlign: 'center',
-    ...fontStyle,
   },
   modalOverlay: {
     flex: 1,
@@ -379,7 +373,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 600,
     color: '#fff',
-    ...fontStyle,
   },
   closeIcon: {
     fontSize: 24,
@@ -394,7 +387,6 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.7)',
-    ...fontStyle,
   },
   textInput: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -403,7 +395,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     fontSize: 16,
-    ...fontStyle,
   },
   submitButton: {
     backgroundColor: 'rgba(129, 176, 255, 0.8)',
@@ -416,7 +407,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 600,
-    ...fontStyle,
   },
 });
 
