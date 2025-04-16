@@ -55,6 +55,7 @@ module.exports = {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#0d1634',
       },
+      package: 'com.ricardo.truenavi',
       permissions: ['ACCESS_FINE_LOCATION', 'RECORD_AUDIO'],
     },
     androidNavigationBar: {

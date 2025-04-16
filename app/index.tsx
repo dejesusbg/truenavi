@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
-import Text, { fontStyle } from '~/components/Text';
+import { View, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import Text from '~/components/Text';
 import ScreenView from '~/components/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { conversationFlow, handleConversationInput, ConversationTurn } from '~/utils/conversation';
 import usePermissions from '~/hooks/usePermissions';
+import { useSpeech } from '~/utils/speech';
 
 const Home = () => {
   const router = useRouter();
   const permissionsGranted = usePermissions();
   const [step, setStep] = useState<ConversationTurn>(conversationFlow.navigation);
-  const [lastInput, setLastInput] = useState<string>('edificio bienestar'); // hardcoded for now
+  const [input, setInput] = useState<string>('edificio bienestar');
+  const isSpeaking = true, isListening = true;
+  // const {
+  //   transcript,
+  //   isListening,
+  //   isSpeaking,
+  //   speak,
+  //   startListening,
+  //   stopListening,
+  //   resetTranscript,
+  // } = useSpeech();
 
-  // simular un input al iniciar el componente (puedes poner esto tras un botón también)
-  useEffect(() => {
-    if (step !== conversationFlow.config) return;
-    const nextStep = handleConversationInput(step, lastInput);
-    setStep(nextStep);
-  }, [step]);
+  // useEffect(() => {
+  //   speak(step.out.es);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (isSpeaking) return;
+  //   // startListening();
+  //   // handleConversationInput(step.out.es, transcript);
+  // }, []);
 
   return permissionsGranted ? (
     <ScreenView
@@ -27,13 +41,22 @@ const Home = () => {
       <View style={styles.container}>
         {/* question */}
         <View style={styles.subContainer}>
-          <MaterialIcons style={styles.sectionIcon} name={step.output.icon} />
-          <Text style={styles.sectionText}>{step.output.es}</Text>
+          <MaterialIcons style={styles.sectionIcon} name={step.out.icon} />
+          <Text style={styles.sectionText}>{step.out.es}</Text>
         </View>
+
         <View style={styles.separator}></View>
+
         {/* answer */}
         <View style={styles.subContainer}>
-          <Text style={styles.sectionText}>{lastInput}</Text>
+          <Text style={styles.sectionText}>{input}</Text>
+          <View style={styles.statusIndicator}>
+            <MaterialIcons
+              name={isSpeaking ? 'volume-off' : isListening ? 'mic' : 'more-horiz'}
+              style={styles.statusIcon}
+            />
+            <Text style={styles.statusText}>you</Text>
+          </View>
         </View>
       </View>
     </ScreenView>
@@ -44,7 +67,7 @@ const Home = () => {
           <MaterialIcons name="location-off" style={styles.sectionIcon} />
           <TouchableOpacity onPress={() => Linking.openSettings()}>
             <Text style={styles.sectionText}>
-              abre los ajustes para activar los permisos necesarios para que truenavi funcione
+              abre los ajustes para activar los permisos necesarios para que Truenavi funcione
             </Text>
           </TouchableOpacity>
         </View>
@@ -60,16 +83,15 @@ const styles = StyleSheet.create({
   subContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
-    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: Platform.OS === 'web' ? 16 : 32,
+    gap: 32,
   },
   separator: {
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, .08)',
     height: 2,
-    marginVertical: Platform.OS === 'web' ? 8 : 16,
+    marginVertical: 16,
     borderRadius: 1,
   },
   sectionText: {
@@ -78,11 +100,27 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: '#fff',
     textAlign: 'center',
-    ...fontStyle,
   },
   sectionIcon: {
-    fontSize: Platform.OS === 'web' ? 32 : 48,
+    fontSize: 48,
     color: 'rgba(255, 255, 255, 0.7)',
+  },
+  statusIndicator: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  statusIcon: {
+    fontSize: 20,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginRight: 6,
+  },
+  statusText: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 14,
   },
 });
 
