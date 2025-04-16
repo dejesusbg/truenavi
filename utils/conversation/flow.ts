@@ -1,94 +1,84 @@
-import { ConversationFlow, ConversationTurn } from './types';
-import { responseVariant } from './responses';
-
-const finalStep: ConversationTurn = {
-  output: {
-    en: "all set! let me know when you're ready to navigate.",
-    es: '¡todo listo! dime cuando quieras empezar la navegación.',
-    icon: 'celebration',
-  },
-  action: () => {}, // go to navigate flow
-};
-
-const hapticStep: ConversationTurn = {
-  output: {
-    en: 'weather option updated. wanna enable haptic vibration for alerts?',
-    es: 'opción del clima actualizada. ¿desea activar vibración para alertas?',
-    icon: 'vibration',
-  },
-  action: () => {}, // set vibration option
-  next: { '*': finalStep },
-};
-
-const weatherStep: ConversationTurn = {
-  output: {
-    en: 'language set to english. show weather during navigation?',
-    es: 'idioma configurado a español. ¿desea saber el clima durante la navegación?',
-    icon: 'cloud',
-  },
-  action: () => {}, // set weather option
-  next: { '*': hapticStep },
-};
-
-const languageStep: ConversationTurn = {
-  output: {
-    en: "let's configure your experience, do you want to set your language as spanish?",
-    es: 'vamos a configurar tu experiencia. ¿quieres configurar tu idioma a español?',
-    icon: 'language',
-  },
-  action: () => {}, // set language
-  next: { '*': weatherStep },
-};
-
-const configFlow = languageStep;
-
-const navigationResponses = responseVariant({
-  yes: {
-    output: {
-      en: 'starting navigation to ${destination}.',
-      es: 'iniciando navegación a ${destination}.',
-      icon: 'directions-walk',
-    },
-    action: () => {}, // start navigation
-  },
-  no: {
-    output: {
-      en: 'okay, navigation canceled.',
-      es: 'está bien, la navegación ha sido cancelada.',
-      icon: 'done',
-    },
-    action: () => {}, // reset
-  },
-});
+import { ConversationFlow } from './engine';
 
 export const conversationFlow: ConversationFlow = {
   navigation: {
-    output: {
-      en: "hi, i'm truenavi, where would you like to go today?",
-      es: 'hola, soy truenavi, ¿a dónde te gustaría ir hoy?',
+    out: {
+      en: "hey, i'm truenavi. where are we headed today?",
+      es: 'hola, soy truenavi, ¿a dónde vamos hoy?',
       icon: 'signpost',
     },
-    action: () => {}, // search node
+    action: (input) => console.log('truenavi: buscando el destino y la mejor ruta posible'),
     next: {
-      '*': {
-        output: {
-          en: 'calculating route to ${input}. start navigation?',
-          es: 'calculando ruta a ${input}. ¿iniciar navegación?',
-          icon: 'route',
-        },
-        action: () => {}, // start navigation
-        next: navigationResponses,
+      out: {
+        en: 'calculating your route and starting navigation...',
+        es: 'calculando tu ruta e iniciando la navegación...',
+        icon: 'route',
       },
-      configurar: configFlow,
+      action: (input) => console.log('truenavi: modo de instrucciones activado'),
     },
   },
-  config: configFlow,
+  reroute: {
+    out: {
+      en: 'looks like you took a detour, re-routing now...',
+      es: 'parece que tomaste un desvío, recalculando la ruta ahora...',
+      icon: 'auto-awesome',
+    },
+    action: (input) => console.log('truenavi: recalculando la ruta debido al desvío'),
+  },
+  instruction: {
+    out: {
+      en: 'turn ${direction} and continue for ${distance} meters',
+      es: 'gira a la ${direction} y continúa por ${distance} metros',
+      icon: 'directions-walk',
+    },
+    action: (input) => console.log('truenavi: dando instrucciones precisas'),
+  },
+  weather: {
+    out: {
+      en: "it's ${degrees}°C in ${location} and there's a ${chance}% chance of rain",
+      es: 'está a ${degrees}°C en ${location} y hay una probabilidad de lluvia del ${chance}%',
+      icon: 'cloud',
+    },
+    action: (input) => console.log('truenavi: mostrando el clima actual'),
+  },
+  configuration: {
+    out: {
+      en: "let's set up your experience. would you like to switch to spanish?",
+      es: 'vamos a configurar tu experiencia. ¿quieres cambiar el idioma a inglés?',
+      icon: 'language',
+    },
+    action: (input) => console.log('truenavi: configurando el idioma deseado'),
+    next: {
+      out: {
+        en: 'language set to english. would you like weather updates during navigation?',
+        es: 'idioma configurado a español. ¿quieres recibir actualizaciones del clima durante la navegación?',
+        icon: 'cloud',
+      },
+      action: (input) => console.log('truenavi: configurando las actualizaciones del clima'),
+      next: {
+        out: {
+          en: 'weather updates are enabled. do you want to activate haptic feedback for alerts?',
+          es: 'actualizaciones del clima activadas. ¿quieres activar la vibración para las alertas?',
+          icon: 'vibration',
+        },
+        action: (input) => console.log('truenavi: ajustando la configuración de vibración'),
+        next: {
+          out: {
+            en: "everything's set! just let me know when you're ready to navigate.",
+            es: '¡todo listo! avísame cuando estés listo para empezar la navegación.',
+            icon: 'celebration',
+          },
+          action: (input) => console.log('truenavi: configuración completada'),
+        },
+      },
+    },
+  },
   fallback: {
-    output: {
-      en: "sorry, i didn't understand that. Can you repeat?",
-      es: 'lo siento, no entendí eso. ¿Puedes repetirlo?',
+    out: {
+      en: "sorry, i didn't quite catch that. could you say it again?",
+      es: 'lo siento, no entendí bien eso. ¿puedes repetirlo?',
       icon: 'question-mark',
     },
-    action: () => {}, // try again
+    action: (input) => console.log('truenavi: no entendí la solicitud'),
   },
 };
