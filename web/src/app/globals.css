@@ -1,0 +1,98 @@
+@import 'tailwindcss';
+
+@custom-variant hocus (&:hover, &:focus);
+
+/* @theme {
+  --color-primary: #3365a6;
+  --color-secondary: #a2c3fc;
+  --color-danger: rgba(255, 70, 70, 0.2);
+  --color-secondary-text: rgba(255, 255, 255, 0.7);
+  --color-tertiary-text: rgba(255, 255, 255, 0.5);
+  --color-status-text: rgba(255, 255, 255, 0.9);
+  --color-danger-text: #ff4646;
+  --color-link-text: #6eb8f7;
+  --color-icon: rgba(255, 255, 255, 0.7);
+  --color-secondary-icon: rgba(255, 255, 255, 0.6);
+  --color-tertiary-icon: rgba(255, 255, 255, 0.08);
+  --color-inactive-icon: rgba(255, 255, 255, 0.5);
+  --color-input: rgba(255, 255, 255, 0.1);
+  --color-input-placeholder: rgba(255, 255, 255, 0.5);
+  --color-btn: rgba(255, 255, 255, 0.15);
+  --color-header-btn: rgba(0, 0, 0, 0.04);
+  --color-secondary-btn: rgba(129, 176, 255, 0.8);
+  --color-tertiary-btn: rgba(129, 176, 255, 0.4);
+  --color-tertiary-btn-text: rgba(129, 176, 255, 0.8);
+  --color-danger-btn: rgba(255, 70, 70, 0.4);
+  --color-danger-btn-text: rgba(255, 70, 70, 0.8);
+  --color-inactive-btn: rgba(129, 176, 255, 0.3);
+  --color-background: #0d1634;
+  --color-modal: #1a1a1a;
+  --color-overlay: #0009;
+  --color-map-overlay: rgba(0, 0, 0, 0.6);
+  --color-outline: rgba(255, 255, 255, 0.1);
+  --color-container: rgba(255, 255, 255, 0.05);
+  --color-status: rgba(255, 255, 255, 0.1);
+} */
+
+@theme {
+  /* Brand colors */
+  --color-primary: #3365a6;
+  --color-secondary: #a2c3fc;
+
+  /* Alerts */
+  --color-danger: #ff4646;
+  --color-danger-light: rgba(255 70 70 / 20%);
+
+  /* Typography (foreground) */
+  --color-foreground: rgba(255 255 255 / 90%);
+  --color-foreground-muted: rgba(255 255 255 / 70%);
+  --color-foreground-subtle: rgba(255 255 255 / 50%);
+  --color-link: rgba(110 184 247 / 90%);
+
+  /* Icons */
+  --color-icon: rgba(255 255 255 / 70%);
+  --color-icon-muted: rgba(255 255 255 / 60%);
+  --color-icon-subtle: rgba(255 255 255 / 8%);
+  --color-icon-disabled: rgba(255 255 255 / 50%);
+
+  /* Inputs */
+  --color-input: rgba(255 255 255 / 10%);
+  --color-input-muted: rgba(255 255 255 / 50%);
+
+  /* Buttons */
+  --color-btn: rgba(255 255 255 / 15%);
+  --color-btn-header: rgba(0 0 0 / 4%);
+  --color-btn-secondary: rgba(109 162 252 / 80%);
+  --color-btn-tertiary: rgba(129 176 255 / 40%);
+  --color-btn-danger: rgba(255 70 70 / 40%);
+  --color-btn-disabled: rgba(129 176 255 / 30%);
+
+  /* Surfaces & overlays */
+  --color-background: #0d1634;
+  --color-overlay: rgba(0 0 0 / 60%);
+  --color-outline: rgba(255 255 255 / 10%);
+  --color-container: rgba(255 255 255 / 5%);
+  --color-status: rgba(255 255 255 / 10%);
+}
+
+@layer base {
+  html {
+    background-image: url('../../public/background.jpeg');
+    @apply bg-cover bg-no-repeat bg-center bg-fixed bg-background text-white;
+  }
+
+  body {
+    font-feature-settings: 'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13';
+    @apply bg-overlay font-sans backdrop-blur-[50px] h-screen px-2.5 pb-16 pt-4;
+  }
+
+  div,
+  form {
+    @apply flex flex-col relative;
+  }
+
+  button,
+  a {
+    @apply cursor-pointer hover:brightness-90;
+  }
+}

@@ -4,7 +4,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "web": "cd web && npm run dev",
-    "native": "cd native && npm run start"
+    "native": "cd native && npm run start",
+    "install": "cd web && npm install && cd ../native && npm install"
   },
   "private": true
 }
