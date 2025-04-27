@@ -1,20 +1,11 @@
-import Header from '@/components/layout/Header';
-import AdminBody from '@/app/admin/component';
+import AdminComponent from '@/app/admin/component';
+import Container from '@/components/layout/Container';
 
-const AdminPage = () => {
-  return (
-    <>
-      <Header
-        title="admin"
-        icons={[
-          { name: 'FaMap', href: 'map' },
-          { name: 'FaSignInAlt', href: 'login' },
-        ]}
-        goBack={true}
-      />
-      <AdminBody />
-    </>
-  );
-};
+const adminIcons = [
+  { name: 'MdMap', href: 'map' },
+  { name: 'MdExitToApp', href: 'login' },
+];
 
-export default AdminPage;
+export default function Admin() {
+  return <Container icons={adminIcons} goBack={true} component={<AdminComponent />} />;
+}

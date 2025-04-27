@@ -1,8 +1,5 @@
-import Header from '@/components/layout/Header';
-import LoginBody from './component';
+import LoginComponent from './component';
 
-const Login = () => {
-  return <LoginBody />;
-};
-
-export default Login;
+export default function Login() {
+  return <LoginComponent />;
+}

@@ -1,96 +1,79 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { IoMdSearch, IoMdClose, IoMdPersonAdd, IoMdCreate, IoMdTrash } from 'react-icons/io';
+import SearchInput from '@/components/ui/SearchInput';
+import Button from '@/components/ui/Button';
+import Card from '@/components/layout/Card';
+import Divider from '@/components/ui/Divider';
+import InputField from '@/components/ui/InputField';
+import AdminListItem from '@/components/admin/ListItem';
+import EmptyState from '@/components/ui/EmptyState';
+import { MdClose, MdPersonAdd, MdSearch } from 'react-icons/md';
 
-const AdminBody = () => {
-  const [admins, setAdmins] = useState([
-    {
-      id: '1',
-      name: 'Ricardo Barrios',
-      email: 'ricardo@truenavi.com',
-      password: '********',
-    },
-    {
-      id: '2',
-      name: 'Gianmarco Gambin',
-      email: 'gianmarco@truenavi.com',
-      password: '********',
-    },
-    {
-      id: '3',
-      name: 'Alex Marquez',
-      email: 'alex@truenavi.com',
-      password: '********',
-    },
-    {
-      id: '4',
-      name: 'Daniel Paez',
-      email: 'daniel@truenavi.com',
-      password: '********',
-    },
-  ]);
+interface AdminProps {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+}
 
-  const [editingAdmin, setEditingAdmin] = useState<
-    | {
-        id: string;
-        name: string;
-        email: string;
-        password: string;
-      }
-    | false
-    | null
-  >(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+const emptyAdmin = { name: '', email: '', password: '' } as AdminProps;
+
+const defaultAdmins = [
+  {
+    id: '1',
+    name: 'Ricardo Barrios',
+    email: 'ricardo@truenavi.com',
+    password: '********',
+  },
+  {
+    id: '2',
+    name: 'Gianmarco Gambin',
+    email: 'gianmarco@truenavi.com',
+    password: '********',
+  },
+  {
+    id: '3',
+    name: 'Alex Marquez',
+    email: 'alex@truenavi.com',
+    password: '********',
+  },
+  {
+    id: '4',
+    name: 'Daniel Paez',
+    email: 'daniel@truenavi.com',
+    password: '********',
+  },
+];
+
+const AdminComponent = () => {
+  const [admins, setAdmins] = useState(defaultAdmins);
+  const [editingAdmin, setEditingAdmin] = useState<AdminProps | null>(null);
+  const [formData, setFormData] = useState(emptyAdmin);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Reset form when editingAdmin changes or when container view changes
   useEffect(() => {
-    if (!editingAdmin) {
-      setFormData({ name: '', email: '', password: '' });
-    } else {
-      setFormData({
-        name: editingAdmin.name,
-        email: editingAdmin.email,
-        password: editingAdmin.password,
-      });
-    }
+    setFormData(!editingAdmin ? emptyAdmin : editingAdmin);
   }, [editingAdmin]);
 
-  const handleEditAdmin = (admin: any) => {
-    setEditingAdmin(admin);
-  };
-
-  const handleAddAdmin = () => {
-    setEditingAdmin(false); // Reset for adding a new admin
-  };
-
+  const handleEditAdmin = (admin: any) => setEditingAdmin(admin);
+  const handleAddAdmin = () => setEditingAdmin(emptyAdmin);
   const handleSubmit = () => {
-    if (!formData.name || !formData.email || !formData.password) {
-      alert('Validation Error: All fields are required');
-      return;
-    }
+    if (!editingAdmin) return;
 
-    if (editingAdmin) {
+    if (editingAdmin === emptyAdmin) {
+      const newAdmin = { ...formData, id: Date.now().toString() };
+      setAdmins([...admins, newAdmin]);
+    } else {
       setAdmins(
         admins.map((admin) => (admin.id === editingAdmin.id ? { ...admin, ...formData } : admin))
       );
-    } else {
-      const newAdmin = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      setAdmins([...admins, newAdmin]);
     }
-
-    setEditingAdmin(null); // Return to the admin list view after submit
+    setEditingAdmin(null);
   };
 
   const handleDeleteAdmin = (adminId: any) => {
-    if (window.confirm('Are you sure you want to delete this admin?')) {
+    if (window.confirm('are you sure you want to delete this admin?')) {
       setAdmins(admins.filter((admin) => admin.id !== adminId));
     }
   };
@@ -100,129 +83,96 @@ const AdminBody = () => {
       admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       admin.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const AdminItem = ({ admin }: any) => {
-    return (
-      <div className="flex-row justify-between items-center py-4">
-        <div className="gap-1">
-          <div className="font-medium text-white">{admin.name}</div>
-          <div className="text-sm text-foreground-muted">{admin.email}</div>
-        </div>
-        <div className="flex-row gap-4">
-          <button onClick={() => handleEditAdmin(admin)} className="text-secondary">
-            <IoMdCreate size={24} />
-          </button>
-          <button onClick={() => handleDeleteAdmin(admin.id)} className="text-danger">
-            <IoMdTrash size={24} />
-          </button>
-        </div>
-      </div>
-    );
+  3;
+  const getCardTitle = () => {
+    if (!editingAdmin) return `found (${filteredAdmins.length})`;
+    if (editingAdmin === emptyAdmin) return 'create';
+    return 'edit';
   };
 
   return (
-    <div className="flex-1 gap-4 mt-4">
-      <div className="flex-row gap-3 items-center">
-        <div className="flex-row items-center bg-input rounded-lg px-3 gap-3 h-12 flex-1">
-          <IoMdSearch size={22} className="text-icon" />
-          <input
-            type="text"
-            placeholder="search admins..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent text-white placeholder-white outline-none"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')}>
-              <IoMdClose size={20} className="text-icon" />
-            </button>
-          )}
-        </div>
-        <button onClick={handleAddAdmin} className="bg-btn-secondary p-3 rounded-lg">
-          <IoMdPersonAdd size={24} />
-        </button>
+    <div className="flex-1 gap-4">
+      <div className="flex-row items-center gap-3">
+        <SearchInput value={searchQuery} onChange={setSearchQuery} className="flex-1" />
+        <Button
+          onClick={handleAddAdmin}
+          variant="secondary"
+          icon={<MdPersonAdd className="text-2xl" />}
+        />
       </div>
-      <div className="bg-container p-6 rounded-xl">
-        {/* Display either the list of admins or the form depending on editingAdmin */}
-        {editingAdmin === null ? (
-          <>
-            <h2 className="text-lg font-semibold mb-4">found ({filteredAdmins.length})</h2>
 
-            {filteredAdmins.length > 0 ? (
-              <div>
-                {filteredAdmins.map((admin, index) => (
-                  <div key={index}>
-                    <AdminItem admin={admin} />
-                    {filteredAdmins.length - 1 !== index && <div className="h-[1px] bg-outline" />}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex-1 justify-center items-center py-8">
-                <IoMdSearch size={48} className="text-icon mb-4" />
-                <p className="text-foreground-subtle">no administrators found</p>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="flex-row justify-between items-center mb-5">
-              <h2 className="text-lg font-semibold">{editingAdmin ? 'edit' : 'create'}</h2>
-              <button onClick={() => setEditingAdmin(null)} className="text-white">
-                <IoMdClose size={24} />
-              </button>
+      <Card
+        title={getCardTitle()}
+        headerRight={
+          editingAdmin && (
+            <Button
+              onClick={() => setEditingAdmin(null)}
+              variant="transparent"
+              className="!p-0"
+              icon={<MdClose className="text-2xl" />}
+            />
+          )
+        }>
+        {!editingAdmin ? (
+          filteredAdmins.length > 0 ? (
+            <div>
+              {filteredAdmins.map((admin, index) => (
+                <div key={index}>
+                  <AdminListItem
+                    admin={admin}
+                    onEdit={handleEditAdmin}
+                    onDelete={handleDeleteAdmin}
+                  />
+                  {filteredAdmins.length - 1 !== index && <Divider />}
+                </div>
+              ))}
             </div>
+          ) : (
+            <EmptyState icon={<MdSearch />} message="no administrators found" />
+          )
+        ) : (
+          <form onSubmit={(e) => e.preventDefault()} className="gap-4 pt-2 pb-4">
+            <InputField
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="admin name"
+              label="name"
+            />
 
-            <form onSubmit={(e) => e.preventDefault()} className="gap-4 mb-2">
-              <div className="gap-1.5">
-                <label className="text-sm text-white">name</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-input p-3 rounded-md text-white"
-                  placeholder="admin name"
-                />
-              </div>
+            <InputField
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="admin@truenavi.com"
+              label="email"
+            />
 
-              <div className="gap-1.5">
-                <label className="text-sm text-white">email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-input p-3 rounded-md text-white"
-                  placeholder="admin@truenavi.com"
-                />
-              </div>
+            <InputField
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="password"
+              label="password"
+            />
 
-              <div className="gap-1.5">
-                <label className="text-sm text-white">password</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-input p-3 rounded-md text-white"
-                  placeholder="password"
-                />
-              </div>
-
-              <div className="flex-row gap-3 mt-3">
-                <button
-                  onClick={() => setEditingAdmin(null)}
-                  className="flex-1 bg-btn-danger p-3 rounded-lg">
-                  cancel
-                </button>
-                <button onClick={handleSubmit} className="flex-1 bg-btn-tertiary p-3 rounded-lg">
-                  {editingAdmin ? 'save changes' : 'add new'}
-                </button>
-              </div>
-            </form>
-          </>
+            <div className="flex-row gap-3 mt-3">
+              <Button onClick={() => setEditingAdmin(null)} variant="danger" fullWidth>
+                cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={!formData.name || !formData.email || !formData.password}
+                variant="tertiary"
+                fullWidth>
+                {editingAdmin ? 'save changes' : 'add new'}
+              </Button>
+            </div>
+          </form>
         )}
-      </div>
+      </Card>
     </div>
   );
 };
 
-export default AdminBody;
+export default AdminComponent;

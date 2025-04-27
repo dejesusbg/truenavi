@@ -1,17 +1,28 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import InputField from '@/components/ui/InputField';
+import Button from '@/components/ui/Button';
+import {
+  MdAdminPanelSettings,
+  MdLock,
+  MdPerson,
+  MdVisibility,
+  MdVisibilityOff,
+} from 'react-icons/md';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 
-const LoginBody = () => {
+const LoginComponent = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (e: any) => {
+    e.preventDefault();
     if (!email || !password) return;
+
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -20,62 +31,50 @@ const LoginBody = () => {
   };
 
   return (
-    <div className="items-center justify-center gap-10 px-6 pt-10 flex-1">
-      {/* Logo Section */}
+    <div className="items-center justify-center flex-1 gap-10 px-6 pt-10">
       <div className="items-center">
-        <div className="text-white text-6xl">
-          <FaUser />
+        <div className="text-6xl text-white">
+          <MdAdminPanelSettings />
         </div>
-        <h1 className="text-white text-3xl font-semibold mt-4">truenavi admin</h1>
+        <h1 className="mt-4 text-3xl font-semibold text-white">truenavi admin</h1>
       </div>
 
       {/* Form Section */}
-      <div className="w-full max-w-sm">
-        {/* Email Input */}
-        <div className="flex-row items-center bg-input rounded-lg p-3 mb-4">
-          <FaUser className="text-icon text-xl mr-3" />
-          <input
-            type="text"
-            placeholder="admin@truenavi.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 bg-transparent text-white placeholder-foreground-subtle focus:outline-none"
-          />
-        </div>
+      <form className="w-full max-w-sm" onSubmit={handleLogin}>
+        <InputField
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="admin@truenavi.com"
+          icon={<MdPerson />}
+          className="p-4 mb-4"
+        />
 
-        {/* Password Input */}
-        <div className="flex-row items-center bg-input rounded-lg p-3 mb-4 relative">
-          <FaLock className="text-icon text-xl mr-3" />
-          <input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="flex-1 bg-transparent text-white placeholder-foreground-subtle focus:outline-none"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 text-white">
-            {showPassword ? <FaEyeSlash className="text-icon" /> : <FaEye className="text-icon" />}
-          </button>
-        </div>
+        <InputField
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="password"
+          icon={<MdLock />}
+          rightIcon={showPassword ? <MdVisibility /> : <MdVisibilityOff />}
+          onRightIconClick={() => setShowPassword(!showPassword)}
+          className="p-4 mb-4"
+        />
 
-        {/* Login Button */}
-        <button
-          onClick={handleLogin}
+        <Button
+          type="submit"
           disabled={!email || !password || isLoading}
-          className={`w-full py-3 mt-4 rounded-lg text-white font-semibold ${
-            !email || !password || isLoading ? 'bg-btn-disabled' : 'bg-btn-secondary'
-          } transition`}>
-          {isLoading ? 'authenticating...' : 'login'}
-        </button>
-      </div>
+          variant={!email || !password || isLoading ? 'disabled' : 'secondary'}
+          fullWidth
+          className="p-4 mt-4">
+          {isLoading ? <LoadingIndicator /> : 'login'}
+        </Button>
+      </form>
 
       {/* Security Note */}
-      <p className="text-foreground-muted text-sm mt-4">authorized personnel only</p>
+      <p className="mt-4 text-sm text-foreground-muted">authorized personnel only</p>
     </div>
   );
 };
 
-export default LoginBody;
+export default LoginComponent;
