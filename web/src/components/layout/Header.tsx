@@ -1,32 +1,32 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { FaArrowLeft } from 'react-icons/fa';
+import { usePathname, useRouter } from 'next/navigation';
+import { MdArrowBackIosNew } from 'react-icons/md';
 
-interface HeaderProps {
-  title?: string;
+export interface HeaderProps {
   goBack?: boolean;
   icons?: { name: string; href?: string }[];
 }
 
-const Header = ({ title, icons, goBack = false }: HeaderProps) => {
-  const router = useRouter();
+function Icon({ name }: { name: string }) {
+  const IconComponent = require('react-icons/md')[name];
+  return <IconComponent className="text-2xl text-white" />;
+}
 
-  const Icon = ({ name }: { name: string }) => {
-    const IconEl = require(`react-icons/fa`)[name] || require(`react-icons/fi`)[name];
-    return <IconEl className="text-white text-lg" />;
-  };
+export default function Header({ icons, goBack = false }: HeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname().replace('/', '');
 
   return (
-    <div className="flex-row justify-between items-center px-2.5 py-5 w-full">
+    <div className="flex-row justify-between items-center px-2.5 py-5 mb-4 w-full">
       <div className="flex-row items-center gap-4">
         {goBack && (
           <a
-            className="w-8 h-8 bg-opacity-10 bg-btn-header rounded-lg flex items-center justify-center"
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-opacity-10 bg-btn-header"
             onClick={() => router.back()}>
-            <FaArrowLeft className="text-white text-lg" />
+            <MdArrowBackIosNew className="text-2xl text-white" />
           </a>
         )}
-        <span className="text-white text-xl font-semibold">{title}</span>
+        <span className="text-xl font-semibold text-white">{pathname || 'truenavi'}</span>
       </div>
 
       <div className="flex-row items-center gap-4">
@@ -35,7 +35,7 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
           icons.map(({ name, href }, index) => (
             <button
               key={index}
-              className="w-8 h-8 bg-opacity-10 bg-btn-header rounded-lg flex items-center justify-center"
+              className="flex items-center justify-center w-8 h-8 rounded-lg bg-opacity-10 bg-btn-header"
               onClick={() => {
                 router.push(href || '/');
               }}>
@@ -45,6 +45,4 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
       </div>
     </div>
   );
-};
-
-export default Header;
+}
