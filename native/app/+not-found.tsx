@@ -1,6 +1,6 @@
 import { Link, Stack } from 'expo-router';
 import { Text, StyleSheet } from 'react-native';
-import ScreenView from '~/components/ScreenView';
+import ScreenView from '~/components/layout/ScreenView';
 
 export default function NotFoundScreen() {
   return (

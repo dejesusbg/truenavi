@@ -1,6 +1,6 @@
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Header from './Header';
+import Header from '~/components/layout/Header';
 
 interface ScreenViewProps {
   title?: string;
@@ -16,7 +16,7 @@ const ScreenView = ({ title, icons, children, goBack }: ScreenViewProps) => {
     <ImageBackground
       style={styles.background}
       resizeMode="cover"
-      source={require('../assets/background.jpeg')}
+      source={require('../../assets/background.jpeg')}
       blurRadius={50}>
       <View
         style={[

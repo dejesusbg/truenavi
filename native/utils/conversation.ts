@@ -1,4 +1,33 @@
-import { ConversationFlow } from './engine';
+// types
+export interface LocalizedText {
+  en: string;
+  es: string;
+  icon: string;
+}
+
+export interface ConversationTurn {
+  out: LocalizedText;
+  next?: ConversationTurn;
+  action: (input: string) => void;
+}
+
+export interface ConversationFlow {
+  [key: string]: ConversationTurn;
+}
+
+// utils
+const normalize = (input: string) => input.trim().toLowerCase();
+
+// execution
+export function handleConversationInput(
+  current: ConversationTurn,
+  userInput: string
+): ConversationTurn {
+  const input = normalize(userInput);
+  current.action(input);
+  if (!current.next) return current;
+  return current.next;
+}
 
 export const conversationFlow: ConversationFlow = {
   navigation: {
@@ -10,36 +39,12 @@ export const conversationFlow: ConversationFlow = {
     action: (input) => console.log('truenavi: buscando el destino y la mejor ruta posible'),
     next: {
       out: {
-        en: 'calculating your route and starting navigation...',
-        es: 'calculando tu ruta e iniciando la navegación...',
+        en: 'calculating your route and starting navigation',
+        es: 'calculando tu ruta e iniciando la navegación',
         icon: 'route',
       },
       action: (input) => console.log('truenavi: modo de instrucciones activado'),
     },
-  },
-  reroute: {
-    out: {
-      en: 'looks like you took a detour, re-routing now...',
-      es: 'parece que tomaste un desvío, recalculando la ruta ahora...',
-      icon: 'auto-awesome',
-    },
-    action: (input) => console.log('truenavi: recalculando la ruta debido al desvío'),
-  },
-  instruction: {
-    out: {
-      en: 'turn ${direction} and continue for ${distance} meters',
-      es: 'gira a la ${direction} y continúa por ${distance} metros',
-      icon: 'directions-walk',
-    },
-    action: (input) => console.log('truenavi: dando instrucciones precisas'),
-  },
-  weather: {
-    out: {
-      en: "it's ${degrees}°C in ${location} and there's a ${chance}% chance of rain",
-      es: 'está a ${degrees}°C en ${location} y hay una probabilidad de lluvia del ${chance}%',
-      icon: 'cloud',
-    },
-    action: (input) => console.log('truenavi: mostrando el clima actual'),
   },
   configuration: {
     out: {

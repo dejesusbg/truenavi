@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import Text from './Text';
+import Text from '~/components/Text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 

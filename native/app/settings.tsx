@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import Text from '~/components/Text';
-import ScreenView from '~/components/ScreenView';
+import ScreenView from '~/components/layout/ScreenView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
