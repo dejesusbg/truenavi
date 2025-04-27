@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Text from '~/components/Text';
-import ScreenView from '~/components/ScreenView';
+import ScreenView from '~/components/layout/ScreenView';
 import { useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { conversationFlow, handleConversationInput, ConversationTurn } from '~/utils/conversation';
+import { conversationFlow, ConversationTurn } from '~/utils/conversation';
 import usePermissions from '~/hooks/usePermissions';
-import { useSpeech } from '~/utils/speech';
+import NavigationView from '~/components/ui/Navigation';
+import NotAllowedView from '~/components/ui/NotAllowed';
+
+type AppState = 'not-allowed' | 'speaking' | 'listening' | 'navigating';
 
 const Home = () => {
   const router = useRouter();
-  const { speak, startListening, stopListening } = useSpeech();
   const permissionsGranted = usePermissions();
-  const [step, setStep] = useState<ConversationTurn>(conversationFlow.navigation);
-  const [input, setInput] = useState<string>('edificio bienestar');
-  const isSpeaking = true,
-    isListening = true;
-  // const {
-  //   transcript,
-  //   isListening,
-  //   isSpeaking,
-  //   speak,
-  //   startListening,
-  //   stopListening,
-  //   resetTranscript,
-  // } = useSpeech();
+  const [appState, setAppState] = useState<AppState>('not-allowed');
+  const [step, setStep] = useState<ConversationTurn>(conversationFlow.fallback);
+  const [input, setInput] = useState<string>('si');
 
-  // useEffect(() => {
-  //   speak(step.out.es);
-  // }, []);
+  useEffect(() => {
+    setAppState(permissionsGranted ? 'navigating' : 'not-allowed');
+  }, [permissionsGranted]);
 
-  // useEffect(() => {
-  //   if (isSpeaking) return;
-  //   // startListening();
-  //   // handleConversationInput(step.out.es, transcript);
-  // }, []);
+  if (appState === 'not-allowed') return <NotAllowedView />;
+  if (appState === 'navigating') return <NavigationView />;
 
-  return permissionsGranted ? (
+  return (
     <ScreenView
       title="truenavi"
       icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
@@ -54,24 +43,11 @@ const Home = () => {
           <Text style={styles.sectionText}>{input}</Text>
           <View style={styles.statusIndicator}>
             <MaterialIcons
-              name={isSpeaking ? 'volume-off' : isListening ? 'mic' : 'more-horiz'}
+              name={appState === 'speaking' ? 'volume-off' : 'mic'}
               style={styles.statusIcon}
             />
             <Text style={styles.statusText}>you</Text>
           </View>
-        </View>
-      </View>
-    </ScreenView>
-  ) : (
-    <ScreenView>
-      <View style={styles.container}>
-        <View style={styles.subContainer}>
-          <MaterialIcons name="location-off" style={styles.sectionIcon} />
-          <TouchableOpacity onPress={() => Linking.openSettings()}>
-            <Text style={styles.sectionText}>
-              abre los ajustes para activar los permisos necesarios para que Truenavi funcione
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ScreenView>
