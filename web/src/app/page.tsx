@@ -1,6 +1,5 @@
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  const router = useRouter();
-  return router.push('/login');
+export default async function Home() {
+  redirect('/login');
 }

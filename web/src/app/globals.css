@@ -65,7 +65,7 @@
   --color-btn-secondary: rgba(109 162 252 / 80%);
   --color-btn-tertiary: rgba(129 176 255 / 40%);
   --color-btn-danger: rgba(255 70 70 / 40%);
-  --color-btn-disabled: rgba(129 176 255 / 30%);
+  --color-btn-disabled: rgba(129 176 255 / 20%);
 
   /* Surfaces & overlays */
   --color-background: #0d1634;
@@ -83,16 +83,22 @@
 
   body {
     font-feature-settings: 'cv01', 'cv02', 'cv06', 'cv11', 'cv12', 'cv13';
-    @apply bg-overlay font-sans backdrop-blur-[50px] h-screen px-2.5 pb-16 pt-4;
+    @apply bg-overlay font-sans backdrop-blur-[50px] h-screen p-4 pb-16 overflow-hidden;
   }
 
   div,
-  form {
+  form,
+  button {
     @apply flex flex-col relative;
   }
 
   button,
   a {
     @apply cursor-pointer hover:brightness-90;
+  }
+
+  input[type='password']::-ms-reveal,
+  input[type='password']::-ms-clear {
+    display: none;
   }
 }
