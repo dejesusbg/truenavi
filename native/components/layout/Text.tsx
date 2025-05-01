@@ -11,12 +11,12 @@ interface BaseTextProps extends TextProps {
   TextComponent: React.ElementType;
 }
 
-const BaseText = ({ TextComponent, children, style, ...props }: BaseTextProps) => {
+function BaseText({ TextComponent, children, style, ...props }: BaseTextProps) {
   const styles = StyleSheet.create({
     text: {
       fontFamily: 'Inter-' + ((style as TextStyle)?.fontWeight || '500'),
-      letterSpacing: -0.5,
-    }
+      letterSpacing: parseInt((style as TextStyle)?.fontWeight as string) > 500 ? -0.75 : -0.25,
+    },
   });
 
   return (
@@ -24,18 +24,20 @@ const BaseText = ({ TextComponent, children, style, ...props }: BaseTextProps) =
       {children}
     </TextComponent>
   );
-};
+}
 
-const Text = ({ children, ...props }: TextProps) => {
+export function Text({ children, ...props }: TextProps) {
   return (
-    <BaseText TextComponent={RNText} {...props}>{children}</BaseText>
+    <BaseText TextComponent={RNText} {...props}>
+      {children}
+    </BaseText>
   );
-};
+}
 
-export const TextInput = ({ children, ...props }: TextInputProps) => {
+export function TextInput({ children, ...props }: TextInputProps) {
   return (
-    <BaseText TextComponent={RNTextInput} {...props}>{children}</BaseText>
+    <BaseText TextComponent={RNTextInput} {...props}>
+      {children}
+    </BaseText>
   );
-};
-
-export default Text;
+}

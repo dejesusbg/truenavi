@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Header from '~/components/layout/Header';
+import { Header } from '~/components/layout/Header';
+import Theme from '~/components/theme/Palette';
 
 interface ScreenViewProps {
   title?: string;
@@ -9,7 +10,7 @@ interface ScreenViewProps {
   children?: React.ReactNode;
 }
 
-const ScreenView = ({ title, icons, children, goBack }: ScreenViewProps) => {
+export function ScreenView({ title, icons, children, goBack }: ScreenViewProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -33,9 +34,7 @@ const ScreenView = ({ title, icons, children, goBack }: ScreenViewProps) => {
       </View>
     </ImageBackground>
   );
-};
-
-export default ScreenView;
+}
 
 const styles = StyleSheet.create({
   background: {
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0009',
+    backgroundColor: Theme.overlay,
     backdropFilter: 'blur(50px)',
   },
   main: {

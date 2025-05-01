@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Text from '~/components/Text';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
-import ScreenView from '~/components/layout/ScreenView';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '~/components/layout/Text';
+import { ScreenView } from '~/components/layout/ScreenView';
+import Theme from '~/components/theme/Palette';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Map from 'react-native-maps';
 
 const NavInstructions = ({ instruction, distance }: any) => {
   const getInstructionIcon = () => {
@@ -53,7 +54,7 @@ const NavInstructions = ({ instruction, distance }: any) => {
   );
 };
 
-export default function NavigationView() {
+export function MapView() {
   const router = useRouter();
   const [region, setRegion] = useState<{
     latitude: number;
@@ -61,18 +62,12 @@ export default function NavigationView() {
     latitudeDelta: number;
     longitudeDelta: number;
   } | null>(null);
-  const [currentInstruction, setCurrentInstruction] = useState('destination');
-  const [distanceToNext, setDistanceToNext] = useState<string | null>(null);
+  const [currentInstruction, setCurrentInstruction] = useState('straight');
+  const [distanceToNext, setDistanceToNext] = useState<string | null>('50');
   const [destination, setDestination] = useState('edificio bienestar');
 
   useEffect(() => {
     const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('permission to access location was denied');
-        return;
-      }
-
       const location = await Location.getCurrentPositionAsync({});
       setRegion({
         latitude: location.coords.latitude,
@@ -102,7 +97,7 @@ export default function NavigationView() {
       } else {
         clearInterval(instructionInterval);
       }
-    }, 1000000);
+    }, 5000);
 
     return () => clearInterval(instructionInterval);
   }, []);
@@ -110,11 +105,14 @@ export default function NavigationView() {
   return (
     <ScreenView
       title="truenavi"
-      icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
+      icons={[
+        { name: 'settings', onPress: () => router.push('/settings') },
+        { name: 'close', onPress: () => router.push('/') },
+      ]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
           {region && (
-            <MapView
+            <Map
               style={styles.map}
               region={region}
               userInterfaceStyle="dark"
@@ -157,7 +155,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: Theme.overlay,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -165,15 +163,15 @@ const styles = StyleSheet.create({
   },
   destinationIcon: {
     fontSize: 24,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: Theme.icon,
   },
   destinationText: {
     fontSize: 16,
-    color: '#fff',
+    color: Theme.white,
     fontWeight: '600',
   },
   instructionContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: Theme.container,
     borderRadius: 16,
     padding: 16,
     gap: 16,
@@ -184,13 +182,13 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: Theme.status,
     justifyContent: 'center',
     alignItems: 'center',
   },
   instructionIcon: {
     fontSize: 32,
-    color: '#fff',
+    color: Theme.white,
   },
   instructionTextContainer: {
     flex: 1,
@@ -198,11 +196,11 @@ const styles = StyleSheet.create({
   instructionText: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#fff',
+    color: Theme.white,
   },
   distanceText: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: Theme.foreground,
     marginTop: 4,
   },
 });

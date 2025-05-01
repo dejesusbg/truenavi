@@ -1,7 +1,8 @@
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import Text from '~/components/Text';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text } from '~/components/layout/Text';
+import Theme from '~/components/theme/Palette';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface HeaderProps {
   title?: string;
@@ -9,7 +10,7 @@ interface HeaderProps {
   icons?: { name: string; onPress?: () => void }[];
 }
 
-const Header = ({ title, icons, goBack = false }: HeaderProps) => {
+export function Header({ title, icons, goBack = false }: HeaderProps) {
   const router = useRouter();
 
   return (
@@ -37,9 +38,7 @@ const Header = ({ title, icons, goBack = false }: HeaderProps) => {
       </View>
     </View>
   );
-};
-
-export default Header;
+}
 
 const styles = StyleSheet.create({
   header: {
@@ -59,17 +58,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingHorizontal: 3,
     fontWeight: 600,
-    color: '#fff',
+    color: Theme.white,
   },
   button: {
     width: 30,
     height: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    backgroundColor: Theme.btnHeader,
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonIcon: {
-    color: '#fff',
+    color: Theme.white,
   },
 });

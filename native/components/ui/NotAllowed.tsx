@@ -1,10 +1,10 @@
-import { Linking, StyleSheet, TouchableOpacity } from 'react-native';
-import ScreenView from '~/components/layout/ScreenView';
-import { View } from 'react-native';
-import Text from '~/components/Text';
+import { View, Linking, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text } from '~/components/layout/Text';
+import { ScreenView } from '~/components/layout/ScreenView';
+import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default function NotAllowedView() {
+export function NotAllowedView() {
   return (
     <ScreenView>
       <View style={styles.container}>
@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 36,
     fontWeight: 600,
-    color: '#fff',
+    color: Theme.white,
     textAlign: 'center',
   },
   sectionIcon: {
     fontSize: 48,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: Theme.icon,
   },
 });

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
-import Text from '~/components/Text';
-import ScreenView from '~/components/layout/ScreenView';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Fragment, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import Theme, { Text, ScreenView } from '~/components';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface SettingsItemProps {
   title: string;
@@ -15,14 +14,7 @@ interface SettingsItemProps {
   onPress?: () => void;
 }
 
-const SettingItem = ({
-  icon,
-  title,
-  isSwitch,
-  value,
-  onValueChange,
-  onPress,
-}: SettingsItemProps) => {
+function SettingItem({ icon, title, isSwitch, value, onValueChange, onPress }: SettingsItemProps) {
   return (
     <TouchableOpacity style={styles.settingItem} onPress={onPress} disabled={isSwitch || !onPress}>
       <View style={styles.settingItemLeft}>
@@ -42,9 +34,9 @@ const SettingItem = ({
       )}
     </TouchableOpacity>
   );
-};
+}
 
-const Settings = () => {
+export default function Settings() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [language, setLanguage] = useState(true);
@@ -90,7 +82,7 @@ const Settings = () => {
     <View style={styles.settingsGroup}>
       <View style={styles.settingsGroupItems}>
         {items.map((item, index) => (
-          <React.Fragment key={`item-${item.title}`}>
+          <Fragment key={`item-${item.title}`}>
             <SettingItem
               icon={item.icon}
               title={item.title}
@@ -100,7 +92,7 @@ const Settings = () => {
               onPress={!isSwitch ? item.onPress : undefined}
             />
             {index < items.length - 1 && <View style={styles.itemSeparator} />}
-          </React.Fragment>
+          </Fragment>
         ))}
       </View>
     </View>
@@ -119,7 +111,7 @@ const Settings = () => {
       </View>
     </ScreenView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -131,7 +123,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   settingsGroupItems: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: Theme.container,
     borderRadius: 12,
     overflow: 'hidden',
   },
@@ -149,11 +141,12 @@ const styles = StyleSheet.create({
   },
   settingIcon: {
     fontSize: 22,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: Theme.icon,
   },
   settingText: {
     fontSize: 16,
-    color: '#fff',
+    fontWeight: 400,
+    color: Theme.white,
   },
   settingSwitch: {
     height: 0,
@@ -161,31 +154,29 @@ const styles = StyleSheet.create({
   },
   chevronIcon: {
     fontSize: 22,
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: Theme.iconMuted,
   },
   itemSeparator: {
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: Theme.iconSubtle,
     marginHorizontal: 16,
   },
   dangerButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 70, 70, 0.2)',
+    backgroundColor: Theme.dangerLight,
     paddingVertical: 16,
     borderRadius: 12,
     gap: 8,
   },
   dangerIcon: {
     fontSize: 20,
-    color: '#ff4646',
+    color: Theme.danger,
   },
   dangerText: {
     fontSize: 16,
-    color: '#ff4646',
+    color: Theme.danger,
     fontWeight: 600,
   },
 });
-
-export default Settings;

@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
+import Theme from '~/components';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,13 +33,13 @@ export default function App() {
         initialRouteName="index"
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#0d1634' },
+          contentStyle: { backgroundColor: Theme.background },
         }}></Stack>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  safeAreaProvider: { backgroundColor: '#0d1634' },
+  safeAreaProvider: { backgroundColor: Theme.background },
   safeAreaView: { flex: 1, padding: 0 },
 });

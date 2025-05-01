@@ -1,8 +1,8 @@
 import { Link, Stack } from 'expo-router';
 import { Text, StyleSheet } from 'react-native';
-import ScreenView from '~/components/layout/ScreenView';
+import Theme, { ScreenView } from '~/components';
 
-export default function NotFoundScreen() {
+export default function NotFoundView() {
   return (
     <>
       <Stack.Screen options={{ title: 'oops!' }} />
@@ -18,7 +18,7 @@ export default function NotFoundScreen() {
 
 const styles = StyleSheet.create({
   title: {
-    color: '#fff',
+    color: Theme.white,
     fontSize: 24,
     fontWeight: 600,
     textAlign: 'center',
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
   linkText: {
     fontWeight: 500,
     fontSize: 16,
-    color: '#6eb8f7',
+    color: Theme.link,
   },
 });
