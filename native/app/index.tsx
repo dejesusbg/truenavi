@@ -1,73 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Text from '~/components/Text';
-import ScreenView from '~/components/layout/ScreenView';
 import { useRouter } from 'expo-router';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import Theme, { Text, TextInput, ScreenView, MapView, NotAllowedView } from '~/components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { conversationFlow, ConversationTurn } from '~/utils/conversation';
+import { ConversationState, useConversationReducer } from '~/utils/conversation';
 import usePermissions from '~/hooks/usePermissions';
-import NavigationView from '~/components/ui/Navigation';
-import NotAllowedView from '~/components/ui/NotAllowed';
 
-type AppState = 'not-allowed' | 'speaking' | 'listening' | 'navigating';
+function getStatus(conversationState: ConversationState) {
+  const [icon, text] =
+    conversationState === 'speak'
+      ? ['more-horiz', 'wait']
+      : conversationState === 'listen'
+        ? ['mic', 'speak']
+        : ['emergency', 'error'];
 
-const Home = () => {
+  return (
+    <View style={styles.statusIndicator}>
+      <MaterialIcons name={icon} style={styles.statusIcon} />
+      <Text style={styles.statusText}>{text}</Text>
+    </View>
+  );
+}
+
+export default function Home() {
   const router = useRouter();
   const permissionsGranted = usePermissions();
-  const [appState, setAppState] = useState<AppState>('not-allowed');
-  const [step, setStep] = useState<ConversationTurn>(conversationFlow.fallback);
-  const [input, setInput] = useState<string>('si');
+  const { state, dispatch } = useConversationReducer(permissionsGranted);
 
-  useEffect(() => {
-    setAppState(permissionsGranted ? 'navigating' : 'not-allowed');
-  }, [permissionsGranted]);
+  const handleSubmit = () => dispatch({ type: 'SUBMIT_INPUT' });
+  const handleChangeText = (text: string) => dispatch({ type: 'SET_USER_INPUT', payload: text });
 
-  if (appState === 'not-allowed') return <NotAllowedView />;
-  if (appState === 'navigating') return <NavigationView />;
+  if (state.appState === 'not-allowed') return <NotAllowedView />;
+  if (state.appState === 'navigate') return <MapView />;
 
   return (
     <ScreenView
       title="truenavi"
       icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
       <View style={styles.container}>
-        {/* question */}
+        {/* assistant's question */}
         <View style={styles.subContainer}>
-          <MaterialIcons style={styles.sectionIcon} name={step.out.icon} />
-          <Text style={styles.sectionText}>{step.out.es}</Text>
+          <MaterialIcons style={styles.sectionIcon} name={state.currentStep.out.icon} />
+          <Text style={styles.sectionText}>{state.currentStep.out.en}</Text>
         </View>
 
-        <View style={styles.separator}></View>
+        <View style={styles.separator} />
 
-        {/* answer */}
+        {/* user's answer input */}
         <View style={styles.subContainer}>
-          <Text style={styles.sectionText}>{input}</Text>
-          <View style={styles.statusIndicator}>
-            <MaterialIcons
-              name={appState === 'speaking' ? 'volume-off' : 'mic'}
-              style={styles.statusIcon}
-            />
-            <Text style={styles.statusText}>you</Text>
-          </View>
+          <TextInput
+            style={styles.sectionText}
+            value={state.userInput}
+            onChangeText={handleChangeText}
+            editable={state.conversationState === 'listen'}
+          />
+          <TouchableOpacity onPress={handleSubmit} disabled={state.conversationState !== 'listen'}>
+            {getStatus(state.conversationState)}
+          </TouchableOpacity>
         </View>
       </View>
     </ScreenView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 'auto',
+    flex: 1,
+    justifyContent: 'center',
   },
   subContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 32,
+    gap: 24,
   },
   separator: {
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, .08)',
+    backgroundColor: Theme.iconSubtle,
     height: 2,
     marginVertical: 16,
     borderRadius: 1,
@@ -75,31 +84,30 @@ const styles = StyleSheet.create({
   sectionText: {
     fontSize: 24,
     lineHeight: 36,
-    fontWeight: 600,
-    color: '#fff',
+    fontWeight: '600',
+    color: Theme.white,
     textAlign: 'center',
+    width: '100%',
   },
   sectionIcon: {
     fontSize: 48,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: Theme.icon,
   },
   statusIndicator: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: Theme.status,
     alignItems: 'center',
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   statusIcon: {
-    fontSize: 20,
-    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 16,
+    color: Theme.foreground,
     marginRight: 6,
   },
   statusText: {
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: Theme.foreground,
     fontSize: 14,
   },
 });
-
-export default Home;
