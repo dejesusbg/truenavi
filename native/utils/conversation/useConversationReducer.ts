@@ -2,6 +2,7 @@ import { useReducer, useEffect } from 'react';
 import { flow, handleInput } from '~/utils/conversation/conversation';
 import { HomeAction, HomeState } from '~/utils/conversation/types';
 import { speak } from '~/utils/audio';
+import t, { defaultLanguage } from '../text/translation';
 
 // initial state
 const initialState: HomeState = {
@@ -75,7 +76,7 @@ export function useConversationReducer(permissionsGranted: boolean) {
   // simulate speech output - will be replaced with actual speech functionality
   useEffect(() => {
     if (state.conversationState === 'speak') {
-      speak(state.currentStep.out.en, 'EN-en', { onDone: handleSpeakDone });
+      speak(t(state.currentStep.output), defaultLanguage, { onDone: handleSpeakDone });
     }
   }, [state.conversationState, state.currentStep]);
 

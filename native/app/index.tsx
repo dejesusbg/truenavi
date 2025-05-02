@@ -39,8 +39,8 @@ export default function Home() {
       <View style={styles.container}>
         {/* assistant's question */}
         <View style={styles.subContainer}>
-          <MaterialIcons style={styles.sectionIcon} name={state.currentStep.out.icon} />
-          <Text style={styles.sectionText}>{state.currentStep.out.en}</Text>
+          <MaterialIcons style={styles.sectionIcon} name={state.currentStep.icon} />
+          <Text style={styles.sectionText}>{state.currentStep.output}</Text>
         </View>
 
         <View style={styles.separator} />

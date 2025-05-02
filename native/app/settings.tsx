@@ -53,13 +53,13 @@ export default function Settings() {
       },
       {
         icon: 'thermostat',
-        title: 'say weather',
+        title: 'show weather',
         value: weather,
         onValueChange: setWeather,
       },
       {
         icon: 'vibration',
-        title: 'allow vibration',
+        title: 'turn on alerts vibration',
         value: vibration,
         onValueChange: setVibration,
       },
@@ -72,7 +72,7 @@ export default function Settings() {
       },
       {
         icon: 'gavel',
-        title: 'privacy policy',
+        title: 'data policy',
         onPress: () => router.push('/'),
       },
     ],

@@ -6,7 +6,7 @@ const normalizeOutput = (input: string) => input.replace('\n', ' ');
 
 export function handleInput(current: ConversationStep, userInput: string): ConversationStep {
   const input = normalize(userInput);
-  const output = normalizeOutput(current.out.en);
+  const output = normalizeOutput(current.output);
   console.log(`[conversation] ${output} -> ${input}`);
   current.action(input);
 
@@ -24,56 +24,38 @@ export function handleInput(current: ConversationStep, userInput: string): Conve
 export const flow: Conversation = {
   start: {
     id: 'nav_start',
-    out: {
-      en: "where are we headed?\nlet me know and i'll find the best route",
-      es: '¿a dónde vamos hoy?\ndime y encontraré la mejor ruta para ti',
-      icon: 'signpost',
-    },
+    icon: 'signpost',
+    output: "where are we headed?\nlet me know and i'll find the best route",
     action: (input) => {},
     next: {
       id: 'nav_calculate',
-      out: {
-        en: 'calculating your route and starting navigation now',
-        es: 'calculando tu ruta e iniciando la navegación ahora',
-        icon: 'route',
-      },
+      icon: 'route',
+      output: 'calculating your route and starting navigation now',
       action: (input) => {},
     },
   },
   configuration: {
     id: 'config_language',
-    out: {
-      en: "let's set up the app,\nwould you like to switch to spanish?",
-      es: 'vamos a configurar la app\n¿desearías cambiar el idioma a inglés?',
-      icon: 'language',
-    },
+    icon: 'language',
+    output: "let's set up the app,\nwould you like to switch to spanish?",
     action: (input) => {},
     next: {
       id: 'config_weather',
-      out: {
-        en: 'language set,\ndo you want to know the weather before navigating?',
-        es: 'idioma configurado\n¿quieres saber el clima antes de navegar?',
-        icon: 'cloud',
-      },
+      icon: 'cloud',
+      output: 'language set,\ndo you want to know the weather before navigating?',
       action: (input) => {},
       next: {
         id: 'config_haptic',
-        out: {
-          en: 'weather updates set,\nwould you like haptic feedback for alerts?',
-          es: 'clima configurado\n¿te gustaría recibir vibraciones para alertas?',
-          icon: 'vibration',
-        },
+        icon: 'vibration',
+        output: 'weather updates set,\nwould you like haptic feedback for alerts?',
         action: (input) => {},
       },
     },
   },
   fallback: {
     id: 'fallback',
-    out: {
-      en: "sorry, i didn't catch that,\ncould you try saying it again?",
-      es: 'lo siento, no entendí eso\n¿puedes intentarlo de nuevo?',
-      icon: 'question-mark',
-    },
+    icon: 'question-mark',
+    output: "sorry, i didn't catch that,\ncould you try saying it again?",
     action: (input) => {},
   },
 };

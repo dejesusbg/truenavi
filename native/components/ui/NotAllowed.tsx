@@ -12,7 +12,7 @@ export function NotAllowedView() {
           <MaterialIcons name="location-off" style={styles.sectionIcon} />
           <TouchableOpacity onPress={() => Linking.openSettings()}>
             <Text style={styles.sectionText}>
-              abre los ajustes para activar los permisos necesarios para que truenavi funcione
+              enable the necessary permissions in the settings so truenavi can function properly
             </Text>
           </TouchableOpacity>
         </View>

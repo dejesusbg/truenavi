@@ -1,18 +1,13 @@
-export interface LocalizedText {
-  en: string;
-  es: string;
-  icon: string;
-}
-
 export interface Conversation {
   [key: string]: ConversationStep;
 }
 
 export interface ConversationStep {
-  id?: string;
-  out: LocalizedText;
-  next?: ConversationStep;
+  id: string;
+  icon: string;
+  output: string;
   action: (input: string) => void;
+  next?: ConversationStep;
 }
 
 export type AppState = 'not-allowed' | 'config' | 'start' | 'navigate';

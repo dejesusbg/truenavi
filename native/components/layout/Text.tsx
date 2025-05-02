@@ -6,6 +6,7 @@ import {
   TextStyle,
   StyleSheet,
 } from 'react-native';
+import t, { defaultLanguage } from '~/utils/text/translation';
 
 interface BaseTextProps extends TextProps {
   TextComponent: React.ElementType;
@@ -21,7 +22,7 @@ function BaseText({ TextComponent, children, style, ...props }: BaseTextProps) {
 
   return (
     <TextComponent style={[styles.text, style]} {...props}>
-      {children}
+      {typeof children === 'string' ? t(children) : children}
     </TextComponent>
   );
 }
