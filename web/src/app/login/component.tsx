@@ -11,6 +11,7 @@ import {
   MdVisibilityOff,
 } from 'react-icons/md';
 import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import { registerUser } from '@/services/auth';
 
 const LoginComponent = () => {
   const router = useRouter();
@@ -19,15 +20,15 @@ const LoginComponent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     if (!email || !password) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push('/admin');
-    }, 1500);
+
+    registerUser(email, password)
+      .then((user) => user.success && router.push('/admin'))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -39,7 +40,7 @@ const LoginComponent = () => {
         <h1 className="mt-4 text-3xl font-semibold text-white">truenavi admin</h1>
       </div>
 
-      {/* Form Section */}
+      {/* form section */}
       <form className="w-full max-w-sm" onSubmit={handleLogin}>
         <InputField
           type="text"
@@ -71,7 +72,7 @@ const LoginComponent = () => {
         </Button>
       </form>
 
-      {/* Security Note */}
+      {/* security note */}
       <p className="mt-4 text-sm text-foreground-muted">authorized personnel only</p>
     </div>
   );
