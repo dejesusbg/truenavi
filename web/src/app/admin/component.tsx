@@ -51,7 +51,7 @@ const AdminComponent = () => {
   const [formData, setFormData] = useState(emptyAdmin);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Reset form when editingAdmin changes or when container view changes
+  // reset form when editingAdmin changes or when container view changes
   useEffect(() => {
     setFormData(!editingAdmin ? emptyAdmin : editingAdmin);
   }, [editingAdmin]);

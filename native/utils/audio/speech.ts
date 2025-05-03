@@ -8,15 +8,15 @@ export async function speak(text: string, language = 'es-ES', options = {}): Pro
       language,
       pitch: 1.0,
       rate: 1.2,
-      onStart: () => console.log('[speech] starting'),
-      onDone: () => console.log('[speech] finishing'),
-      onStopped: () => console.log('[speech] stopping'),
-      onError: (error: any) => console.error('[speech]: ', error),
+      onStart: () => console.log('[Speech] starting'),
+      onDone: () => console.log('[Speech] finishing'),
+      onStopped: () => console.log('[Speech] stopping'),
+      onError: (error: any) => console.error('[Speech]: ', error),
     };
 
     const speechOptions = { ...defaultOptions, ...options };
     await Speech.speak(text, speechOptions);
   } catch (error) {
-    console.error('[speech]: ', error);
+    console.error('[Speech]: ', error);
   }
 }

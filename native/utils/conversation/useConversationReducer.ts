@@ -70,7 +70,7 @@ export function useConversationReducer(permissionsGranted: boolean) {
 
   const handleSpeakDone = () => {
     dispatch({ type: 'SET_CONVERSATION_STATE', payload: 'listen' });
-    console.log('[speech] finishing');
+    console.log('[Speech] finishing');
   };
 
   // simulate speech output - will be replaced with actual speech functionality

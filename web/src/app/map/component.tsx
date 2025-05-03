@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L, { LatLngExpression } from 'leaflet';
 import { MdPlace, MdTimeline, MdDelete, MdLinearScale } from 'react-icons/md';
@@ -68,9 +68,7 @@ const MapComponent = () => {
             const { latitude, longitude } = position.coords;
             setLocation([latitude, longitude]);
           },
-          (error) => {
-            console.error('location not found: ' + error);
-          }
+          (error) => console.error('[Location] Not found:', error)
         );
       } else {
         alert('geolocation not supported');
@@ -93,7 +91,7 @@ const MapComponent = () => {
 
   return (
     <div className="relative flex-1 gap-4">
-      {/* Map Container */}
+      {/* map container */}
       <div className="relative flex-1 overflow-hidden rounded-lg">
         {location && (
           <MapContainer
@@ -110,7 +108,7 @@ const MapComponent = () => {
               <Popup>current location</Popup>
             </Marker>
 
-            {/* Render Graph Nodes */}
+            {/* render graph nodes */}
             {sampleNodes.map((node) => (
               <Marker
                 key={node.id}
@@ -120,7 +118,7 @@ const MapComponent = () => {
               </Marker>
             ))}
 
-            {/* Render Graph Edges */}
+            {/* render graph edges */}
             {sampleEdges.map((edge, index) => {
               const fromNode = sampleNodes.find((node) => node.id === edge.from);
               const toNode = sampleNodes.find((node) => node.id === edge.to);
@@ -146,7 +144,7 @@ const MapComponent = () => {
         </div>
       </div>
 
-      {/* Tool buttons */}
+      {/* tool buttons */}
       <div className="flex-row gap-4">
         <MapToolButton
           icon={<MdPlace />}
@@ -171,7 +169,7 @@ const MapComponent = () => {
         />
       </div>
 
-      {/* Stats */}
+      {/* stats */}
       <Card className="flex-row justify-around !p-3">
         <MapStatCounter icon={<MdPlace />} label="nodes" count={sampleNodes.length} />
         <MapStatCounter icon={<MdLinearScale />} label="connections" count={sampleEdges.length} />

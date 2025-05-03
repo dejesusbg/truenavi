@@ -31,7 +31,7 @@ export class VoiceDetector {
         staysActiveInBackground: false,
       });
     } catch (error) {
-      console.error('[voice] setting up:', error);
+      console.error('[Voice] setting up:', error);
     }
   }
 
@@ -58,9 +58,9 @@ export class VoiceDetector {
         this.stopListeningAndProcessInput();
       }, 10000);
 
-      console.log('[voice] starting');
+      console.log('[Voice] starting');
     } catch (error) {
-      console.error('[voice] starting: ', error);
+      console.error('[Voice] starting: ', error);
     }
   }
 
@@ -105,9 +105,9 @@ export class VoiceDetector {
       this.isRecording = false;
       this.recording = null;
 
-      console.log('[voice] stopping');
+      console.log('[Voice] stopping');
     } catch (error) {
-      console.error('[voice] stopping: ', error);
+      console.error('[Voice] stopping: ', error);
     }
   }
 

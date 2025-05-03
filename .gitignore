@@ -27,3 +27,5 @@ web/out/
 *.env
 *.env.local
 model.ts
+
+*/.gitignore

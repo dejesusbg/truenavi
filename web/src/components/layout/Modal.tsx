@@ -22,7 +22,7 @@ export default function Modal({
   footer,
   size = 'medium',
 }: ModalProps) {
-  // Close modal on escape key press
+  // close modal on escape key press
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();

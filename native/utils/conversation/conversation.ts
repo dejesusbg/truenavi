@@ -7,7 +7,7 @@ const normalizeOutput = (input: string) => input.replace('\n', ' ');
 export function handleInput(current: ConversationStep, userInput: string): ConversationStep {
   const input = normalize(userInput);
   const output = normalizeOutput(current.output);
-  console.log(`[conversation] ${output} -> ${input}`);
+  console.log(`[Conversation] ${output} -> ${input}`);
   current.action(input);
 
   if (input === 'configurar' || input === 'configure') return flow.configuration;
