@@ -1,9 +1,11 @@
 import { authToken } from '@/services/auth';
 
-export interface Response {
+export interface Response<T> {
   success: boolean;
   token: string;
-  error: string;
+  count?: number;
+  error?: string;
+  data?: Array<T>;
 }
 
 export const api = {
