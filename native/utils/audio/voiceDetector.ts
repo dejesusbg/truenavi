@@ -1,5 +1,5 @@
 import { Audio } from 'expo-av';
-import { normalize } from '~/utils/conversation/conversation';
+import { normalize } from '~/utils/text';
 
 // simulate some common voice phrases
 const commonPhrases: Record<string, string[]> = {
@@ -31,7 +31,7 @@ export class VoiceDetector {
         staysActiveInBackground: false,
       });
     } catch (error) {
-      console.error('[Voice] setting up:', error);
+      console.error('[Voice] Error during setting up:', error);
     }
   }
 
@@ -57,10 +57,8 @@ export class VoiceDetector {
       this.timer = setTimeout(() => {
         this.stopListeningAndProcessInput();
       }, 10000);
-
-      console.log('[Voice] starting');
     } catch (error) {
-      console.error('[Voice] starting: ', error);
+      console.error('[Voice] Error during listening:', error);
     }
   }
 
@@ -104,10 +102,8 @@ export class VoiceDetector {
 
       this.isRecording = false;
       this.recording = null;
-
-      console.log('[Voice] stopping');
     } catch (error) {
-      console.error('[Voice] stopping: ', error);
+      console.error('[Voice] Error during listening:', error);
     }
   }
 

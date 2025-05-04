@@ -13,7 +13,7 @@ export default function usePermissions() {
       const allGranted = locationStatus.status === 'granted' && audioStatus.status === 'granted';
       setGranted(allGranted);
     } catch (err) {
-      console.error('[Permission]: ', err);
+      console.error('[Permission] Error during request:', err);
       setGranted(false);
     }
   }, []);

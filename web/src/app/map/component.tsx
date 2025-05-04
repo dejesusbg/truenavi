@@ -66,10 +66,10 @@ const MapComponent = () => {
             const { latitude, longitude } = position.coords;
             setLocation([latitude, longitude]);
           },
-          (error) => console.error('[Location] Not found:', error)
+          (error) => console.error('[Location] Error during request:', error)
         );
       } else {
-        alert('geolocation not supported');
+        console.error('[Location] Not supported');
       }
     };
 
