@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputField from '@/components/ui/InputField';
-import Button from '@/components/ui/Button';
 import {
   MdAdminPanelSettings,
   MdLock,
@@ -10,8 +8,8 @@ import {
   MdVisibility,
   MdVisibilityOff,
 } from 'react-icons/md';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
-import { registerUser } from '@/services/auth';
+import { InputField, Button, LoadingIndicator } from '@/components';
+import { loginUser, logoutUser } from '@/services/auth';
 
 const LoginComponent = () => {
   const router = useRouter();
@@ -20,14 +18,18 @@ const LoginComponent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    logoutUser();
+  }, []);
+
   const handleLogin = async (e: any) => {
     e.preventDefault();
     if (!email || !password) return;
 
     setIsLoading(true);
 
-    registerUser(email, password)
-      .then((user) => user.success && router.push('/admin'))
+    loginUser(email, password)
+      .then((res) => res.success && router.push('/admin'))
       .finally(() => setIsLoading(false));
   };
 
@@ -43,7 +45,7 @@ const LoginComponent = () => {
       {/* form section */}
       <form className="w-full max-w-sm" onSubmit={handleLogin}>
         <InputField
-          type="text"
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="admin@truenavi.com"
