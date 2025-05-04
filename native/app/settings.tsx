@@ -1,14 +1,17 @@
-import { Fragment, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { Fragment, useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import Theme, { Text, ScreenView } from '~/components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { PreferencesProps, getPreferences, updatePreferences } from '~/services/preferences';
+import { deviceId } from '~/utils/api';
+import useLocale from '~/hooks/useLocale';
 
 interface SettingsItemProps {
   title: string;
   icon: string;
   isSwitch?: boolean;
+  prop?: string;
   value?: boolean;
   onValueChange?: (value: boolean) => void;
   onPress?: () => void;
@@ -27,7 +30,7 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange, onPress }: S
           onValueChange={onValueChange}
           trackColor={{ false: '#767577', true: '#a2c3fc' }}
           thumbColor={value ? '#3365a6' : '#f4f3f4'}
-          style={styles.settingSwitch}
+          style={[styles.settingSwitch, value && { marginRight: 8 }]}
         />
       ) : (
         <MaterialIcons name="chevron-right" style={styles.chevronIcon} />
@@ -38,43 +41,42 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange, onPress }: S
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
-  const [language, setLanguage] = useState(true);
-  const [weather, setWeather] = useState(true);
-  const [vibration, setVibration] = useState(false);
+  const { updateLocale } = useLocale();
+  const [preferences, setPreferences] = useState<PreferencesProps>({});
+  const [id, setId] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getPreferences();
+      if (res.success && res.data) setPreferences(res.data);
+      deviceId().then(setId);
+    };
+    fetchData();
+  }, []);
+
+  const handleUpdate = async (newPreferences: PreferencesProps) => {
+    await updatePreferences(newPreferences);
+    setPreferences(newPreferences);
+    updateLocale();
+  };
+
+  const handleChange = async (key: keyof PreferencesProps, value: boolean) => {
+    await handleUpdate({ ...preferences, [key]: value });
+  };
+
+  const handleReset = async () => {
+    await handleUpdate({ spanish: true, weather: true, vibration: true });
+  };
 
   const settingsData = {
     switches: [
-      {
-        icon: 'language',
-        title: 'set language to spanish',
-        value: language,
-        onValueChange: setLanguage,
-      },
-      {
-        icon: 'thermostat',
-        title: 'show weather',
-        value: weather,
-        onValueChange: setWeather,
-      },
-      {
-        icon: 'vibration',
-        title: 'turn on alerts vibration',
-        value: vibration,
-        onValueChange: setVibration,
-      },
+      { icon: 'thermostat', prop: 'weather', title: 'show weather', value: preferences.weather },
+      { icon: 'language', prop: 'spanish', title: 'switch to spanish', value: preferences.spanish },
+      { icon: 'vibration', prop: 'vibration', title: 'vibration', value: preferences.vibration },
     ],
     links: [
-      {
-        icon: 'admin-panel-settings',
-        title: 'terms and conditions',
-        onPress: () => router.push('/'),
-      },
-      {
-        icon: 'gavel',
-        title: 'data policy',
-        onPress: () => router.push('/'),
-      },
+      { icon: 'admin-panel-settings', title: 'terms and conditions' },
+      { icon: 'gavel', title: 'data policy' },
     ],
   };
 
@@ -82,13 +84,16 @@ export default function Settings() {
     <View style={styles.settingsGroup}>
       <View style={styles.settingsGroupItems}>
         {items.map((item, index) => (
-          <Fragment key={`item-${item.title}`}>
+          <Fragment key={index}>
             <SettingItem
-              icon={item.icon}
-              title={item.title}
+              {...item}
               isSwitch={isSwitch}
-              value={isSwitch ? item.value : undefined}
-              onValueChange={isSwitch ? item.onValueChange : undefined}
+              value={item.value}
+              onValueChange={
+                isSwitch
+                  ? (value) => handleChange(item.prop as keyof PreferencesProps, value)
+                  : undefined
+              }
               onPress={!isSwitch ? item.onPress : undefined}
             />
             {index < items.length - 1 && <View style={styles.itemSeparator} />}
@@ -104,10 +109,11 @@ export default function Settings() {
         {renderSettingsGroup(settingsData.switches, true)}
         {renderSettingsGroup(settingsData.links, false)}
 
-        <TouchableOpacity style={styles.dangerButton} onPress={() => router.push('/')}>
+        <TouchableOpacity style={styles.dangerButton} onPress={handleReset}>
           <MaterialIcons name="delete" style={styles.dangerIcon} />
           <Text style={styles.dangerText}>erase all data</Text>
         </TouchableOpacity>
+        <Text style={styles.idText}>{id}</Text>
       </View>
     </ScreenView>
   );
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
   settingItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
   },
   settingIcon: {
     fontSize: 22,
@@ -178,5 +184,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Theme.danger,
     fontWeight: 600,
+  },
+  idText: {
+    fontSize: 12,
+    color: Theme.foregroundSubtle,
+    margin: 'auto',
+    marginTop: 0,
   },
 });
