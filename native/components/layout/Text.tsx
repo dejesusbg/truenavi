@@ -1,12 +1,7 @@
-import {
-  Text as RNText,
-  TextInput as RNTextInput,
-  TextProps,
-  TextInputProps,
-  TextStyle,
-  StyleSheet,
-} from 'react-native';
-import t, { defaultLanguage } from '~/utils/text/translation';
+import { Text as RNText, TextInput as RNTextInput } from 'react-native';
+import { TextProps, TextInputProps, TextStyle, StyleSheet } from 'react-native';
+import useLocale from '~/hooks/useLocale';
+import t from '~/utils/text';
 
 interface BaseTextProps extends TextProps {
   TextComponent: React.ElementType;
@@ -22,15 +17,17 @@ function BaseText({ TextComponent, children, style, ...props }: BaseTextProps) {
 
   return (
     <TextComponent style={[styles.text, style]} {...props}>
-      {typeof children === 'string' ? t(children) : children}
+      {children}
     </TextComponent>
   );
 }
 
 export function Text({ children, ...props }: TextProps) {
+  const { locale } = useLocale();
+
   return (
     <BaseText TextComponent={RNText} {...props}>
-      {children}
+      {typeof children === 'string' ? t(children, locale) : children}
     </BaseText>
   );
 }

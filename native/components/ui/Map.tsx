@@ -8,50 +8,20 @@ import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Map from 'react-native-maps';
 
-const NavInstructions = ({ instruction, distance }: any) => {
-  const getInstructionIcon = () => {
-    switch (instruction) {
-      case 'turn-left':
-        return 'turn-left';
-      case 'turn-right':
-        return 'turn-right';
-      case 'turn-slight-left':
-        return 'turn-slight-left';
-      case 'turn-slight-right':
-        return 'turn-slight-right';
-      case 'straight':
-        return 'arrow-upward';
-      case 'destination':
-        return 'place';
-      case 'reroute':
-        return 'auto-awesome';
-      case 'weather':
-        return 'cloud';
-      default:
-        return 'navigation';
-    }
-  };
+export interface Navigation {
+  [instruction: string]: string;
+}
 
-  return (
-    <View style={styles.instructionContainer}>
-      <View style={styles.instructionIconContainer}>
-        <MaterialIcons name={getInstructionIcon()} style={styles.instructionIcon} />
-      </View>
-      <View style={styles.instructionTextContainer}>
-        <Text style={styles.instructionText}>
-          {instruction === 'turn-left' && 'gira a la izquierda'}
-          {instruction === 'turn-right' && 'gira a la derecha'}
-          {instruction === 'turn-slight-left' && 'gira ligeramente a la izquierda'}
-          {instruction === 'turn-slight-right' && 'gira ligeramente a la derecha'}
-          {instruction === 'straight' && 'continúa recto'}
-          {instruction === 'destination' && 'has llegado a tu destino'}
-          {instruction === 'reroute' && 'recalculando ruta'}
-          {instruction === 'weather' && 'probabilidad de lluvia del 20%'}
-        </Text>
-        {distance && <Text style={styles.distanceText}>{distance} metros</Text>}
-      </View>
-    </View>
-  );
+export const navigationFlow: Navigation = {
+  navigation: '',
+  'turn-left': 'turn to the left',
+  'turn-right': 'turn to the right',
+  'turn-slight-left': 'turn slightly to the left',
+  'turn-slight-right': 'turn slightly to the right',
+  'arrow-upward': 'go straight',
+  'auto-awesome': 'rerouting',
+  cloud: 'rain chance of',
+  place: 'your destination is here',
 };
 
 export function MapView() {
@@ -62,8 +32,8 @@ export function MapView() {
     latitudeDelta: number;
     longitudeDelta: number;
   } | null>(null);
-  const [currentInstruction, setCurrentInstruction] = useState('straight');
-  const [distanceToNext, setDistanceToNext] = useState<string | null>('50');
+  const [currentInstruction, setCurrentInstruction] = useState('arrow-upward');
+  const [distanceToNext, setDistanceToNext] = useState<string | null>('50 meters');
   const [destination, setDestination] = useState('edificio bienestar');
 
   useEffect(() => {
@@ -81,11 +51,12 @@ export function MapView() {
 
     // mock navigation instructions
     const instructionSequence = [
-      { instruction: 'straight', distance: '50' },
-      { instruction: 'turn-right', distance: '30' },
-      { instruction: 'straight', distance: '100' },
-      { instruction: 'turn-left', distance: '20' },
-      { instruction: 'destination', distance: null },
+      { instruction: 'arrow-upward', distance: '50 meters' },
+      { instruction: 'turn-right', distance: '30 meters' },
+      { instruction: 'arrow-upward', distance: '100 meters' },
+      { instruction: 'turn-left', distance: '20 meters' },
+      { instruction: 'cloud', distance: '20 percent' },
+      { instruction: 'place', distance: null },
     ];
 
     let currentIndex = 0;
@@ -103,12 +74,7 @@ export function MapView() {
   }, []);
 
   return (
-    <ScreenView
-      title="truenavi"
-      icons={[
-        { name: 'settings', onPress: () => router.push('/settings') },
-        { name: 'close', onPress: () => router.push('/') },
-      ]}>
+    <ScreenView title="navigation" icons={[{ name: 'close', onPress: () => router.push('/') }]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
           {region && (
@@ -127,7 +93,15 @@ export function MapView() {
           </View>
         </View>
 
-        <NavInstructions instruction={currentInstruction} distance={distanceToNext} />
+        <View style={styles.instructionContainer}>
+          <View style={styles.instructionIconContainer}>
+            <MaterialIcons name={currentInstruction} style={styles.instructionIcon} />
+          </View>
+          <View style={styles.instructionTextContainer}>
+            <Text style={styles.instructionText}>{navigationFlow[currentInstruction]}</Text>
+            {distanceToNext && <Text style={styles.distanceText}>{distanceToNext}</Text>}
+          </View>
+        </View>
       </View>
     </ScreenView>
   );
@@ -176,7 +150,6 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 16,
     flexDirection: 'row',
-    alignItems: 'center',
   },
   instructionIconContainer: {
     width: 64,

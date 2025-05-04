@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Theme from '~/components';
+import { defaultLocale } from '~/utils/text';
+import { LocaleProvider } from '~/hooks/useLocale';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,15 +29,17 @@ export default function App() {
   if (!loaded && !error) return null;
 
   return (
-    <SafeAreaProvider style={styles.safeAreaProvider}>
-      <StatusBar style="auto" />
-      <Stack
-        initialRouteName="index"
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: Theme.background },
-        }}></Stack>
-    </SafeAreaProvider>
+    <LocaleProvider value={defaultLocale}>
+      <SafeAreaProvider style={styles.safeAreaProvider}>
+        <StatusBar style="auto" />
+        <Stack
+          initialRouteName="index"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: Theme.background },
+          }}></Stack>
+      </SafeAreaProvider>
+    </LocaleProvider>
   );
 }
 

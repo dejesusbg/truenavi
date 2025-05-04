@@ -2,8 +2,9 @@ import { useRouter } from 'expo-router';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Theme, { Text, TextInput, ScreenView, MapView, NotAllowedView } from '~/components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { ConversationState, useConversationReducer } from '~/utils/conversation';
+import { ConversationState, useConversationReducer } from '~/utils/flow';
 import usePermissions from '~/hooks/usePermissions';
+import useLocale from '~/hooks/useLocale';
 
 function getStatus(conversationState: ConversationState) {
   const [icon, text] =
@@ -24,7 +25,8 @@ function getStatus(conversationState: ConversationState) {
 export default function Home() {
   const router = useRouter();
   const permissionsGranted = usePermissions();
-  const { state, dispatch } = useConversationReducer(permissionsGranted);
+  const { locale } = useLocale();
+  const { state, dispatch } = useConversationReducer(permissionsGranted, locale);
 
   const handleSubmit = () => dispatch({ type: 'SUBMIT_INPUT' });
   const handleChangeText = (text: string) => dispatch({ type: 'SET_USER_INPUT', payload: text });
