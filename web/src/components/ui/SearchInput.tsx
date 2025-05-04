@@ -9,7 +9,7 @@ interface SearchInputProps {
   className?: string;
 }
 
-export default function SearchInput({
+export function SearchInput({
   value,
   onChange,
   placeholder = 'search',

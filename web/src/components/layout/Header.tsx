@@ -12,7 +12,7 @@ function Icon({ name }: { name: string }) {
   return <IconComponent className="text-2xl text-white" />;
 }
 
-export default function Header({ icons, goBack = false }: HeaderProps) {
+export function Header({ icons, goBack = false }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname().replace('/', '');
 

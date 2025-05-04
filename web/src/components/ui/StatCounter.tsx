@@ -7,7 +7,7 @@ interface MapStatCounterProps {
   count: number;
 }
 
-export default function MapStatCounter({ icon, label, count }: MapStatCounterProps) {
+export function StatCounter({ icon, label, count }: MapStatCounterProps) {
   return (
     <div className="flex-row items-center gap-2">
       <span className="text-lg text-icon-muted">{icon}</span>

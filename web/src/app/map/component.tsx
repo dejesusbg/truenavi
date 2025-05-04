@@ -2,11 +2,9 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L, { LatLngExpression } from 'leaflet';
-import { MdPlace, MdTimeline, MdDelete, MdLinearScale } from 'react-icons/md';
 import 'leaflet/dist/leaflet.css';
-import Card from '@/components/layout/Card';
-import MapToolButton from '@/components/map/ToolButton';
-import MapStatCounter from '@/components/map/StatCounter';
+import { MdPlace, MdTimeline, MdDelete, MdLinearScale } from 'react-icons/md';
+import { Card, StatCounter, ToolButton } from '@/components';
 
 const defaultLocation = [11.2250879, -74.1866137] as LatLngExpression;
 
@@ -146,21 +144,21 @@ const MapComponent = () => {
 
       {/* tool buttons */}
       <div className="flex-row gap-4">
-        <MapToolButton
+        <ToolButton
           icon={<MdPlace />}
           label="new node"
           isSelected={selectedTool === 'add_node'}
           onClick={() => handleToolSelect('add_node')}
         />
 
-        <MapToolButton
+        <ToolButton
           icon={<MdTimeline />}
           label="new connection"
           isSelected={selectedTool === 'add_connection'}
           onClick={() => handleToolSelect('add_connection')}
         />
 
-        <MapToolButton
+        <ToolButton
           icon={<MdDelete />}
           label="delete"
           isSelected={selectedTool === 'delete'}
@@ -171,8 +169,8 @@ const MapComponent = () => {
 
       {/* stats */}
       <Card className="flex-row justify-around !p-3">
-        <MapStatCounter icon={<MdPlace />} label="nodes" count={sampleNodes.length} />
-        <MapStatCounter icon={<MdLinearScale />} label="connections" count={sampleEdges.length} />
+        <StatCounter icon={<MdPlace />} label="nodes" count={sampleNodes.length} />
+        <StatCounter icon={<MdLinearScale />} label="connections" count={sampleEdges.length} />
       </Card>
     </div>
   );

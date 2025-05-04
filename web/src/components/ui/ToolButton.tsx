@@ -10,7 +10,7 @@ interface MapToolButtonProps {
   isDanger?: boolean;
 }
 
-export default function MapToolButton({
+export function ToolButton({
   icon,
   label,
   isSelected,

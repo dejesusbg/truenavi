@@ -19,7 +19,7 @@ const typeMap = {
   warning: { icon: <MdWarning />, bgColor: 'bg-yellow-600/20' },
 };
 
-export default function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
+export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {

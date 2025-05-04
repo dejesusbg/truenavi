@@ -22,7 +22,7 @@ const variantClasses = {
   transparent: 'bg-transparent',
 };
 
-export default function Button({
+export function Button({
   type = 'button',
   onClick,
   children,
@@ -39,7 +39,10 @@ export default function Button({
       disabled={disabled}
       className={clsx(
         'rounded-lg p-3 text-white transition',
-        { 'w-full': fullWidth, 'cursor-not-allowed hover:brightness-100': disabled },
+        {
+          'w-full': fullWidth,
+          'cursor-not-allowed hover:brightness-100 !text-icon-disabled': disabled,
+        },
         variantClasses[disabled ? 'disabled' : variant],
         className
       )}>

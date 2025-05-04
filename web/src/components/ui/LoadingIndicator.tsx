@@ -8,7 +8,7 @@ interface LoadingIndicatorProps {
 
 const sizeClasses = { small: 'w-4 h-4', medium: 'w-6 h-6', large: 'w-10 h-10' };
 
-export default function LoadingIndicator({ size = 'medium', className }: LoadingIndicatorProps) {
+export function LoadingIndicator({ size = 'medium', className }: LoadingIndicatorProps) {
   return (
     <div className={clsx('flex justify-center items-center', className)}>
       <div

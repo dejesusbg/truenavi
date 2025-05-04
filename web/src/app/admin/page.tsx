@@ -1,5 +1,5 @@
 import AdminComponent from '@/app/admin/component';
-import Container from '@/components/layout/Container';
+import { Container } from '@/components';
 
 const adminIcons = [
   { name: 'MdMap', href: 'map' },

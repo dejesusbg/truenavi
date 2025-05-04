@@ -14,14 +14,7 @@ interface ModalProps {
 
 const sizeClasses = { small: 'max-w-sm', medium: 'max-w-md', large: 'max-w-lg' };
 
-export default function Modal({
-  isOpen,
-  onClose,
-  title,
-  children,
-  footer,
-  size = 'medium',
-}: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, footer, size = 'medium' }: ModalProps) {
   // close modal on escape key press
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

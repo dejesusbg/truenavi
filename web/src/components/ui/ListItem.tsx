@@ -1,18 +1,14 @@
 'use client';
+import { AdminProps } from '@/services/admin';
 import { MdCreate, MdDelete } from 'react-icons/md';
 
 interface AdminItemProps {
-  admin: {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-  };
-  onEdit: (admin: any) => void;
-  onDelete: (adminId: string) => void;
+  admin: AdminProps;
+  onEdit: (admin: AdminProps) => void;
+  onDelete: (_id: string) => void;
 }
 
-export default function AdminListItem({ admin, onEdit, onDelete }: AdminItemProps) {
+export function ListItem({ admin, onEdit, onDelete }: AdminItemProps) {
   return (
     <div className="flex-row items-center justify-between py-4">
       <div className="gap-1">
@@ -23,7 +19,7 @@ export default function AdminListItem({ admin, onEdit, onDelete }: AdminItemProp
         <button onClick={() => onEdit(admin)}>
           <MdCreate className="text-2xl text-secondary" />
         </button>
-        <button onClick={() => onDelete(admin.id)}>
+        <button onClick={() => onDelete(admin._id)}>
           <MdDelete className="text-2xl text-danger" />
         </button>
       </div>

@@ -9,7 +9,7 @@ interface CardProps {
   headerRight?: ReactNode;
 }
 
-export default function Card({ children, title, className, headerRight }: CardProps) {
+export function Card({ children, title, className, headerRight }: CardProps) {
   return (
     <div className={clsx('bg-container p-6 rounded-xl', className)}>
       {(title || headerRight) && (

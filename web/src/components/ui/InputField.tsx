@@ -14,7 +14,7 @@ interface InputFieldProps {
   className?: string;
 }
 
-export default function InputField({
+export function InputField({
   type,
   value,
   onChange,

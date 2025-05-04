@@ -1,5 +1,6 @@
 import LoginComponent from '@/app/login/component';
+import { Container } from '@/components';
 
 export default function Login() {
-  return <LoginComponent />;
+  return <Container component={<LoginComponent />} />;
 }

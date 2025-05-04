@@ -1,6 +1,6 @@
 'use client';
-import Container from '@/components/layout/Container';
 import dynamic from 'next/dynamic';
+import { Container } from '@/components';
 
 const MapComponent = dynamic(() => import('@/app/map/component'), { ssr: false });
 
