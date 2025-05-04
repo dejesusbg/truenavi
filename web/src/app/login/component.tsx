@@ -27,10 +27,10 @@ const LoginComponent = () => {
     if (!email || !password) return;
 
     setIsLoading(true);
+    const res = await loginUser(email, password);
+    setIsLoading(false);
 
-    loginUser(email, password)
-      .then((res) => res.success && router.push('/admin'))
-      .finally(() => setIsLoading(false));
+    if (res.success) router.push('/admin');
   };
 
   return (
