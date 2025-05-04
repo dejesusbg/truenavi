@@ -3,11 +3,10 @@ export interface Conversation {
 }
 
 export interface ConversationStep {
-  id: string;
   icon: string;
   output: string;
   action: (input: string) => void;
-  next?: ConversationStep;
+  next?: ConversationStep | string;
 }
 
 export type AppState = 'not-allowed' | 'config' | 'start' | 'navigate';

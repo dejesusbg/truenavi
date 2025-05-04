@@ -1,61 +1,46 @@
-import { Conversation, ConversationStep } from '~/utils/conversation/types';
-
-// utils
-export const normalize = (input: string) => input.trim().toLowerCase();
-const normalizeOutput = (input: string) => input.replace('\n', ' ');
+import { Conversation, ConversationStep } from '~/utils/flow/types';
+import { normalize } from '~/utils/text';
 
 export function handleInput(current: ConversationStep, userInput: string): ConversationStep {
   const input = normalize(userInput);
-  const output = normalizeOutput(current.output);
+  const output = normalize(current.output).replace('\n', ' ');
   console.log(`[Conversation] ${output} -> ${input}`);
   current.action(input);
 
-  if (input === 'configurar' || input === 'configure') return flow.configuration;
+  if (input === 'configurar' || input === 'configure') return flow.config;
 
-  if (!current.next) {
-    if (current.id?.startsWith('config')) return flow.start;
-    return current;
-  }
-
+  if (current.next === 'start') return flow.start;
+  if (!current.next || typeof current.next === 'string') return current;
   return current.next;
 }
 
 // conversation flow
 export const flow: Conversation = {
   start: {
-    id: 'nav_start',
     icon: 'signpost',
     output: "where are we headed?\nlet me know and i'll find the best route",
     action: (input) => {},
     next: {
-      id: 'nav_calculate',
       icon: 'route',
       output: 'calculating your route and starting navigation now',
       action: (input) => {},
+      next: 'navigate',
     },
   },
-  configuration: {
-    id: 'config_language',
+  config: {
     icon: 'language',
     output: "let's set up the app,\nwould you like to switch to spanish?",
     action: (input) => {},
     next: {
-      id: 'config_weather',
       icon: 'cloud',
       output: 'language set,\ndo you want to know the weather before navigating?',
       action: (input) => {},
       next: {
-        id: 'config_haptic',
         icon: 'vibration',
         output: 'weather updates set,\nwould you like haptic feedback for alerts?',
         action: (input) => {},
+        next: 'start',
       },
     },
-  },
-  fallback: {
-    id: 'fallback',
-    icon: 'question-mark',
-    output: "sorry, i didn't catch that,\ncould you try saying it again?",
-    action: (input) => {},
   },
 };

@@ -1,14 +1,14 @@
 import { useReducer, useEffect } from 'react';
-import { flow, handleInput } from '~/utils/conversation/conversation';
-import { HomeAction, HomeState } from '~/utils/conversation/types';
 import { speak } from '~/utils/audio';
-import t, { defaultLanguage } from '../text/translation';
+import { flow, handleInput } from '~/utils/flow/conversation';
+import { HomeAction, HomeState, AppState } from '~/utils/flow/types';
+import t, { Locale } from '~/utils/text';
 
 // initial state
 const initialState: HomeState = {
   appState: 'not-allowed',
   conversationState: null,
-  currentStep: flow.configuration,
+  currentStep: flow.config,
   userInput: 'edificio bienestar',
   isFirstTime: true, // this would be false after first use (would connect to DB)
 };
@@ -29,29 +29,29 @@ const reducer = (state: HomeState, action: HomeAction): HomeState => {
       return { ...state, userInput: action.payload };
 
     case 'NEXT_STEP': {
-      const nextStep = state.currentStep.next ?? flow.start;
-      return { ...state, currentStep: nextStep, conversationState: 'speak' };
+      return {
+        ...state,
+        currentStep:
+          typeof state.currentStep.next === 'object' ? state.currentStep.next : flow.start,
+        conversationState: 'speak',
+      };
     }
 
     case 'HANDLE_PERMISSIONS':
       return {
         ...state,
         appState: action.payload ? (state.isFirstTime ? 'config' : 'start') : 'not-allowed',
-        currentStep: action.payload && !state.isFirstTime ? flow.start : flow.configuration,
+        currentStep: action.payload && !state.isFirstTime ? flow.start : flow.config,
         conversationState: action.payload ? 'speak' : null,
       };
 
     case 'SUBMIT_INPUT': {
       const nextStep = handleInput(state.currentStep, state.userInput);
-
-      const shouldStart = nextStep.id?.startsWith('config_') && !nextStep.next;
-      const shouldNavigate = nextStep.id?.startsWith('nav_') && !nextStep.next;
-
       return {
         ...state,
         currentStep: nextStep,
         conversationState: 'speak',
-        appState: shouldNavigate ? 'navigate' : shouldStart ? 'start' : state.appState,
+        appState: typeof nextStep.next === 'string' ? (nextStep.next as AppState) : state.appState,
       };
     }
 
@@ -60,7 +60,7 @@ const reducer = (state: HomeState, action: HomeAction): HomeState => {
   }
 };
 
-export function useConversationReducer(permissionsGranted: boolean) {
+export function useConversationReducer(permissionsGranted: boolean, locale: Locale) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // handle permission changes
@@ -70,13 +70,11 @@ export function useConversationReducer(permissionsGranted: boolean) {
 
   const handleSpeakDone = () => {
     dispatch({ type: 'SET_CONVERSATION_STATE', payload: 'listen' });
-    console.log('[Speech] finishing');
   };
 
-  // simulate speech output - will be replaced with actual speech functionality
   useEffect(() => {
     if (state.conversationState === 'speak') {
-      speak(t(state.currentStep.output), defaultLanguage, { onDone: handleSpeakDone });
+      speak(t(state.currentStep.output, locale), locale, { onDone: handleSpeakDone });
     }
   }, [state.conversationState, state.currentStep]);
 
