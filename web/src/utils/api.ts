@@ -5,7 +5,7 @@ export interface Response<T> {
   token: string;
   count?: number;
   error?: string;
-  data?: Array<T>;
+  data?: T;
 }
 
 export const api = {
@@ -25,6 +25,11 @@ async function fetchData<T>(endpoint: string, method: string, body?: any): Promi
   const options: RequestInit = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const response = await fetch(`${NEXT_PUBLIC_API}/${endpoint}`, options);
-  return response.json();
+  try {
+    const response = await fetch(`${NEXT_PUBLIC_API}/${endpoint}`, options);
+    return response.json();
+  } catch (error) {
+    console.error(`[${method}] Error fetching data from ${endpoint}:`, error);
+    return Promise.reject({ success: false, data: [], error });
+  }
 }
