@@ -21,7 +21,7 @@ export function Header({ title, icons, goBack = false }: HeaderProps) {
             <MaterialIcons style={styles.buttonIcon} name="arrow-back-ios" size={24} />
           </TouchableOpacity>
         )}
-        <Text style={styles.title}>{title}</Text>
+        {title && <Text style={styles.title}>{title}</Text>}
       </View>
       <View style={styles.section}>
         {icons &&
