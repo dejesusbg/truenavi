@@ -3,9 +3,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import Theme, { Text, ScreenView } from '~/components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { PreferencesProps, getPreferences, updatePreferences } from '~/services/preferences';
+import { emptyPreferences, updatePreferences, PreferencesProps } from '~/services/preferences';
 import { deviceId } from '~/utils/api';
-import useLocale from '~/hooks/useLocale';
+import usePreferences from '~/hooks/usePreferences';
 
 interface SettingsItemProps {
   title: string;
@@ -14,12 +14,11 @@ interface SettingsItemProps {
   prop?: string;
   value?: boolean;
   onValueChange?: (value: boolean) => void;
-  onPress?: () => void;
 }
 
-function SettingItem({ icon, title, isSwitch, value, onValueChange, onPress }: SettingsItemProps) {
+function SettingItem({ icon, title, isSwitch, value, onValueChange }: SettingsItemProps) {
   return (
-    <TouchableOpacity style={styles.settingItem} onPress={onPress} disabled={isSwitch || !onPress}>
+    <TouchableOpacity style={styles.settingItem}>
       <View style={styles.settingItemLeft}>
         <MaterialIcons name={icon} style={styles.settingIcon} />
         <Text style={styles.settingText}>{title}</Text>
@@ -41,31 +40,21 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange, onPress }: S
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
-  const { updateLocale } = useLocale();
-  const [preferences, setPreferences] = useState<PreferencesProps>({});
+  const { preferences, setNewPreferences } = usePreferences();
   const [id, setId] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await getPreferences();
-      if (res.success && res.data) setPreferences(res.data);
-      deviceId().then(setId);
-    };
-    fetchData();
+    deviceId().then(setId);
   }, []);
 
-  const handleUpdate = async (newPreferences: PreferencesProps) => {
-    await updatePreferences(newPreferences);
-    setPreferences(newPreferences);
-    updateLocale();
-  };
-
   const handleChange = async (key: keyof PreferencesProps, value: boolean) => {
-    await handleUpdate({ ...preferences, [key]: value });
+    await updatePreferences({ ...preferences, [key]: value });
+    setNewPreferences();
   };
 
   const handleReset = async () => {
-    await handleUpdate({ spanish: true, weather: true, vibration: true });
+    await updatePreferences(emptyPreferences);
+    setNewPreferences();
   };
 
   const settingsData = {
@@ -94,7 +83,6 @@ export default function Settings() {
                   ? (value) => handleChange(item.prop as keyof PreferencesProps, value)
                   : undefined
               }
-              onPress={!isSwitch ? item.onPress : undefined}
             />
             {index < items.length - 1 && <View style={styles.itemSeparator} />}
           </Fragment>

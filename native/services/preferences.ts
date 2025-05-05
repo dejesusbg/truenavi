@@ -6,6 +6,7 @@ export interface PreferencesProps {
   vibration?: boolean;
 }
 
+export const emptyPreferences: PreferencesProps = { spanish: true, weather: true, vibration: true };
 export type PreferencesResponse = Response<PreferencesProps>;
 
 export async function getPreferences() {

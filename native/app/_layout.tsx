@@ -6,8 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Theme from '~/components';
-import { defaultLocale } from '~/utils/text';
-import { LocaleProvider } from '~/hooks/useLocale';
+import { PreferencesProvider } from '~/hooks/usePreferences';
+import { emptyPreferences } from '~/services/preferences';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,7 +29,7 @@ export default function App() {
   if (!loaded && !error) return null;
 
   return (
-    <LocaleProvider value={defaultLocale}>
+    <PreferencesProvider value={emptyPreferences}>
       <SafeAreaProvider style={styles.safeAreaProvider}>
         <StatusBar style="auto" />
         <Stack
@@ -39,7 +39,7 @@ export default function App() {
             contentStyle: { backgroundColor: Theme.background },
           }}></Stack>
       </SafeAreaProvider>
-    </LocaleProvider>
+    </PreferencesProvider>
   );
 }
 
