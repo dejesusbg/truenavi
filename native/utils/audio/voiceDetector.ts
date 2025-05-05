@@ -1,132 +1,82 @@
 import { Audio } from 'expo-av';
 import { normalize } from '~/utils/text';
 
-// simulate some common voice phrases
 const commonPhrases: Record<string, string[]> = {
-  configurar: ['configure', 'configurar', 'settings', 'setup'],
-  ayuda: ['help', 'ayuda', 'ayúdame'],
-  'ir a': ['go to', 'navigate to', 'ir a', 'vamos a'],
-  sí: ['yes', 'sí', 'yeah', 'ok', 'okay'],
-  no: ['no', 'nope', 'no way'],
+  // config: ['configure', 'configurar', 'settings', 'setup'],
+  '': ['asklda', 'asdas', 'qweqwd', 'asda', 'asdasf'],
+  yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
+  no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
 };
 
-export class VoiceDetector {
-  private recording: Audio.Recording | null = null;
-  private isRecording: boolean = false;
-  private timer: NodeJS.Timeout | null = null;
-  private silenceTimer: NodeJS.Timeout | null = null;
-  private callback: ((input: string) => void) | null = null;
-  private silenceThreshold: number = 60; // dB threshold for silence detection
+const SILENCE_THRESHOLD = 60;
+const SILENCE_TIMEOUT_MS = 1500;
+const MAX_LISTEN_DURATION_MS = 10000;
 
-  constructor() {
-    this.setupAudio();
-  }
+export async function listen(): Promise<string> {
+  try {
+    await setupAudio();
 
-  private async setupAudio() {
-    try {
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+    const { recording } = await Audio.Recording.createAsync(
+      Audio.RecordingOptionsPresets.HIGH_QUALITY
+    );
+
+    return await new Promise<string>((resolve) => {
+      let silenceTimer: NodeJS.Timeout | null = null;
+
+      const stop = async () => {
+        silenceTimer && clearTimeout(silenceTimer);
+        clearTimeout(timeoutTimer);
+        recording.stopAndUnloadAsync().then(() => resolve(getSimulatedInput()));
+      };
+
+      const timeoutTimer = setTimeout(stop, MAX_LISTEN_DURATION_MS);
+
+      recording.setOnRecordingStatusUpdate((status: any) => {
+        const metering = status.metering;
+        if (!status.isRecording) return;
+
+        if (metering < SILENCE_THRESHOLD) {
+          if (!silenceTimer) silenceTimer = setTimeout(stop, SILENCE_TIMEOUT_MS);
+        } else {
+          silenceTimer && clearTimeout(silenceTimer);
+          silenceTimer = null;
+        }
       });
-    } catch (error) {
-      console.error('[Voice] Error during setting up:', error);
-    }
-  }
-
-  // start listening for voice input
-  async startListening(onInputDetected: (input: string) => void) {
-    if (this.isRecording) return;
-
-    try {
-      this.callback = onInputDetected;
-
-      // create and start recording
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-
-      this.recording = recording;
-      this.isRecording = true;
-
-      // monitor recording status for sound levels
-      this.recording.setOnRecordingStatusUpdate(this.onRecordingStatusUpdate);
-
-      // set a timeout for max recording duration (10 seconds)
-      this.timer = setTimeout(() => {
-        this.stopListeningAndProcessInput();
-      }, 10000);
-    } catch (error) {
-      console.error('[Voice] Error during listening:', error);
-    }
-  }
-
-  // handle recording status updates
-  private onRecordingStatusUpdate = (status: Audio.RecordingStatus) => {
-    if (status.isRecording) {
-      const { metering } = status;
-
-      if (metering !== undefined && metering < this.silenceThreshold) {
-        // detected silence
-        if (!this.silenceTimer) {
-          this.silenceTimer = setTimeout(() => {
-            // stop recording after silence for more than 1.5 seconds
-            this.stopListeningAndProcessInput();
-          }, 1500);
-        }
-      } else {
-        // detected sound, reset silence timer
-        if (this.silenceTimer) {
-          clearTimeout(this.silenceTimer);
-          this.silenceTimer = null;
-        }
-      }
-    }
-  };
-
-  // stop listening and process the detected input
-  private async stopListeningAndProcessInput() {
-    if (!this.isRecording || !this.recording) return;
-
-    try {
-      // clear timers
-      if (this.timer) clearTimeout(this.timer);
-      if (this.silenceTimer) clearTimeout(this.silenceTimer);
-
-      // stop recording
-      await this.recording.stopAndUnloadAsync();
-
-      // simulate voice recognition
-      this.simulateRecognition();
-
-      this.isRecording = false;
-      this.recording = null;
-    } catch (error) {
-      console.error('[Voice] Error during listening:', error);
-    }
-  }
-
-  // simulate the recognition of a voice input
-  private simulateRecognition() {
-    if (!this.callback) return;
-
-    // flatten common phrases and pick a random phrase
-    const allPhrases = Object.values(commonPhrases).flat();
-    const randomIndex = Math.floor(Math.random() * allPhrases.length);
-    const simulatedInput = allPhrases[randomIndex];
-
-    // normalize and send the input to the callback
-    const normalizedInput = normalize(simulatedInput);
-    this.callback(normalizedInput);
-  }
-
-  // for testing: Simulate specific input
-  simulateSpecificInput(input: string) {
-    if (this.callback) {
-      this.callback(normalize(input));
-    }
+    });
+  } catch (error) {
+    console.error('[Listen] Error during listening:', error);
+    return '';
   }
 }
 
-export const voiceDetector = new VoiceDetector();
+async function setupAudio() {
+  try {
+    await Audio.requestPermissionsAsync();
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      playsInSilentModeIOS: true,
+      staysActiveInBackground: false,
+    });
+  } catch (error) {
+    console.error('[Audio] Error during setup:', error);
+  }
+}
+
+function getSimulatedInput(): string {
+  const phrases = Object.values(commonPhrases).flat();
+  const random = phrases[Math.floor(Math.random() * phrases.length)];
+  return normalize(random);
+}
+
+export function getStandarizedInput(input: string): string {
+  for (const [key, phrases] of Object.entries(commonPhrases)) {
+    if (phrases.includes(normalize(input))) {
+      return key;
+    }
+  }
+  return input;
+}
+
+export function getBooleanInput(input: string): boolean {
+  return getStandarizedInput(input) === 'yes';
+}
