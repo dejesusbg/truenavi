@@ -1,43 +1,35 @@
 import { useRouter } from 'expo-router';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import Theme, { Text, TextInput, ScreenView, MapView, NotAllowedView } from '~/components';
+import { View, StyleSheet } from 'react-native';
+import Theme, { Text, ScreenView, MapView, NotAllowedView } from '~/components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { ConversationState, useConversationReducer } from '~/utils/flow';
+import { useConversationReducer } from '~/utils/flow';
 import usePermissions from '~/hooks/usePermissions';
-import useLocale from '~/hooks/useLocale';
-
-function getStatus(conversationState: ConversationState) {
-  const [icon, text] =
-    conversationState === 'speak'
-      ? ['more-horiz', 'wait']
-      : conversationState === 'listen'
-        ? ['mic', 'speak']
-        : ['emergency', 'error'];
-
-  return (
-    <View style={styles.statusIndicator}>
-      <MaterialIcons name={icon} style={styles.statusIcon} />
-      <Text style={styles.statusText}>{text}</Text>
-    </View>
-  );
-}
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
   const permissionsGranted = usePermissions();
-  const { locale } = useLocale();
-  const { state, dispatch } = useConversationReducer(permissionsGranted, locale);
+  const { state } = useConversationReducer(permissionsGranted);
+  const [iconText, setIconText] = useState(['more-horiz', 'listen']);
 
-  const handleSubmit = () => dispatch({ type: 'SUBMIT_INPUT' });
-  const handleChangeText = (text: string) => dispatch({ type: 'SET_USER_INPUT', payload: text });
+  useEffect(() => {
+    const statusMap = {
+      speak: ['more-horiz', 'listen'],
+      listen: ['mic', 'speak'],
+      default: ['emergency', 'error'],
+    };
+
+    setIconText(statusMap[state.conversationState || 'default']);
+  }, [state.conversationState]);
 
   if (state.appState === 'not-allowed') return <NotAllowedView />;
   if (state.appState === 'navigate') return <MapView />;
 
+  const handleSettingsPress = () => router.push('/settings');
+  const [icon, text] = iconText;
+
   return (
-    <ScreenView
-      title="truenavi"
-      icons={[{ name: 'settings', onPress: () => router.push('/settings') }]}>
+    <ScreenView title="truenavi" icons={[{ name: 'settings', onPress: handleSettingsPress }]}>
       <View style={styles.container}>
         {/* assistant's question */}
         <View style={styles.subContainer}>
@@ -49,15 +41,13 @@ export default function Home() {
 
         {/* user's answer input */}
         <View style={styles.subContainer}>
-          <TextInput
-            style={styles.sectionText}
-            value={state.userInput}
-            onChangeText={handleChangeText}
-            editable={state.conversationState === 'listen'}
-          />
-          <TouchableOpacity onPress={handleSubmit} disabled={state.conversationState !== 'listen'}>
-            {getStatus(state.conversationState)}
-          </TouchableOpacity>
+          <Text style={state.userInput === 'waiting' ? styles.sectionWaitText : styles.sectionText}>
+            {state.userInput}
+          </Text>
+          <View style={styles.statusIndicator}>
+            <MaterialIcons name={icon} style={styles.statusIcon} />
+            <Text style={styles.statusText}>{text}</Text>
+          </View>
         </View>
       </View>
     </ScreenView>
@@ -88,6 +78,14 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: '600',
     color: Theme.white,
+    textAlign: 'center',
+    width: '100%',
+  },
+  sectionWaitText: {
+    fontSize: 24,
+    lineHeight: 36,
+    fontWeight: '600',
+    color: Theme.foregroundMuted,
     textAlign: 'center',
     width: '100%',
   },
