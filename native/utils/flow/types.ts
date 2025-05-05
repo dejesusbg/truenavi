@@ -5,11 +5,12 @@ export interface Conversation {
 export interface ConversationStep {
   icon: string;
   output: string;
-  action: (input: string) => void;
-  next?: ConversationStep | string;
+  action: (input: any) => Promise<any>;
+  nextId: string;
 }
 
-export type AppState = 'not-allowed' | 'config' | 'start' | 'navigate';
+export const appStates = ['not-allowed', 'config', 'start', 'navigate'];
+export type AppState = (typeof appStates)[number];
 export type ConversationState = 'speak' | 'listen' | null;
 
 export interface HomeState {
@@ -26,5 +27,4 @@ export type HomeAction =
   | { type: 'SET_STEP'; payload: ConversationStep }
   | { type: 'SET_USER_INPUT'; payload: string }
   | { type: 'NEXT_STEP' }
-  | { type: 'HANDLE_PERMISSIONS'; payload: boolean }
-  | { type: 'SUBMIT_INPUT' };
+  | { type: 'HANDLE_PERMISSIONS'; payload: boolean };
