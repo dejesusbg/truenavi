@@ -12,7 +12,7 @@ export async function speak(text: string, language = 'es-ES', options = {}): Pro
     };
 
     const speechOptions = { ...defaultOptions, ...options };
-    await Speech.speak(text, speechOptions);
+    Speech.speak(text, speechOptions);
   } catch (error) {
     console.error('[Speech] Error during setting up:', error);
   }

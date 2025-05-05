@@ -44,7 +44,7 @@ async function fetchData<T>(endpoint: string, method: string, body?: T): Promise
   if (body) options.body = JSON.stringify(body);
 
   try {
-    // console.log(`[${method}] Request to ${endpoint}:`, headers, body);
+    console.log(`[${method}] Request to ${endpoint}:`, body);
     const response = await fetch(`${EXPO_PUBLIC_API}/${endpoint}`, options);
     return response.json();
   } catch (error) {

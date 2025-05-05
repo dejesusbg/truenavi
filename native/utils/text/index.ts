@@ -1,8 +1,6 @@
 export type Locale = 'es-ES' | 'en-EN';
 export type LocaleMap = { [L in Locale]: { [key: string]: string } };
 
-export const defaultLocale: Locale = 'es-ES';
-
 const translationMap: LocaleMap = {
   'en-EN': {},
   'es-ES': {
@@ -14,7 +12,7 @@ const translationMap: LocaleMap = {
     'calculating your route and starting navigation now':
       'calculando tu ruta e iniciando la navegación ahora',
     "let's set up the app,\nwould you like to switch to spanish?":
-      'vamos a configurar la app\n¿desearías cambiar el idioma a inglés?',
+      'vamos a configurar la app\n¿desearías mantener el idioma en español?',
     'language set,\ndo you want to know the weather before navigating?':
       'idioma configurado\n¿quieres saber el clima antes de navegar?',
     'weather updates set,\nwould you like haptic feedback for alerts?':
@@ -31,7 +29,8 @@ const translationMap: LocaleMap = {
     vibration: 'vibración',
 
     // layout
-    wait: 'espera',
+    waiting: 'esperando',
+    listen: 'escucha',
     settings: 'ajustes',
     navigation: 'navegación',
     speak: 'habla',
