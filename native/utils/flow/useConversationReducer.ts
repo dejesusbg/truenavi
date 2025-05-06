@@ -1,9 +1,9 @@
 import { useReducer, useEffect } from 'react';
-import usePreferences, { getLocale } from '~/hooks/usePreferences';
+import usePreferences from '~/hooks/usePreferences';
 import { listen, speak } from '~/utils/audio';
 import { flow, handleInput } from '~/utils/flow/conversation';
 import { HomeAction, HomeState, appStates } from '~/utils/flow/types';
-import t from '~/utils/text';
+import t, { getLocale } from '~/utils/text';
 
 // initial state
 const initialState: HomeState = {
@@ -11,7 +11,7 @@ const initialState: HomeState = {
   conversationState: null,
   currentStep: flow.config,
   userInput: 'waiting',
-  isFirstTime: true, // this would be false after first use (would connect to DB)
+  isFirstTime: true, // TODO: this would be false after first use (would connect to DB)
 };
 
 // reducer function
@@ -19,26 +19,12 @@ const reducer = (state: HomeState, action: HomeAction): HomeState => {
   switch (action.type) {
     case 'SET_APP_STATE':
       return { ...state, appState: action.payload };
-
     case 'SET_CONVERSATION_STATE':
       return { ...state, conversationState: action.payload };
-
     case 'SET_STEP':
       return { ...state, currentStep: action.payload };
-
     case 'SET_USER_INPUT':
       return { ...state, userInput: action.payload };
-
-    case 'NEXT_STEP': {
-      return {
-        ...state,
-        currentStep: !appStates.includes(state.currentStep.nextId)
-          ? flow[state.currentStep.nextId]
-          : flow.start,
-        conversationState: 'speak',
-      };
-    }
-
     case 'HANDLE_PERMISSIONS':
       return {
         ...state,
@@ -46,7 +32,6 @@ const reducer = (state: HomeState, action: HomeAction): HomeState => {
         currentStep: action.payload && !state.isFirstTime ? flow.start : flow.config,
         conversationState: action.payload ? 'speak' : null,
       };
-
     default:
       return state;
   }
@@ -56,31 +41,34 @@ export function useConversationReducer(permissionsGranted: boolean) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { preferences, setNewPreferences } = usePreferences();
 
-  // handle permission changes
+  // handle permission changes on mount
   useEffect(() => {
     dispatch({ type: 'HANDLE_PERMISSIONS', payload: permissionsGranted });
   }, [permissionsGranted]);
 
-  const handleSpeakDone = () => {
-    dispatch({ type: 'SET_CONVERSATION_STATE', payload: 'listen' });
+  // handle speak completion and listen start
+  const handleSpeak = () => {
+    const locale = getLocale(preferences);
+    const output = t(state.currentStep.output, locale);
+    speak(output, locale, {
+      onDone: () => dispatch({ type: 'SET_CONVERSATION_STATE', payload: 'listen' }),
+    });
   };
 
-  const handleListenStart = async () => {
+  const handleListen = async () => {
     dispatch({ type: 'SET_USER_INPUT', payload: 'waiting' });
-    const input = await listen();
-    handleListenDone(input);
-  };
 
-  const handleListenDone = async (input: string) => {
+    // get user input from audio
+    const input = await listen(state.appState);
     dispatch({ type: 'SET_USER_INPUT', payload: input });
 
     if (state.appState === 'navigate') return;
-    const nextStep = await handleInput(state.currentStep, input);
+    const nextStep = await handleInput(input, state.currentStep, state.appState);
     await setNewPreferences();
 
     setTimeout(() => {
-      dispatch({ type: 'SET_USER_INPUT', payload: 'waiting' });
       const newState = appStates.includes(nextStep.nextId) ? nextStep.nextId : state.appState;
+      dispatch({ type: 'SET_USER_INPUT', payload: 'waiting' });
       dispatch({ type: 'SET_CONVERSATION_STATE', payload: 'speak' });
       dispatch({ type: 'SET_STEP', payload: nextStep });
       dispatch({ type: 'SET_APP_STATE', payload: newState });
@@ -88,12 +76,8 @@ export function useConversationReducer(permissionsGranted: boolean) {
   };
 
   useEffect(() => {
-    if (state.conversationState === 'speak') {
-      const locale = getLocale(preferences);
-      speak(t(state.currentStep.output, locale), locale, { onDone: handleSpeakDone });
-    } else if (state.conversationState === 'listen') {
-      handleListenStart();
-    }
+    if (state.conversationState === 'speak') handleSpeak();
+    if (state.conversationState === 'listen') handleListen();
   }, [state.conversationState, state.currentStep]);
 
   return { state, dispatch };
