@@ -4,7 +4,7 @@ import { Text } from '~/components/layout/Text';
 import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-interface HeaderProps {
+export interface HeaderProps {
   title?: string;
   goBack?: boolean;
   icons?: { name: string; onPress?: () => void }[];

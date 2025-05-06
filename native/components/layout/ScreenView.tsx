@@ -1,16 +1,10 @@
+import { PropsWithChildren } from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Header } from '~/components/layout/Header';
+import { Header, HeaderProps } from '~/components/layout/Header';
 import Theme from '~/components/theme/Palette';
 
-interface ScreenViewProps {
-  title?: string;
-  icons?: { name: string; onPress?: () => void }[];
-  goBack?: boolean;
-  children?: React.ReactNode;
-}
-
-export function ScreenView({ title, icons, children, goBack }: ScreenViewProps) {
+export function ScreenView({ title, icons, children, goBack }: PropsWithChildren<HeaderProps>) {
   const insets = useSafeAreaInsets();
 
   return (
