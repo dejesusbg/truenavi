@@ -1,7 +1,8 @@
-export type Locale = 'es-ES' | 'en-EN';
-export type LocaleMap = { [L in Locale]: { [key: string]: string } };
+import { PreferencesProps } from '~/services/preferences';
 
-const translationMap: LocaleMap = {
+type Locale = 'es-ES' | 'en-EN';
+
+const translationMap: Record<Locale, Record<string, string>> = {
   'en-EN': {},
   'es-ES': {
     // conversation
@@ -48,6 +49,10 @@ const translationMap: LocaleMap = {
     meters: 'metros',
   },
 };
+
+export function getLocale(preferences: PreferencesProps): Locale {
+  return preferences.spanish ? 'es-ES' : 'en-EN';
+}
 
 export function normalize(input: string) {
   return input.trim().toLowerCase();

@@ -1,7 +1,7 @@
 import { Text as RNText, TextInput as RNTextInput } from 'react-native';
 import { TextProps, TextInputProps, TextStyle, StyleSheet } from 'react-native';
-import usePreferences, { getLocale } from '~/hooks/usePreferences';
-import t from '~/utils/text';
+import usePreferences from '~/hooks/usePreferences';
+import t, { getLocale } from '~/utils/text';
 
 interface BaseTextProps extends TextProps {
   TextComponent: React.ElementType;

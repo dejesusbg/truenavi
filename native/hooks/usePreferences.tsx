@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect, useContext, ProviderProps } from 'react';
 import { emptyPreferences, getPreferences, PreferencesProps } from '~/services/preferences';
-import { Locale } from '~/utils/text';
 
 interface PreferencesContextType {
   preferences: PreferencesProps;
@@ -34,8 +33,4 @@ export function PreferencesProvider({ value, children }: ProviderProps<Preferenc
 
 export default function usePreferences() {
   return useContext(PreferencesContext);
-}
-
-export function getLocale(preferences: PreferencesProps): Locale {
-  return preferences.spanish ? 'es-ES' : 'en-EN';
 }
