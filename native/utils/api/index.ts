@@ -24,8 +24,7 @@ export const deviceId = async (): Promise<string> => {
 
 deviceId.reset = async (): Promise<string> => {
   await AsyncStorage.removeItem('DEVICE_ID');
-  const newId = await deviceId();
-  return newId;
+  return await deviceId();
 };
 
 export const api = {
@@ -39,7 +38,7 @@ async function fetchData<T>(endpoint: string, method: string, body?: T): Promise
   const EXPO_PUBLIC_API = process.env.EXPO_PUBLIC_API;
   const id = await deviceId();
 
-  const headers: Record<string, string> = { 'Content-Type': 'application/json', 'device-id': id };
+  const headers: HeadersInit = { 'Content-Type': 'application/json', 'device-id': id };
   const options: RequestInit = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
