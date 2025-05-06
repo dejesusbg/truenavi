@@ -26,5 +26,4 @@ export type HomeAction =
   | { type: 'SET_CONVERSATION_STATE'; payload: ConversationState }
   | { type: 'SET_STEP'; payload: ConversationStep }
   | { type: 'SET_USER_INPUT'; payload: string }
-  | { type: 'NEXT_STEP' }
   | { type: 'HANDLE_PERMISSIONS'; payload: boolean };

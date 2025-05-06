@@ -1,18 +1,11 @@
 import { Audio } from 'expo-av';
-import { normalize } from '~/utils/text';
-
-const commonPhrases: Record<string, string[]> = {
-  // config: ['configure', 'configurar', 'settings', 'setup'],
-  '': ['asklda', 'asdas', 'qweqwd', 'asda', 'asdasf'],
-  yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
-  no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
-};
+import { AppState, simulateInput } from '~/utils/flow';
 
 const SILENCE_THRESHOLD = 60;
 const SILENCE_TIMEOUT_MS = 1500;
 const MAX_LISTEN_DURATION_MS = 10000;
 
-export async function listen(): Promise<string> {
+export async function listen(appState: AppState): Promise<string> {
   try {
     await setupAudio();
 
@@ -26,7 +19,7 @@ export async function listen(): Promise<string> {
       const stop = async () => {
         silenceTimer && clearTimeout(silenceTimer);
         clearTimeout(timeoutTimer);
-        recording.stopAndUnloadAsync().then(() => resolve(getSimulatedInput()));
+        recording.stopAndUnloadAsync().then(() => resolve(simulateInput(appState)));
       };
 
       const timeoutTimer = setTimeout(stop, MAX_LISTEN_DURATION_MS);
@@ -51,32 +44,8 @@ export async function listen(): Promise<string> {
 
 async function setupAudio() {
   try {
-    await Audio.requestPermissionsAsync();
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-    });
+    await Audio.setAudioModeAsync({ staysActiveInBackground: false });
   } catch (error) {
     console.error('[Audio] Error during setup:', error);
   }
-}
-
-function getSimulatedInput(): string {
-  const phrases = Object.values(commonPhrases).flat();
-  const random = phrases[Math.floor(Math.random() * phrases.length)];
-  return normalize(random);
-}
-
-export function getStandarizedInput(input: string): string {
-  for (const [key, phrases] of Object.entries(commonPhrases)) {
-    if (phrases.includes(normalize(input))) {
-      return key;
-    }
-  }
-  return input;
-}
-
-export function getBooleanInput(input: string): boolean {
-  return getStandarizedInput(input) === 'yes';
 }
