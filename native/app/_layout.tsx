@@ -1,13 +1,12 @@
-import { Stack } from 'expo-router';
+import { PreferencesProvider } from '~/context/PreferencesProvider';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
-import Theme from '~/components';
-import { PreferencesProvider } from '~/hooks/usePreferences';
-import { emptyPreferences } from '~/services/preferences';
+import Theme from '~/components/theme';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,7 +28,7 @@ export default function App() {
   if (!loaded && !error) return null;
 
   return (
-    <PreferencesProvider value={emptyPreferences}>
+    <PreferencesProvider>
       <SafeAreaProvider style={styles.safeAreaProvider}>
         <StatusBar style="auto" />
         <Stack

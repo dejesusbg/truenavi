@@ -1,6 +1,12 @@
-import { Text as RNText, TextInput as RNTextInput } from 'react-native';
-import { TextProps, TextInputProps, TextStyle, StyleSheet } from 'react-native';
-import usePreferences from '~/hooks/usePreferences';
+import {
+  Text as RNText,
+  TextInput as RNTextInput,
+  TextProps,
+  TextInputProps,
+  TextStyle,
+  StyleSheet,
+} from 'react-native';
+import usePreferencesContext from '~/context/PreferencesProvider';
 import t, { getLocale } from '~/utils/text';
 
 interface BaseTextProps extends TextProps {
@@ -23,7 +29,7 @@ function BaseText({ TextComponent, children, style, ...props }: BaseTextProps) {
 }
 
 export function Text({ children, ...props }: TextProps) {
-  const { preferences } = usePreferences();
+  const { preferences } = usePreferencesContext();
 
   return (
     <BaseText TextComponent={RNText} {...props}>

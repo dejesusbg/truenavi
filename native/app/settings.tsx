@@ -1,11 +1,11 @@
-import { Fragment, useEffect, useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
-import Theme, { Text, ScreenView } from '~/components';
+import { defaultPreferences, PreferencesProps, updatePreferences } from '~/services/preferences';
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { emptyPreferences, updatePreferences, PreferencesProps } from '~/services/preferences';
+import usePreferences from '~/context/PreferencesProvider';
+import { ScreenView, Text } from '~/components/layout';
+import { Fragment, useEffect, useState } from 'react';
+import Theme from '~/components/theme';
 import { deviceId } from '~/utils/api';
-import usePreferences from '~/hooks/usePreferences';
 
 interface SettingsItemProps {
   title: string;
@@ -39,22 +39,26 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange }: SettingsIt
 }
 
 export default function Settings() {
-  const insets = useSafeAreaInsets();
-  const { preferences, setNewPreferences } = usePreferences();
-  const [id, setId] = useState('');
+  const { preferences, loadPreferences } = usePreferences();
+  const [identifier, setIdentifier] = useState('');
 
   useEffect(() => {
-    deviceId().then(setId);
+    const getIdentifier = async () => {
+      const id = await deviceId();
+      setIdentifier(id);
+    };
+
+    getIdentifier();
   }, []);
 
   const handleChange = async (key: keyof PreferencesProps, value: boolean) => {
     await updatePreferences({ ...preferences, [key]: value });
-    setNewPreferences();
+    loadPreferences();
   };
 
   const handleReset = async () => {
-    await updatePreferences(emptyPreferences);
-    setNewPreferences();
+    await updatePreferences(defaultPreferences);
+    loadPreferences();
   };
 
   const settingsData = {
@@ -76,8 +80,7 @@ export default function Settings() {
           <Fragment key={index}>
             <SettingItem
               {...item}
-              isSwitch={isSwitch}
-              value={item.value}
+              isSwitch
               onValueChange={
                 isSwitch
                   ? (value) => handleChange(item.prop as keyof PreferencesProps, value)
@@ -93,7 +96,7 @@ export default function Settings() {
 
   return (
     <ScreenView title="settings" goBack={true}>
-      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={styles.container}>
         {renderSettingsGroup(settingsData.switches, true)}
         {renderSettingsGroup(settingsData.links, false)}
 
@@ -101,7 +104,7 @@ export default function Settings() {
           <MaterialIcons name="delete" style={styles.dangerIcon} />
           <Text style={styles.dangerText}>erase all data</Text>
         </TouchableOpacity>
-        <Text style={styles.idText}>{id}</Text>
+        <Text style={styles.idText}>{identifier}</Text>
       </View>
     </ScreenView>
   );

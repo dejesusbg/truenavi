@@ -1,12 +1,19 @@
-import { api, Response } from '~/utils/api';
+import api, { Response } from '~/utils/api';
 
 export interface PreferencesProps {
   spanish?: boolean;
   weather?: boolean;
   vibration?: boolean;
+  isFirstTime?: boolean;
 }
 
-export const emptyPreferences: PreferencesProps = { spanish: true, weather: true, vibration: true };
+export const defaultPreferences: PreferencesProps = {
+  spanish: true,
+  weather: true,
+  vibration: true,
+  isFirstTime: true,
+};
+
 export type PreferencesResponse = Response<PreferencesProps>;
 
 export async function getPreferences() {
