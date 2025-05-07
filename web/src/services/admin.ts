@@ -1,4 +1,4 @@
-import { api, Response } from '@/utils/api';
+import { api, Response } from '@/services/api';
 
 export interface AdminProps {
   _id: string;
@@ -6,6 +6,8 @@ export interface AdminProps {
   email: string;
   password: string;
 }
+
+export const defaultAdmin: AdminProps = { _id: '', name: '', email: '', password: '' };
 
 export type AdminResponse = Response<AdminProps[]>;
 

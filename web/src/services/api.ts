@@ -1,4 +1,5 @@
-import { authToken } from '@/services/auth';
+import { parse, serialize } from 'cookie';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export interface Response<T> {
   success: boolean;
@@ -17,7 +18,7 @@ export const api = {
 
 async function fetchData<T>(endpoint: string, method: string, body?: any): Promise<T> {
   const NEXT_PUBLIC_API = process.env.NEXT_PUBLIC_API;
-  const JWT_TOKEN = authToken.get();
+  const JWT_TOKEN = authToken();
 
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (JWT_TOKEN) headers.Authorization = `Bearer ${JWT_TOKEN}`;
@@ -33,3 +34,30 @@ async function fetchData<T>(endpoint: string, method: string, body?: any): Promi
     return Promise.reject({ success: false, data: [], error });
   }
 }
+
+export const authToken = (): string | null => {
+  const cookies = parse(document.cookie);
+  return cookies.access_token || null;
+};
+
+authToken.set = (token: string, router: AppRouterInstance): void => {
+  const options = {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: true,
+    path: '/',
+    maxAge: 3600,
+  };
+  document.cookie = serialize('access_token', token, options);
+  router.push('/admin');
+};
+
+authToken.clear = (router: AppRouterInstance): void => {
+  const options = {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: true,
+    path: '/',
+    expires: new Date(0),
+  };
+  document.cookie = serialize('access_token', '', options);
+  router.push('/');
+};
