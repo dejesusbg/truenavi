@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
-import * as Location from 'expo-location';
-import { View, StyleSheet } from 'react-native';
-import { Text } from '~/components/layout/Text';
-import { ScreenView } from '~/components/layout/ScreenView';
-import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { direction, FlowState } from '~/utils/flow';
+import { View, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import * as Location from 'expo-location';
 import Map from 'react-native-maps';
+
+import { Text, ScreenView } from '../layout';
+import Theme from '../theme';
 
 export interface Navigation {
   [instruction: string]: string;
 }
 
 export const navigationFlow: Navigation = {
-  navigation: '',
   'turn-left': 'turn to the left',
   'turn-right': 'turn to the right',
   'turn-slight-left': 'turn slightly to the left',
@@ -24,17 +23,17 @@ export const navigationFlow: Navigation = {
   place: 'your destination is here',
 };
 
-export function MapView() {
-  const router = useRouter();
+export function NavigationView({ state, finish }: { state: FlowState; finish: () => void }) {
   const [region, setRegion] = useState<{
     latitude: number;
     longitude: number;
     latitudeDelta: number;
     longitudeDelta: number;
   } | null>(null);
-  const [currentInstruction, setCurrentInstruction] = useState('arrow-upward');
-  const [distanceToNext, setDistanceToNext] = useState<string | null>('50 meters');
-  const [destination, setDestination] = useState('edificio bienestar');
+
+  const { navigationSteps, navigationIndex, destination } = state;
+  const currentInstruction = direction[navigationSteps[navigationIndex].id];
+  const distanceToNext = navigationSteps[navigationIndex].value;
 
   useEffect(() => {
     const getLocation = async () => {
@@ -48,33 +47,10 @@ export function MapView() {
     };
 
     getLocation();
-
-    // mock navigation instructions
-    const instructionSequence = [
-      { instruction: 'arrow-upward', distance: '50 meters' },
-      { instruction: 'turn-right', distance: '30 meters' },
-      { instruction: 'arrow-upward', distance: '100 meters' },
-      { instruction: 'turn-left', distance: '20 meters' },
-      { instruction: 'cloud', distance: '20 percent' },
-      { instruction: 'place', distance: null },
-    ];
-
-    let currentIndex = 0;
-    const instructionInterval = setInterval(() => {
-      if (currentIndex < instructionSequence.length) {
-        setCurrentInstruction(instructionSequence[currentIndex].instruction);
-        setDistanceToNext(instructionSequence[currentIndex].distance);
-        currentIndex++;
-      } else {
-        clearInterval(instructionInterval);
-      }
-    }, 5000);
-
-    return () => clearInterval(instructionInterval);
   }, []);
 
   return (
-    <ScreenView title="navigation" icons={[{ name: 'close', onPress: () => router.push('/') }]}>
+    <ScreenView title="navigation" icons={[{ name: 'close', onPress: finish }]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
           {region && (
@@ -95,10 +71,10 @@ export function MapView() {
 
         <View style={styles.instructionContainer}>
           <View style={styles.instructionIconContainer}>
-            <MaterialIcons name={currentInstruction} style={styles.instructionIcon} />
+            <MaterialIcons name={currentInstruction.icon} style={styles.instructionIcon} />
           </View>
           <View style={styles.instructionTextContainer}>
-            <Text style={styles.instructionText}>{navigationFlow[currentInstruction]}</Text>
+            <Text style={styles.instructionText}>{currentInstruction.output}</Text>
             {distanceToNext && <Text style={styles.distanceText}>{distanceToNext}</Text>}
           </View>
         </View>
