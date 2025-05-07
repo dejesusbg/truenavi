@@ -1,26 +1,18 @@
 import { updatePreferences } from '~/services/preferences';
-import { AppState, Conversation, ConversationStep } from '~/utils/flow/types';
-import { normalize } from '~/utils/text';
+import { Dispatch } from 'react';
 
-const commonInputs: Record<string, string[]> = {
-  place: ['edificio bienestar', 'lago', 'cafeteria', 'mar caribe', 'restaurante'],
-  config: ['configure', 'configurar', 'settings', 'setup'],
-  yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
-  no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
-  '': ['asklda', 'asdas', 'qweqwd', 'asda', 'asdasf'],
-};
-
-const noop = async () => {};
+import { ConversationStep, FlowAction, InputAppState } from './types';
+import { commonInputs, normalize } from '../text';
 
 const createStep = (
   icon: string,
   output: string,
   nextId: string = '',
-  action: (input: any) => Promise<any> = noop
+  action: (input: any) => Promise<any> = async () => {}
 ): ConversationStep => ({ icon, output, action, nextId });
 
 // conversation flow
-export const flow: Conversation = {
+export const flow: Record<string, ConversationStep> = {
   start: createStep(
     // TODO: search destination and find route
     'signpost',
@@ -44,7 +36,7 @@ export const flow: Conversation = {
     'vibration',
     'weather updates set,\nwould you like haptic feedback for alerts?',
     'start',
-    (input) => updatePreferences({ vibration: input })
+    (input) => updatePreferences({ vibration: input, isFirstTime: false })
   ),
   fallback: createStep(
     'question-mark',
@@ -56,45 +48,37 @@ export const flow: Conversation = {
 export async function handleInput(
   userInput: string,
   current: ConversationStep,
-  appState: AppState
+  type: InputAppState,
+  dispatch: Dispatch<FlowAction>
 ): Promise<ConversationStep> {
-  const input = parseInput(userInput, appState);
-  const output = normalize(current.output).replace(/\n/g, ' ');
+  const input = parseInput(userInput, type);
+  const output = current.output.replace(/\n/g, ' ');
 
-  console.log(`[Conversation] ${output} -> ${userInput}`);
+  console.log(`[Conversation] ${output} -> ${userInput} (${input})`);
 
   if (input === null) return { ...flow.fallback, action: current.action, nextId: current.nextId };
-  if (input === 'config') return flow.config;
+
+  if (input === 'config') {
+    dispatch({ type: 'SET_APP_STATE', payload: 'config' });
+    return flow.config;
+  }
 
   await current.action(input);
   return flow[current.nextId] || current;
 }
 
-export function simulateInput(appState: AppState): string {
-  const pool: Record<AppState, string[]> = {
-    config: [...commonInputs.yes, ...commonInputs.no, ...commonInputs.config],
-    start: [...commonInputs.place],
-  };
-
-  const statePhrases = pool[appState] || [];
-  statePhrases.push(...commonInputs['']);
-
-  const random = statePhrases[Math.floor(Math.random() * statePhrases.length)];
-  return normalize(random);
-}
-
-export function parseInput(userInput: string, appState: AppState): string | boolean | null {
+export function parseInput(userInput: string, type: InputAppState): string | boolean | null {
   const input = normalize(userInput);
 
-  if (appState === 'config') {
+  if (type === 'config') {
     if (commonInputs.yes.includes(input)) return true;
     if (commonInputs.no.includes(input)) return false;
-    if (commonInputs.config.includes(input)) return 'config';
   }
 
-  if (appState === 'start') {
-    // TODO: get actual places and search
+  if (type === 'start') {
+    if (commonInputs.config.includes(input)) return 'config';
     if (commonInputs.place.includes(input)) return input;
+    // TODO: get actual places and search
   }
 
   return null;

@@ -1,29 +1,46 @@
-export interface Conversation {
-  [key: string]: ConversationStep;
-}
+// states
+export type AppState = 'not-allowed' | InputAppState | 'navigate';
+export type InputAppState = 'config' | 'start';
+export type ConversationStatus = 'speak' | 'listen' | null;
 
+// steps
 export interface ConversationStep {
   icon: string;
   output: string;
   action: (input: any) => Promise<any>;
-  nextId: string;
+  nextId: string | AppState;
 }
 
-export const appStates = ['not-allowed', 'config', 'start', 'navigate'];
-export type AppState = (typeof appStates)[number];
-export type ConversationState = 'speak' | 'listen' | null;
+export interface InstructionStep {
+  icon: string;
+  output: string;
+}
 
-export interface HomeState {
+export interface NavigationStep {
+  id: string;
+  value: string;
+}
+
+// flow
+export interface FlowState {
   appState: AppState;
-  conversationState: ConversationState;
+  conversationStatus: ConversationStatus;
   currentStep: ConversationStep;
   userInput: string;
-  isFirstTime: boolean;
+  hideInput: boolean;
+  navigationSteps: NavigationStep[];
+  navigationIndex: number;
+  destination: string;
 }
 
-export type HomeAction =
+// reducer actions
+export type FlowAction =
   | { type: 'SET_APP_STATE'; payload: AppState }
-  | { type: 'SET_CONVERSATION_STATE'; payload: ConversationState }
-  | { type: 'SET_STEP'; payload: ConversationStep }
+  | { type: 'SET_CONVERSATION_STATUS'; payload: ConversationStatus }
+  | { type: 'SET_CURRENT_STEP'; payload: ConversationStep }
   | { type: 'SET_USER_INPUT'; payload: string }
-  | { type: 'HANDLE_PERMISSIONS'; payload: boolean };
+  | { type: 'HIDE_INPUT'; payload: boolean }
+  | { type: 'START_NAVIGATION'; payload: NavigationStep[] }
+  | { type: 'END_NAVIGATION' }
+  | { type: 'NEXT_INSTRUCTION' }
+  | { type: 'SET_DESTINATION'; payload: string };
