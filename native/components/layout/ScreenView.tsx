@@ -1,8 +1,9 @@
-import { PropsWithChildren } from 'react';
-import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Header, HeaderProps } from '~/components/layout/Header';
-import Theme from '~/components/theme/Palette';
+import { ImageBackground, StyleSheet, View } from 'react-native';
+import { PropsWithChildren } from 'react';
+
+import { Header, HeaderProps } from './Header';
+import Theme from '../theme';
 
 export function ScreenView({ title, icons, children, goBack }: PropsWithChildren<HeaderProps>) {
   const insets = useSafeAreaInsets();

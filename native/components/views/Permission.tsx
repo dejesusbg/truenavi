@@ -1,10 +1,10 @@
 import { View, Linking, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text } from '~/components/layout/Text';
-import { ScreenView } from '~/components/layout/ScreenView';
-import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export function NotAllowedView() {
+import { Text, ScreenView } from '../layout';
+import Theme from '../theme';
+
+export function PermissionView() {
   return (
     <ScreenView>
       <View style={styles.container}>

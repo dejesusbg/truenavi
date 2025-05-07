@@ -1,8 +1,9 @@
-import { useRouter } from 'expo-router';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Text } from '~/components/layout/Text';
-import Theme from '~/components/theme/Palette';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+
+import { Text } from './Text';
+import Theme from '../theme';
 
 export interface HeaderProps {
   title?: string;
