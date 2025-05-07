@@ -1,4 +1,5 @@
 // states
+export const validAppStates = ['not-allowed', 'config', 'start', 'navigate'];
 export type AppState = 'not-allowed' | InputAppState | 'navigate';
 export type InputAppState = 'config' | 'start';
 export type ConversationStatus = 'speak' | 'listen' | null;
@@ -8,7 +9,7 @@ export interface ConversationStep {
   icon: string;
   output: string;
   action: (input: any) => Promise<any>;
-  nextId: string | AppState;
+  nextId: string;
 }
 
 export interface InstructionStep {

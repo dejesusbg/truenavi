@@ -1,6 +1,13 @@
 import { Dispatch } from 'react';
 
-import { FlowAction, InputAppState, AppState, NavigationStep, ConversationStep } from './types';
+import {
+  validAppStates,
+  InputAppState,
+  AppState,
+  NavigationStep,
+  ConversationStep,
+  FlowAction,
+} from './types';
 import { createNavigation, direction, sampleNavigation } from './navigation';
 import { flow, handleInput } from './conversation';
 import { listen, speak } from '../audio';
@@ -49,7 +56,7 @@ export async function listenConversation(
   dispatch: Dispatch<FlowAction>
 ) {
   // determine next app state
-  const newState = (step.nextId as AppState) || state;
+  const newState = validAppStates.includes(step.nextId) ? (step.nextId as AppState) : state;
   dispatch({ type: 'SET_APP_STATE', payload: newState });
 
   // special case: start navigation if that's the next state
@@ -73,13 +80,13 @@ export async function listenConversation(
 
 // initialize navigation flow
 export function startNavigation(destination: string, dispatch: Dispatch<FlowAction>) {
-  // TODO: generate actual navigation steps based on destination
+  // TODO: generate actual navigation steps based on destination + add delay
   const navigation = [createNavigation('start'), ...sampleNavigation, createNavigation('end')];
   dispatch({ type: 'SET_DESTINATION', payload: destination });
   dispatch({ type: 'START_NAVIGATION', payload: navigation });
 }
 
-// end navigation and return to conversation
+// end navigation and return to conversation (delay)
 export function endNavigation(dispatch: Dispatch<FlowAction>) {
   setTimeout(() => {
     dispatch({ type: 'SET_CURRENT_STEP', payload: flow.start });
