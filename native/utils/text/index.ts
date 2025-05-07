@@ -1,6 +1,13 @@
 import { PreferencesProps } from '~/services/preferences';
 
-type Locale = 'es-ES' | 'en-EN';
+export type Locale = 'es-ES' | 'en-EN';
+
+export const commonInputs: Record<string, string[]> = {
+  place: ['edificio bienestar', 'lago', 'cafeteria', 'mar caribe', 'restaurante'],
+  config: ['configurar', 'settings', 'setup'],
+  yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
+  no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
+};
 
 const translationMap: Record<Locale, Record<string, string>> = {
   'en-EN': {},
@@ -37,13 +44,14 @@ const translationMap: Record<Locale, Record<string, string>> = {
     speak: 'habla',
 
     // navigation
+    'going to your destination': 'en camino a tu destino',
     'turn to the left': 'gira a la izquierda',
     'turn to the right': 'gira a la derecha',
     'turn slightly to the left': 'gira ligeramente a la izquierda',
     'turn slightly to the right': 'gira ligeramente a la derecha',
     'go straight': 'continúa recto',
     'your destination is here': 'has llegado a tu destino',
-    'rain chance of': 'posible lluvia del',
+    'rain chance of': 'posibilidad de lluvia',
     rerouting: 'recalculando ruta',
     percent: 'por ciento',
     meters: 'metros',

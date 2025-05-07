@@ -1,11 +1,13 @@
 import { Audio } from 'expo-av';
-import { AppState, simulateInput } from '~/utils/flow';
+
+import { commonInputs, normalize } from '../text';
+import { InputAppState } from '../flow';
 
 const SILENCE_THRESHOLD = 60;
 const SILENCE_TIMEOUT_MS = 1500;
 const MAX_LISTEN_DURATION_MS = 10000;
 
-export async function listen(appState: AppState): Promise<string> {
+export async function listen(type: InputAppState): Promise<string> {
   try {
     await setupAudio();
 
@@ -19,7 +21,7 @@ export async function listen(appState: AppState): Promise<string> {
       const stop = async () => {
         silenceTimer && clearTimeout(silenceTimer);
         clearTimeout(timeoutTimer);
-        recording.stopAndUnloadAsync().then(() => resolve(simulateInput(appState)));
+        recording.stopAndUnloadAsync().then(() => resolve(simulateInput(type)));
       };
 
       const timeoutTimer = setTimeout(stop, MAX_LISTEN_DURATION_MS);
@@ -48,4 +50,16 @@ async function setupAudio() {
   } catch (error) {
     console.error('[Audio] Error during setup:', error);
   }
+}
+
+function simulateInput(type: InputAppState): string {
+  const pool: string[] = {
+    config: [...commonInputs.yes, ...commonInputs.no],
+    start: [...commonInputs.place, ...commonInputs.config],
+  }[type];
+
+  pool.push('pan con queso'); // placeholder for not recognized input
+
+  const random = pool[Math.floor(Math.random() * pool.length)];
+  return normalize(random);
 }
