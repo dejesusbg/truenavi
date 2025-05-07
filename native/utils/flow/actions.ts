@@ -1,17 +1,16 @@
 import { Dispatch } from 'react';
-
+import { listen, speak } from '~/utils/audio';
+import t, { Locale } from '~/utils/text';
+import { flow, handleInput } from './conversation';
+import { createNavigation, direction, sampleNavigation } from './navigation';
 import {
-  validAppStates,
-  InputAppState,
   AppState,
-  NavigationStep,
   ConversationStep,
   FlowAction,
+  InputAppState,
+  NavigationStep,
+  validAppStates,
 } from './types';
-import { createNavigation, direction, sampleNavigation } from './navigation';
-import { flow, handleInput } from './conversation';
-import { listen, speak } from '../audio';
-import t, { Locale } from '../text';
 
 // handle navigation instructions
 export function speakNavigation(

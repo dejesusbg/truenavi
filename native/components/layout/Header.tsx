@@ -1,9 +1,8 @@
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Theme from '~/components/theme';
 import { Text } from './Text';
-import Theme from '../theme';
 
 export interface HeaderProps {
   title?: string;

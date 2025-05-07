@@ -1,4 +1,4 @@
-import api, { Response } from '~/utils/api';
+import { api, Response } from '~/services/api';
 
 export interface NodeProps {
   _id: string;

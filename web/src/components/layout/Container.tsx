@@ -5,10 +5,10 @@ interface ContainerProps extends HeaderProps {
   component: React.ReactNode;
 }
 
-export function Container({ icons, goBack = false, component }: ContainerProps) {
+export function Container({ icon, goBack = false, component }: ContainerProps) {
   return (
     <>
-      {icons && <Header icons={icons} goBack={goBack} />}
+      {icon && <Header icon={icon} goBack={goBack} />}
       {component}
     </>
   );

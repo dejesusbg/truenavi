@@ -1,8 +1,7 @@
-import { getNodes } from '~/services/routes';
 import { Audio } from 'expo-av';
-
-import { commonInputs, normalize } from '../text';
-import { InputAppState } from '../flow';
+import { getNodes } from '~/services/routes';
+import { InputAppState } from '~/utils/flow';
+import { commonInputs, normalize } from '~/utils/text';
 
 const SILENCE_THRESHOLD = 60;
 const SILENCE_TIMEOUT_MS = 1500;

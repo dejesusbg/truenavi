@@ -1,10 +1,10 @@
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import {
   defaultPreferences,
   getPreferences,
   PreferencesProps,
   PreferencesResponse,
 } from '~/services/preferences';
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 export interface PreferencesContextType {
   preferences: PreferencesProps;

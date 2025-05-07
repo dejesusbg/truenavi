@@ -1,10 +1,10 @@
 'use client';
-import { AdminProps } from '@/services/admin';
+import { Admin } from '@/services/admin';
 import { MdCreate, MdDelete } from 'react-icons/md';
 
 interface AdminItemProps {
-  admin: AdminProps;
-  onEdit: (admin: AdminProps) => void;
+  admin: Admin;
+  onEdit: (admin: Admin) => void;
   onDelete: (_id: string) => void;
 }
 

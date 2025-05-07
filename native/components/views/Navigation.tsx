@@ -1,12 +1,11 @@
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { direction, FlowState } from '~/utils/flow';
-import { View, StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Map from 'react-native-maps';
-
-import { Text, ScreenView } from '../layout';
-import Theme from '../theme';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { ScreenView, Text } from '~/components/layout';
+import Theme from '~/components/theme';
+import { direction, FlowState } from '~/utils/flow';
 
 export interface Navigation {
   [instruction: string]: string;

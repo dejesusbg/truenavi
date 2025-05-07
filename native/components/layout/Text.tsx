@@ -1,10 +1,10 @@
 import {
   Text as RNText,
   TextInput as RNTextInput,
-  TextProps,
-  TextInputProps,
-  TextStyle,
   StyleSheet,
+  TextInputProps,
+  TextProps,
+  TextStyle,
 } from 'react-native';
 import usePreferencesContext from '~/context/PreferencesProvider';
 import t, { getLocale } from '~/utils/text';

@@ -1,10 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { Card, StatCounter, ToolButton } from '@/components';
 import L, { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MdPlace, MdTimeline, MdDelete, MdLinearScale } from 'react-icons/md';
-import { Card, StatCounter, ToolButton } from '@/components';
+import { useEffect, useState } from 'react';
+import { MdDelete, MdLinearScale, MdPlace, MdTimeline } from 'react-icons/md';
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 
 const defaultLocation = [11.2250879, -74.1866137] as LatLngExpression;
 

@@ -1,18 +1,15 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { Button, Card, Divider, EmptyState, InputField, ListItem, SearchInput } from '@/components';
+import { AdminProps, defaultAdmin, deleteAdmin, getAllAdmins, updateAdmin } from '@/services/admin';
+import { registerUser } from '@/services/auth';
+import { useEffect, useState } from 'react';
 import { MdClose, MdPersonAdd, MdSearch } from 'react-icons/md';
-import { Card, Button, SearchInput, Divider, InputField, ListItem, EmptyState } from '@/components';
-import { AdminProps, deleteAdmin, getAllAdmins, updateAdmin } from '@/services/admin';
-import { handleAuth, registerUser } from '@/services/auth';
 
-export const initialForm: AdminProps = { _id: '', name: '', email: '', password: '' };
 type appState = 'view' | 'edit' | 'create';
 
 const AdminComponent = () => {
-  handleAuth();
-
   const [admins, setAdmins] = useState<AdminProps[]>([]);
-  const [formData, setFormData] = useState(initialForm);
+  const [formData, setFormData] = useState(defaultAdmin);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [mode, setMode] = useState<appState>('view');
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,13 +30,13 @@ const AdminComponent = () => {
   };
 
   const handleCreate = () => {
-    setFormData(initialForm);
+    setFormData(defaultAdmin);
     setCurrentId(null);
     setMode('create');
   };
 
   const handleCancel = () => {
-    setFormData(initialForm);
+    setFormData(defaultAdmin);
     setCurrentId(null);
     setMode('view');
   };

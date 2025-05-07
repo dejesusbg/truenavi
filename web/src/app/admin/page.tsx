@@ -1,11 +1,7 @@
 import AdminComponent from '@/app/admin/component';
 import { Container } from '@/components';
 
-const adminIcons = [
-  { name: 'MdMap', href: 'map' },
-  { name: 'MdExitToApp', href: 'login' },
-];
-
 export default function Admin() {
-  return <Container icons={adminIcons} goBack={true} component={<AdminComponent />} />;
+  const icon = { name: 'MdMap', href: 'map' };
+  return <Container icon={icon} goBack={true} component={<AdminComponent />} />;
 }

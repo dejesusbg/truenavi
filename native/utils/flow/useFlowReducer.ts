@@ -1,11 +1,15 @@
+import { useEffect, useReducer } from 'react';
 import { PreferencesProps } from '~/services/preferences';
-import { useReducer, useEffect } from 'react';
-
-import { endNavigation, listenConversation, speakConversation } from './actions';
-import { handlePermissions, speakNavigation } from './actions';
-import { FlowState, FlowAction } from './types';
+import { getLocale } from '~/utils/text';
+import {
+  endNavigation,
+  handlePermissions,
+  listenConversation,
+  speakConversation,
+  speakNavigation,
+} from './actions';
 import { flow } from './conversation';
-import { getLocale } from '../text';
+import { FlowAction, FlowState } from './types';
 
 export const defaultState: FlowState = {
   appState: 'not-allowed',

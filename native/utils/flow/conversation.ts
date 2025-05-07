@@ -1,9 +1,8 @@
+import { Dispatch } from 'react';
 import { updatePreferences } from '~/services/preferences';
 import { getNodes } from '~/services/routes';
-import { Dispatch } from 'react';
-
+import { commonInputs, normalize } from '~/utils/text';
 import { ConversationStep, FlowAction, InputAppState } from './types';
-import { commonInputs, normalize } from '../text';
 
 const createStep = (
   icon: string,

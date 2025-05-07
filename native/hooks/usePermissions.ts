@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as Location from 'expo-location';
 import { Audio } from 'expo-av';
+import * as Location from 'expo-location';
+import { useCallback, useEffect, useState } from 'react';
 
 export function usePermissions(): boolean {
   const [granted, setGranted] = useState(false);

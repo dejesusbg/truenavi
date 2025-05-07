@@ -1,8 +1,7 @@
-import { View, Linking, StyleSheet, TouchableOpacity } from 'react-native';
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-import { Text, ScreenView } from '../layout';
-import Theme from '../theme';
+import { ScreenView, Text } from '~/components/layout';
+import Theme from '~/components/theme';
 
 export function PermissionView() {
   return (

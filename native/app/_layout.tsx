@@ -1,12 +1,12 @@
-import { PreferencesProvider } from '~/context/PreferencesProvider';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
-import Theme from '~/components/theme';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Theme from '~/components/theme';
+import { PreferencesProvider } from '~/context/PreferencesProvider';
 
 SplashScreen.preventAutoHideAsync();
 

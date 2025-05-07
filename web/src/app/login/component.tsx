@@ -1,6 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Button, InputField, LoadingIndicator } from '@/components';
+import { loginUser } from '@/services/auth';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import {
   MdAdminPanelSettings,
   MdLock,
@@ -8,8 +10,6 @@ import {
   MdVisibility,
   MdVisibilityOff,
 } from 'react-icons/md';
-import { InputField, Button, LoadingIndicator } from '@/components';
-import { loginUser, logoutUser } from '@/services/auth';
 
 const LoginComponent = () => {
   const router = useRouter();
@@ -18,19 +18,13 @@ const LoginComponent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    logoutUser();
-  }, []);
-
   const handleLogin = async (e: any) => {
     e.preventDefault();
     if (!email || !password) return;
 
     setIsLoading(true);
-    const res = await loginUser(email, password);
+    await loginUser(email, password, router);
     setIsLoading(false);
-
-    if (res.success) router.push('/admin');
   };
 
   return (

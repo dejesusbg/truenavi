@@ -1,9 +1,9 @@
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Text, ScreenView } from '~/components/layout';
-import { View, StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
-import { FlowState } from '~/utils/flow';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { ScreenView, Text } from '~/components/layout';
+import { FlowState } from '~/utils/flow';
 
 import Theme from '../theme';
 

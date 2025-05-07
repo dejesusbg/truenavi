@@ -1,10 +1,11 @@
 'use client';
+import { logoutUser } from '@/services/auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { MdArrowBackIosNew } from 'react-icons/md';
 
 export interface HeaderProps {
+  icon?: { name: string; href: string };
   goBack?: boolean;
-  icons?: { name: string; href?: string }[];
 }
 
 function Icon({ name }: { name: string }) {
@@ -12,7 +13,7 @@ function Icon({ name }: { name: string }) {
   return <IconComponent className="text-2xl text-white" />;
 }
 
-export function Header({ icons, goBack = false }: HeaderProps) {
+export function Header({ icon, goBack = false }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname().replace('/', '');
 
@@ -30,18 +31,18 @@ export function Header({ icons, goBack = false }: HeaderProps) {
       </div>
 
       <div className="flex-row items-center gap-4">
-        {icons &&
-          icons.length > 0 &&
-          icons.map(({ name, href }, index) => (
-            <button
-              key={index}
-              className="flex items-center justify-center w-8 h-8 rounded-lg bg-opacity-10 bg-btn-header"
-              onClick={() => {
-                router.push(href || '/');
-              }}>
-              <Icon name={name} />
-            </button>
-          ))}
+        {icon && (
+          <button
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-opacity-10 bg-btn-header"
+            onClick={() => router.push(icon.href)}>
+            <Icon name={icon.name} />
+          </button>
+        )}
+        <button
+          className="flex items-center justify-center w-8 h-8 rounded-lg bg-opacity-10 bg-btn-header"
+          onClick={() => logoutUser(router)}>
+          <Icon name="MdExitToApp" />
+        </button>
       </div>
     </div>
   );

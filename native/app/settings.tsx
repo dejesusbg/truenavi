@@ -1,11 +1,11 @@
-import { defaultPreferences, PreferencesProps, updatePreferences } from '~/services/preferences';
+import { Fragment, useEffect, useState } from 'react';
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import usePreferences from '~/context/PreferencesProvider';
 import { ScreenView, Text } from '~/components/layout';
-import { Fragment, useEffect, useState } from 'react';
 import Theme from '~/components/theme';
-import { deviceId } from '~/utils/api';
+import usePreferences from '~/context/PreferencesProvider';
+import { deviceId } from '~/services/api';
+import { defaultPreferences, PreferencesProps, updatePreferences } from '~/services/preferences';
 
 interface SettingsItemProps {
   title: string;
