@@ -1,4 +1,5 @@
 import { updatePreferences } from '~/services/preferences';
+import { getNodes } from '~/services/routes';
 import { Dispatch } from 'react';
 
 import { ConversationStep, FlowAction, InputAppState } from './types';
@@ -51,7 +52,7 @@ export async function handleInput(
   type: InputAppState,
   dispatch: Dispatch<FlowAction>
 ): Promise<ConversationStep> {
-  const input = parseInput(userInput, type);
+  const input = await parseInput(userInput, type);
   const output = current.output.replace(/\n/g, ' ');
 
   console.log(`[Conversation] ${output} -> ${userInput} (${input})`);
@@ -67,7 +68,13 @@ export async function handleInput(
   return flow[current.nextId] || current;
 }
 
-export function parseInput(userInput: string, type: InputAppState): string | boolean | null {
+export async function parseInput(
+  userInput: string,
+  type: InputAppState
+): Promise<string | boolean | null> {
+  // const res = await getNodes();
+  // commonInputs.place = (res.data ?? []).map((node) => normalize(node.name));
+
   const input = normalize(userInput);
 
   if (type === 'config') {
@@ -78,7 +85,6 @@ export function parseInput(userInput: string, type: InputAppState): string | boo
   if (type === 'start') {
     if (commonInputs.config.includes(input)) return 'config';
     if (commonInputs.place.includes(input)) return input;
-    // TODO: get actual places and search
   }
 
   return null;

@@ -1,3 +1,4 @@
+import { getNodes } from '~/services/routes';
 import { Audio } from 'expo-av';
 
 import { commonInputs, normalize } from '../text';
@@ -52,7 +53,10 @@ async function setupAudio() {
   }
 }
 
-function simulateInput(type: InputAppState): string {
+export async function simulateInput(type: InputAppState): Promise<string> {
+  const res = await getNodes();
+  commonInputs.place = (res.data ?? []).map((node) => normalize(node.name));
+
   const pool: string[] = {
     config: [...commonInputs.yes, ...commonInputs.no],
     start: [...commonInputs.place, ...commonInputs.config],

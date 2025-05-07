@@ -1,17 +1,16 @@
 import { PreferencesProps } from '~/services/preferences';
 
-export type Locale = 'es-ES' | 'en-EN';
+export type Locale = 'es-CO' | 'en-GB';
 
 export const commonInputs: Record<string, string[]> = {
-  place: ['edificio bienestar', 'lago', 'cafeteria', 'mar caribe', 'restaurante'],
   config: ['configurar', 'settings', 'setup'],
   yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
   no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
 };
 
 const translationMap: Record<Locale, Record<string, string>> = {
-  'en-EN': {},
-  'es-ES': {
+  'en-GB': {},
+  'es-CO': {
     // conversation
     'enable the necessary permissions in the settings so truenavi can function properly':
       'abre los ajustes para activar los permisos necesarios para que truenavi funcione',
@@ -45,21 +44,21 @@ const translationMap: Record<Locale, Record<string, string>> = {
 
     // navigation
     'going to your destination': 'en camino a tu destino',
-    'turn to the left': 'gira a la izquierda',
-    'turn to the right': 'gira a la derecha',
+    'you should turn to the left': 'gira en dirección a la izquierda',
+    'you should turn to the right': 'gira en dirección a la derecha',
     'turn slightly to the left': 'gira ligeramente a la izquierda',
     'turn slightly to the right': 'gira ligeramente a la derecha',
     'go straight': 'continúa recto',
     'your destination is here': 'has llegado a tu destino',
     'rain chance of': 'posibilidad de lluvia',
-    rerouting: 'recalculando ruta',
+    'hold up, rerouting quickly': 'recalculando tu ruta rapidamente',
     percent: 'por ciento',
     meters: 'metros',
   },
 };
 
 export function getLocale(preferences: PreferencesProps): Locale {
-  return preferences.spanish ? 'es-ES' : 'en-EN';
+  return preferences.spanish ? 'es-CO' : 'en-GB';
 }
 
 export function normalize(input: string) {
