@@ -28,8 +28,8 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'medium
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/50">
-      <div className={clsx('bg-container rounded-xl w-full', sizeClasses[size])}>
+    <div className="fixed inset-0 z-[9999] items-center justify-center p-4 backdrop-blur-sm bg-overlay/50">
+      <div className={clsx('bg-overlay rounded-xl w-full', sizeClasses[size])}>
         <div className="flex-row items-center justify-between p-6 border-b border-outline">
           <h2 className="text-lg font-semibold text-white">{title}</h2>
           <button onClick={onClose} className="text-white">

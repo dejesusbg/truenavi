@@ -9,6 +9,5 @@ export * from './ui/InputField';
 export * from './ui/ListItem';
 export * from './ui/LoadingIndicator';
 export * from './ui/SearchInput';
-export * from './ui/StatCounter';
 export * from './ui/Toast';
 export * from './ui/ToolButton';

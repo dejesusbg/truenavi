@@ -54,7 +54,7 @@
     @apply bg-overlay font-sans backdrop-blur-[50px] h-screen p-4 pb-16 overflow-hidden;
   }
 
-  div,
+  div:not(.leaflet-popup),
   form,
   button {
     @apply flex flex-col relative;
