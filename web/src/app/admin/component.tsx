@@ -1,6 +1,6 @@
 'use client';
 import { Button, Card, Divider, EmptyState, InputField, ListItem, SearchInput } from '@/components';
-import { AdminProps, defaultAdmin, deleteAdmin, getAllAdmins, updateAdmin } from '@/services/admin';
+import { AdminProps, defaultAdmin, deleteAdmin, getAdmins, updateAdmin } from '@/services/admin';
 import { registerUser } from '@/services/auth';
 import { useEffect, useState } from 'react';
 import { MdClose, MdPersonAdd, MdSearch } from 'react-icons/md';
@@ -15,7 +15,7 @@ const AdminComponent = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchAdmins = async () => {
-    const res = await getAllAdmins();
+    const res = await getAdmins();
     if (res.success && res.data) setAdmins(res.data);
   };
 

@@ -45,7 +45,7 @@ authToken.set = (token: string, router: AppRouterInstance): void => {
     secure: process.env.NODE_ENV === 'production',
     sameSite: true,
     path: '/',
-    maxAge: 3600,
+    maxAge: 7200,
   };
   document.cookie = serialize('access_token', token, options);
   router.push('/admin');

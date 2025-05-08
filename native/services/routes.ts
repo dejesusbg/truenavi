@@ -2,16 +2,21 @@ import { api, Response } from '~/services/api';
 
 export interface NodeProps {
   _id: string;
-  name: string;
-  coordinates: number[];
-  next: string;
-  timestamp: string;
+  coordinates: [number, number];
+  name?: string;
+}
+
+export interface EdgeProps {
+  _id: string;
+  distance: number;
+  startNodeId: NodeProps;
+  endNodeId: NodeProps;
 }
 
 export interface RouteProps {
   totalDistance: number;
-  path: any[];
-  edges: any[];
+  path: NodeProps[];
+  edges: EdgeProps[];
 }
 
 export type NodesResponse = Response<NodeProps[]>;

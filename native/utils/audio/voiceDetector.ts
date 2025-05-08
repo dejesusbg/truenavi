@@ -54,7 +54,9 @@ async function setupAudio() {
 
 export async function simulateInput(type: InputAppState): Promise<string> {
   const res = await getNodes();
-  commonInputs.place = (res.data ?? []).map((node) => normalize(node.name));
+  commonInputs.place = (res.data ?? [])
+    .map((node) => node.name && normalize(node.name))
+    .filter((name): name is string => name !== undefined);
 
   const pool: string[] = {
     config: [...commonInputs.yes, ...commonInputs.no],

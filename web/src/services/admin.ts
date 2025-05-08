@@ -11,7 +11,7 @@ export const defaultAdmin: AdminProps = { _id: '', name: '', email: '', password
 
 export type AdminResponse = Response<AdminProps[]>;
 
-export async function getAllAdmins() {
+export async function getAdmins() {
   return await api.get<AdminResponse>('admin');
 }
 
