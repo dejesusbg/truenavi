@@ -183,7 +183,7 @@ const MapComponent = () => {
   };
 
   return (
-    <div className="relative flex flex-1 flex-row gap-4">
+    <div className="relative flex-1 flex-row gap-4">
       {/* map container */}
       <div className="relative flex-1 overflow-hidden rounded-lg">
         <MapContainer className="h-full w-full" {...options.container} ref={mapRef}>
@@ -229,7 +229,7 @@ const MapComponent = () => {
       </div>
 
       {/* Tool buttons */}
-      <div className="flex flex-col gap-4">
+      <div className="mt-auto gap-4">
         <ToolButton
           icon={<MdPlace />}
           isSelected={selectedTool === 'add_node'}
