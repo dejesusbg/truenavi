@@ -1,15 +1,5 @@
-import { api, Response } from '@/services/api';
-
-export interface AdminProps {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-}
-
-export const defaultAdmin: AdminProps = { _id: '', name: '', email: '', password: '' };
-
-export type AdminResponse = Response<AdminProps[]>;
+import { api } from '@/services/api';
+import { AdminResponse } from '@/services/types';
 
 export async function getAdmins() {
   return await api.get<AdminResponse>('admin');

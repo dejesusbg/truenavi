@@ -1,10 +1,10 @@
 'use client';
 import { Button, Card, Divider, EmptyState, InputField, ListItem, SearchInput } from '@/components';
-import { AdminProps, defaultAdmin, deleteAdmin, getAdmins, updateAdmin } from '@/services/admin';
-import { registerUser } from '@/services/auth';
+import { AdminProps, deleteAdmin, getAdmins, registerUser, updateAdmin } from '@/services';
 import { useEffect, useState } from 'react';
 import { MdClose, MdPersonAdd, MdSearch } from 'react-icons/md';
 
+const defaultAdmin: AdminProps = { _id: '', name: '', email: '', password: '' };
 type appState = 'view' | 'edit' | 'create';
 
 const AdminComponent = () => {

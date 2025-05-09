@@ -1,6 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { PreferencesProps } from '~/services/preferences';
-import { getLocale } from '~/utils/text';
+import { PreferencesProps, getLocale } from '~/services';
 import {
   endNavigation,
   handlePermissions,

@@ -1,7 +1,6 @@
-import { api, authToken, Response } from '@/services/api';
+import { api, authToken } from '@/services/api';
+import { AuthResponse } from '@/services/types';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-
-type AuthResponse = Response<any>;
 
 export async function registerUser(name: string, email: string, password: string) {
   return await api.post<AuthResponse>('auth/register', { name, email, password });

@@ -1,20 +1,6 @@
-import { api, Response } from '~/services/api';
-
-export interface PreferencesProps {
-  spanish?: boolean;
-  weather?: boolean;
-  vibration?: boolean;
-  isFirstTime?: boolean;
-}
-
-export const defaultPreferences: PreferencesProps = {
-  spanish: true,
-  weather: true,
-  vibration: true,
-  isFirstTime: true,
-};
-
-export type PreferencesResponse = Response<PreferencesProps>;
+import { Locale } from '~/utils/text';
+import { api } from './api';
+import { PreferencesProps, PreferencesResponse } from './types';
 
 export async function getPreferences() {
   return await api.get<PreferencesResponse>('preferences');
@@ -22,4 +8,12 @@ export async function getPreferences() {
 
 export async function updatePreferences(preferences: PreferencesProps) {
   return await api.put<PreferencesResponse>('preferences', preferences);
+}
+
+export async function resetPreferences() {
+  await updatePreferences({ spanish: true, weather: true, vibration: true, isFirstTime: true });
+}
+
+export function getLocale(preferences: PreferencesProps): Locale {
+  return preferences.spanish ? 'es-CO' : 'en-GB';
 }

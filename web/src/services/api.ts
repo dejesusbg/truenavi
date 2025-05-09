@@ -1,14 +1,6 @@
 import { parse, serialize } from 'cookie';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
-export interface Response<T> {
-  success: boolean;
-  token: string;
-  count?: number;
-  error?: string;
-  data?: T;
-}
-
 export const api = {
   get: async <T>(endpoint: string): Promise<T> => fetchData<T>(endpoint, 'GET'),
   post: async <T>(endpoint: string, body: any): Promise<T> => fetchData<T>(endpoint, 'POST', body),
@@ -28,9 +20,11 @@ async function fetchData<T>(endpoint: string, method: string, body?: any): Promi
 
   try {
     const response = await fetch(`${NEXT_PUBLIC_API}/${endpoint}`, options);
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) console.error(`Error fetching from ${endpoint}:`, data.error);
+    return data;
   } catch (error) {
-    console.error(`[${method}] Error fetching data from ${endpoint}:`, error);
+    console.error(`Network or unexpected error:`, error);
     return Promise.reject({ success: false, data: [], error });
   }
 }

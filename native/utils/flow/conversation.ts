@@ -1,6 +1,5 @@
 import { Dispatch } from 'react';
-import { updatePreferences } from '~/services/preferences';
-import { getNodes } from '~/services/routes';
+import { updatePreferences } from '~/services';
 import { commonInputs, normalize } from '~/utils/text';
 import { ConversationStep, FlowAction, InputAppState } from './types';
 
@@ -71,9 +70,6 @@ export async function parseInput(
   userInput: string,
   type: InputAppState
 ): Promise<string | boolean | null> {
-  // const res = await getNodes();
-  // commonInputs.place = (res.data ?? []).map((node) => normalize(node.name));
-
   const input = normalize(userInput);
 
   if (type === 'config') {

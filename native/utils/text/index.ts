@@ -1,5 +1,3 @@
-import { PreferencesProps } from '~/services/preferences';
-
 export type Locale = 'es-CO' | 'en-GB';
 
 export const commonInputs: Record<string, string[]> = {
@@ -56,10 +54,6 @@ const translationMap: Record<Locale, Record<string, string>> = {
     meters: 'metros',
   },
 };
-
-export function getLocale(preferences: PreferencesProps): Locale {
-  return preferences.spanish ? 'es-CO' : 'en-GB';
-}
 
 export function normalize(input: string) {
   return input.trim().toLowerCase();

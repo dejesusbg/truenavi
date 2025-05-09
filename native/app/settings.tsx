@@ -4,8 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
 import usePreferences from '~/context/PreferencesProvider';
-import { deviceId } from '~/services/api';
-import { defaultPreferences, PreferencesProps, updatePreferences } from '~/services/preferences';
+import { deviceId, PreferencesProps, resetPreferences, updatePreferences } from '~/services';
 
 interface SettingsItemProps {
   title: string;
@@ -57,7 +56,7 @@ export default function Settings() {
   };
 
   const handleReset = async () => {
-    await updatePreferences(defaultPreferences);
+    await resetPreferences();
     loadPreferences();
   };
 

@@ -1,10 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import {
-  defaultPreferences,
-  getPreferences,
-  PreferencesProps,
-  PreferencesResponse,
-} from '~/services/preferences';
+import { getPreferences, PreferencesProps, PreferencesResponse } from '~/services';
 
 export interface PreferencesContextType {
   preferences: PreferencesProps;
@@ -12,12 +7,12 @@ export interface PreferencesContextType {
 }
 
 const PreferencesContext = createContext<PreferencesContextType>({
-  preferences: defaultPreferences,
+  preferences: { spanish: true, weather: true, vibration: true, isFirstTime: true },
   loadPreferences: async () => Promise.resolve(),
 });
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [preferences, setPreferences] = useState<PreferencesProps>(defaultPreferences);
+  const [preferences, setPreferences] = useState<PreferencesProps>({});
 
   const loadPreferences = async (): Promise<PreferencesResponse> => {
     const res = await getPreferences();

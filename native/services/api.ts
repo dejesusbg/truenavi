@@ -2,14 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface Response<T> {
-  [key: string]: any;
-  success: boolean;
-  count?: number;
-  error?: string;
-  data?: T;
-}
-
 export const api = {
   get: async <T>(endpoint: string): Promise<T> => fetchData<T>(endpoint, 'GET'),
   post: async <T>(endpoint: string, body: any): Promise<T> => fetchData<T>(endpoint, 'POST', body),
