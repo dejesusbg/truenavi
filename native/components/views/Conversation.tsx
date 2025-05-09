@@ -4,13 +4,14 @@ import { StyleSheet, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import { FlowState } from '~/utils/flow';
-
 import Theme from '../theme';
 
 export function ConversationView({ state }: { state: FlowState }) {
   const router = useRouter();
+  const onPress = () => router.push('/settings');
   const [iconText, setIconText] = useState(['more-horiz', 'listen']);
-  const handleSettingsPress = () => router.push('/settings');
+  const { hideInput, currentStep, conversationStatus, userInput } = state;
+  const { icon, output } = currentStep;
 
   useEffect(() => {
     const statusMap = {
@@ -19,30 +20,30 @@ export function ConversationView({ state }: { state: FlowState }) {
       default: ['emergency', 'error'],
     };
 
-    setIconText(statusMap[state.conversationStatus || 'default']);
-  }, [state.conversationStatus]);
+    setIconText(statusMap[conversationStatus || 'default']);
+  }, [conversationStatus]);
 
-  const [icon, text] = iconText;
+  const [statusIcon, statusText] = iconText;
 
   return (
-    <ScreenView title="truenavi" icons={[{ name: 'settings', onPress: handleSettingsPress }]}>
+    <ScreenView title="truenavi" icons={[{ name: 'settings', onPress }]}>
       <View style={styles.container}>
         {/* assistant's question */}
         <View style={styles.subContainer}>
-          <MaterialIcons style={styles.sectionIcon} name={state.currentStep.icon} />
-          <Text style={styles.sectionText}>{state.currentStep.output}</Text>
+          <MaterialIcons style={styles.sectionIcon} name={icon} />
+          <Text style={styles.sectionText}>{output}</Text>
         </View>
 
         <View style={styles.separator} />
 
         {/* user's answer input */}
         <View style={styles.subContainer}>
-          <Text style={state.hideInput ? styles.sectionWaitText : styles.sectionText}>
-            {state.hideInput ? 'waiting' : state.userInput}
+          <Text style={hideInput ? styles.sectionWaitText : styles.sectionText}>
+            {hideInput ? 'waiting' : userInput}
           </Text>
           <View style={styles.statusIndicator}>
-            <MaterialIcons name={icon} style={styles.statusIcon} />
-            <Text style={styles.statusText}>{text}</Text>
+            <MaterialIcons name={statusIcon} style={styles.statusIcon} />
+            <Text style={styles.statusText}>{statusText}</Text>
           </View>
         </View>
       </View>

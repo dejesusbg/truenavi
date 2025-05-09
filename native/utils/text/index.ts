@@ -7,13 +7,17 @@ export const commonInputs: Record<string, string[]> = {
 };
 
 const translationMap: Record<Locale, Record<string, string>> = {
-  'en-GB': {},
+  'en-GB': {
+    'bienestar universitario': 'wellbeing building',
+  },
   'es-CO': {
     // conversation
     'enable the necessary permissions in the settings so truenavi can function properly':
       'abre los ajustes para activar los permisos necesarios para que truenavi funcione',
     "where are we headed?\nlet me know and i'll find the best route":
       '¿a dónde vamos hoy?\ndime y encontraré la mejor ruta para ti',
+    'already here,\nplease choose a different destination':
+      'ya estás aquí,\npor favor elige un destino distinto',
     'calculating your route and starting navigation now':
       'calculando tu ruta e iniciando la navegación ahora',
     "let's set up the app,\nwould you like to switch to spanish?":

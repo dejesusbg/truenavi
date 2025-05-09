@@ -7,7 +7,8 @@ import {
   TextStyle,
 } from 'react-native';
 import usePreferencesContext from '~/context/PreferencesProvider';
-import t, { getLocale } from '~/utils/text';
+import { getLocale } from '~/services';
+import t from '~/utils/text';
 
 interface BaseTextProps extends TextProps {
   TextComponent: React.ElementType;

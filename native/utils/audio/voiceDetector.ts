@@ -54,14 +54,16 @@ async function setupAudio() {
 
 // TODO: implement actual speech to text and get rid of this
 export async function simulateInput(type: InputAppState): Promise<string> {
-  commonInputs.place = await getPlacesNames();
+  let pool: string[] = ['pan con queso']; // placeholder for not recognized input
 
-  const pool: string[] = {
-    config: [...commonInputs.yes, ...commonInputs.no],
-    start: [...commonInputs.place, ...commonInputs.config],
-  }[type];
+  if (type === 'config') {
+    pool = [...commonInputs.yes, ...commonInputs.no];
+  }
 
-  pool.push('pan con queso'); // placeholder for not recognized input
+  if (type === 'start') {
+    commonInputs.place = await getPlacesNames();
+    pool = [...commonInputs.place, ...commonInputs.config];
+  }
 
   const random = pool[Math.floor(Math.random() * pool.length)];
   return normalize(random);
