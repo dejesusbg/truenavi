@@ -1,43 +1,70 @@
 import * as Location from 'expo-location';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Map from 'react-native-maps';
+import Map, { LatLng, Marker, Polyline } from 'react-native-maps';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
-import { direction, FlowState } from '~/utils/flow';
+import { direction, endNavigation, FlowDispatch, FlowState } from '~/utils/flow';
 
-export function NavigationView({ state, finish }: { state: FlowState; finish: () => void }) {
-  const [region, setRegion] = useState<{
-    latitude: number;
-    longitude: number;
-    latitudeDelta: number;
-    longitudeDelta: number;
-  } | null>(null);
+function getRegion(points: LatLng[]) {
+  const minLatitude = Math.min(...points.map((point) => point.latitude));
+  const maxLatitude = Math.max(...points.map((point) => point.latitude));
+  const minLongitude = Math.min(...points.map((point) => point.longitude));
+  const maxLongitude = Math.max(...points.map((point) => point.longitude));
 
-  const { navigationSteps, navigationIndex, destination } = state;
-  const currentInstruction = direction[navigationSteps[navigationIndex].id];
-  const distanceToNext = navigationSteps[navigationIndex].value;
+  // calculate the center of the region
+  const centerLatitude = (minLatitude + maxLatitude) / 2;
+  const centerLongitude = (minLongitude + maxLongitude) / 2;
+
+  // calculate the deltas
+  const latitudeDelta = maxLatitude - minLatitude;
+  const longitudeDelta = maxLongitude - minLongitude;
+
+  // construct the region object
+  return {
+    latitude: centerLatitude,
+    longitude: centerLongitude,
+    latitudeDelta: latitudeDelta * 1.25,
+    longitudeDelta: longitudeDelta * 1.25,
+  };
+}
+
+export function NavigationView({ state, dispatch }: { state: FlowState; dispatch: FlowDispatch }) {
+  const onPress = () => endNavigation(dispatch);
+  const { navigationSteps, navigationIndex, destination, path } = state;
+  const { id, value, node } = navigationSteps[navigationIndex];
+  const { icon, output } = direction[id];
 
   useEffect(() => {
-    const getLocation = async () => {
-      const location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0005,
-        longitudeDelta: 0.0005,
-      });
-    };
-
-    getLocation();
+    Location.getCurrentPositionAsync();
   }, []);
 
+  const points = path.map((edge) => ({
+    latitude: edge.coordinates[0],
+    longitude: edge.coordinates[1],
+  }));
+
+  const region = getRegion(points);
+
   return (
-    <ScreenView title="navigation" icons={[{ name: 'close', onPress: finish }]}>
+    <ScreenView title="navigation" icons={[{ name: 'close', onPress }]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
-          {region && <Map style={styles.map} region={region} showsUserLocation showsCompass />}
+          <Map style={styles.map} region={region} showsBuildings={false} showsUserLocation>
+            <Polyline
+              style={styles.line}
+              coordinates={points}
+              strokeColor="#3365a6"
+              strokeWidth={8}
+            />
+            {points.map(
+              (point, index) =>
+                (path[index].name || node?._id === path[index]._id) && (
+                  <Marker key={index} coordinate={point} title={path[index].name} />
+                )
+            )}
+          </Map>
           <View style={styles.destinationOverlay}>
             <MaterialIcons name="navigation" style={styles.destinationIcon} />
             <Text style={styles.destinationText}>{destination}</Text>
@@ -46,11 +73,11 @@ export function NavigationView({ state, finish }: { state: FlowState; finish: ()
 
         <View style={styles.instructionContainer}>
           <View style={styles.instructionIconContainer}>
-            <MaterialIcons name={currentInstruction.icon} style={styles.instructionIcon} />
+            <MaterialIcons name={icon} style={styles.instructionIcon} />
           </View>
           <View style={styles.instructionTextContainer}>
-            <Text style={styles.instructionText}>{currentInstruction.output}</Text>
-            {distanceToNext && <Text style={styles.distanceText}>{distanceToNext}</Text>}
+            <Text style={styles.instructionText}>{output}</Text>
+            {value && <Text style={styles.valueText}>{value}</Text>}
           </View>
         </View>
       </View>
@@ -73,6 +100,9 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+  },
+  line: {
+    zIndex: 9999,
   },
   destinationOverlay: {
     position: 'absolute',
@@ -122,7 +152,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Theme.white,
   },
-  distanceText: {
+  valueText: {
     fontSize: 16,
     color: Theme.foreground,
     marginTop: 4,
