@@ -60,6 +60,18 @@
     @apply flex flex-col relative;
   }
 
+  .leaflet-popup-content {
+    @apply !m-2 !font-sans !text-base !text-white !text-nowrap !w-min;
+  }
+
+  .leaflet-popup-content-wrapper {
+    @apply !bg-overlay !backdrop-blur-sm;
+  }
+
+  .leaflet-popup-tip {
+    @apply !hidden;
+  }
+
   button,
   a {
     @apply cursor-pointer hover:brightness-90;
