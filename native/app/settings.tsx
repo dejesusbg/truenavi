@@ -79,7 +79,7 @@ export default function Settings() {
           <Fragment key={index}>
             <SettingItem
               {...item}
-              isSwitch
+              isSwitch={isSwitch}
               onValueChange={
                 isSwitch
                   ? (value) => handleChange(item.prop as keyof PreferencesProps, value)
