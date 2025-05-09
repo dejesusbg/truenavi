@@ -1,5 +1,5 @@
 import { Dispatch } from 'react';
-import { updatePreferences } from '~/services';
+import { getPlacesNames, updatePreferences } from '~/services';
 import { commonInputs, normalize } from '~/utils/text';
 import { ConversationStep, FlowAction, InputAppState } from './types';
 
@@ -70,6 +70,7 @@ export async function parseInput(
   userInput: string,
   type: InputAppState
 ): Promise<string | boolean | null> {
+  commonInputs.place = await getPlacesNames();
   const input = normalize(userInput);
 
   if (type === 'config') {

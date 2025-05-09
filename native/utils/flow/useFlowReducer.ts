@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { PreferencesProps, getLocale } from '~/services';
+import { PreferencesProps, calculateRoute, getLocale, getNodes } from '~/services';
 import {
   endNavigation,
   handlePermissions,
@@ -63,6 +63,7 @@ export function useFlowReducer(
   const locale = getLocale(preferences);
 
   useEffect(() => {
+    loadPreferences();
     const isFirstTime = preferences.isFirstTime ?? true;
     handlePermissions(isFirstTime, permissionsGranted, dispatch);
   }, [permissionsGranted]);
@@ -75,7 +76,7 @@ export function useFlowReducer(
     if (conversationStatus === 'speak') {
       speakConversation(currentStep, locale, dispatch);
     } else if (conversationStatus === 'listen') {
-      listenConversation(appState, currentStep, userInput, loadPreferences, dispatch);
+      listenConversation(appState, currentStep, userInput, preferences, loadPreferences, dispatch);
     }
   }, [state.conversationStatus, state.currentStep]);
 

@@ -1,8 +1,9 @@
 import { Dispatch } from 'react';
+import { PreferencesProps } from '~/services';
 import { listen, speak } from '~/utils/audio';
 import t, { Locale } from '~/utils/text';
 import { flow, handleInput } from './conversation';
-import { createNavigation, direction, sampleNavigation } from './navigation';
+import { direction, getRoute } from './navigation';
 import {
   AppState,
   ConversationStep,
@@ -27,7 +28,8 @@ export function speakNavigation(
   speak(t(instructionText, locale), locale, {
     onDone: () => {
       if (index < steps.length - 1) {
-        setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), 5000);
+        // TODO: check actual navigation flow to go to next instruction
+        setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), 3000);
       } else {
         endNavigation(dispatch);
       }
@@ -51,18 +53,19 @@ export async function listenConversation(
   state: AppState,
   step: ConversationStep,
   input: string,
+  preferences: PreferencesProps,
   loadPreferences: () => Promise<any>,
   dispatch: Dispatch<FlowAction>
 ) {
   // determine next app state
   const newState = validAppStates.includes(step.nextId) ? (step.nextId as AppState) : state;
-  dispatch({ type: 'SET_APP_STATE', payload: newState });
 
   // special case: start navigation if that's the next state
-  if (newState === 'navigate') return startNavigation(input, dispatch);
+  if (newState === 'navigate') return startNavigation(input, preferences, dispatch);
 
   // get user input from audio
   const listenedInput = await listen(state as InputAppState);
+  dispatch({ type: 'SET_APP_STATE', payload: newState });
   dispatch({ type: 'SET_USER_INPUT', payload: listenedInput });
   dispatch({ type: 'HIDE_INPUT', payload: false });
 
@@ -78,11 +81,18 @@ export async function listenConversation(
 }
 
 // initialize navigation flow
-export function startNavigation(destination: string, dispatch: Dispatch<FlowAction>) {
-  // TODO: generate actual navigation steps based on destination + add delay
-  const navigation = [createNavigation('start'), ...sampleNavigation, createNavigation('end')];
-  dispatch({ type: 'SET_DESTINATION', payload: destination });
-  dispatch({ type: 'START_NAVIGATION', payload: navigation });
+export async function startNavigation(
+  destination: string,
+  preferences: PreferencesProps,
+  dispatch: Dispatch<FlowAction>
+) {
+  const route = await getRoute(destination, preferences);
+  setTimeout(() => {
+    dispatch({ type: 'SET_DESTINATION', payload: destination });
+    dispatch({ type: 'SET_APP_STATE', payload: 'navigate' });
+    dispatch({ type: 'SET_CONVERSATION_STATUS', payload: null });
+    dispatch({ type: 'START_NAVIGATION', payload: route });
+  }, 3000);
 }
 
 // end navigation and return to conversation (delay)

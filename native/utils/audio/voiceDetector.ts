@@ -1,5 +1,5 @@
 import { Audio } from 'expo-av';
-import { getPlaces } from '~/services';
+import { getPlacesNames } from '~/services';
 import { InputAppState } from '~/utils/flow';
 import { commonInputs, normalize } from '~/utils/text';
 
@@ -52,8 +52,9 @@ async function setupAudio() {
   }
 }
 
+// TODO: implement actual speech to text and get rid of this
 export async function simulateInput(type: InputAppState): Promise<string> {
-  commonInputs.place = await getPlaces();
+  commonInputs.place = await getPlacesNames();
 
   const pool: string[] = {
     config: [...commonInputs.yes, ...commonInputs.no],

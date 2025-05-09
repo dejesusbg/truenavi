@@ -7,21 +7,6 @@ import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
 import { direction, FlowState } from '~/utils/flow';
 
-export interface Navigation {
-  [instruction: string]: string;
-}
-
-export const navigationFlow: Navigation = {
-  'turn-left': 'turn to the left',
-  'turn-right': 'turn to the right',
-  'turn-slight-left': 'turn slightly to the left',
-  'turn-slight-right': 'turn slightly to the right',
-  'arrow-upward': 'go straight',
-  'auto-awesome': 'rerouting',
-  cloud: 'rain chance of',
-  place: 'your destination is here',
-};
-
 export function NavigationView({ state, finish }: { state: FlowState; finish: () => void }) {
   const [region, setRegion] = useState<{
     latitude: number;
@@ -52,16 +37,7 @@ export function NavigationView({ state, finish }: { state: FlowState; finish: ()
     <ScreenView title="navigation" icons={[{ name: 'close', onPress: finish }]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
-          {region && (
-            <Map
-              style={styles.map}
-              region={region}
-              userInterfaceStyle="dark"
-              showsUserLocation
-              showsCompass
-              showsScale
-            />
-          )}
+          {region && <Map style={styles.map} region={region} showsUserLocation showsCompass />}
           <View style={styles.destinationOverlay}>
             <MaterialIcons name="navigation" style={styles.destinationIcon} />
             <Text style={styles.destinationText}>{destination}</Text>
