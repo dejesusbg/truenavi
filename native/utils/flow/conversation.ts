@@ -1,61 +1,25 @@
-import { Dispatch } from 'react';
-import { getPlacesNames, updatePreferences } from '~/services';
-import { commonInputs, normalize } from '~/utils/text';
-import { ConversationStep, FlowAction, InputAppState } from './types';
+import { getPlacesNames, PreferencesProps } from '~/services';
+import { listen, speak } from '~/utils/audio';
+import t, { commonInputs, Locale, normalize } from '~/utils/text';
+import { startNavigation } from './navigation';
+import { flow } from './steps';
+import { AppState, ConversationStep, FlowDispatch, InputAppState, validAppStates } from './types';
 
-const createStep = (
-  icon: string,
-  output: string,
-  nextId: string = '',
-  action: (input: any) => Promise<any> = async () => {}
-): ConversationStep => ({ icon, output, action, nextId });
-
-// conversation flow
-export const flow: Record<string, ConversationStep> = {
-  start: createStep(
-    // TODO: search destination and find route
-    'signpost',
-    "where are we headed?\nlet me know and i'll find the best route",
-    'start_nav'
-  ),
-  start_nav: createStep('route', 'calculating your route and starting navigation now', 'navigate'),
-  config: createStep(
-    'language',
-    "let's set up the app,\nwould you like to switch to spanish?",
-    'config_weather',
-    (input) => updatePreferences({ spanish: input })
-  ),
-  config_weather: createStep(
-    'cloud',
-    'language set,\ndo you want to know the weather before navigating?',
-    'config_vibrate',
-    (input) => updatePreferences({ weather: input })
-  ),
-  config_vibrate: createStep(
-    'vibration',
-    'weather updates set,\nwould you like haptic feedback for alerts?',
-    'start',
-    (input) => updatePreferences({ vibration: input, isFirstTime: false })
-  ),
-  fallback: createStep(
-    'question-mark',
-    "sorry, i didn't catch that,\ncould you try saying it again?"
-  ),
-};
-
-// input utils
-export async function handleInput(
+// handle user input to get keep flow going
+async function handleInput(
   userInput: string,
   current: ConversationStep,
   type: InputAppState,
-  dispatch: Dispatch<FlowAction>
+  dispatch: FlowDispatch
 ): Promise<ConversationStep> {
   const input = await parseInput(userInput, type);
   const output = current.output.replace(/\n/g, ' ');
 
   console.log(`[Conversation] ${output} -> ${userInput} (${input})`);
 
-  if (input === null) return { ...flow.fallback, action: current.action, nextId: current.nextId };
+  if (input === null) {
+    return { ...flow.fallback, action: current.action, nextId: current.nextId };
+  }
 
   if (input === 'config') {
     dispatch({ type: 'SET_APP_STATE', payload: 'config' });
@@ -66,11 +30,11 @@ export async function handleInput(
   return flow[current.nextId] || current;
 }
 
-export async function parseInput(
+// parse user input into predefined categories
+async function parseInput(
   userInput: string,
   type: InputAppState
 ): Promise<string | boolean | null> {
-  commonInputs.place = await getPlacesNames();
   const input = normalize(userInput);
 
   if (type === 'config') {
@@ -79,9 +43,49 @@ export async function parseInput(
   }
 
   if (type === 'start') {
+    commonInputs.place = await getPlacesNames();
     if (commonInputs.config.includes(input)) return 'config';
     if (commonInputs.place.includes(input)) return input;
   }
 
   return null;
+}
+
+// handle conversation speech output
+export function speakConversation(step: ConversationStep, locale: Locale, dispatch: FlowDispatch) {
+  speak(t(step.output, locale), locale, {
+    onDone: () => dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'listen' }),
+  });
+}
+
+// handle conversation input processing
+export async function listenConversation(
+  state: AppState,
+  step: ConversationStep,
+  input: string,
+  preferences: PreferencesProps,
+  loadPreferences: () => Promise<any>,
+  dispatch: FlowDispatch
+) {
+  // determine next app state
+  const newState = validAppStates.includes(step.nextId) ? (step.nextId as AppState) : state;
+
+  // special case: start navigation if that's the next state
+  if (newState === 'navigate') return startNavigation(input, preferences, dispatch);
+
+  // get user input from audio
+  const listenedInput = await listen(state as InputAppState);
+  dispatch({ type: 'SET_APP_STATE', payload: newState });
+  dispatch({ type: 'SET_USER_INPUT', payload: listenedInput });
+  dispatch({ type: 'HIDE_INPUT', payload: false });
+
+  // process the input and reload preferences (in case they changed)
+  const nextStep = await handleInput(listenedInput, step, state as InputAppState, dispatch);
+  await loadPreferences();
+
+  setTimeout(() => {
+    dispatch({ type: 'HIDE_INPUT', payload: true });
+    dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'speak' });
+    dispatch({ type: 'SET_CURRENT_STEP', payload: nextStep });
+  }, 3000);
 }

@@ -1,23 +1,19 @@
 import { useEffect, useReducer } from 'react';
-import { PreferencesProps, calculateRoute, getLocale, getNodes } from '~/services';
-import {
-  endNavigation,
-  handlePermissions,
-  listenConversation,
-  speakConversation,
-  speakNavigation,
-} from './actions';
-import { flow } from './conversation';
+import { PreferencesProps, getLocale } from '~/services';
+import { listenConversation, speakConversation } from './conversation';
+import { speakNavigation } from './navigation';
+import { flow } from './steps';
 import { FlowAction, FlowState } from './types';
 
 export const defaultState: FlowState = {
-  appState: 'not-allowed',
+  appState: 'start',
   conversationStatus: null,
   currentStep: flow.config,
   userInput: '',
   hideInput: true,
   navigationSteps: [],
   navigationIndex: -1,
+  path: [],
   destination: '',
 };
 
@@ -36,9 +32,9 @@ const reducer = (state: FlowState, action: FlowAction): FlowState => {
     case 'SET_DESTINATION':
       return { ...state, destination: action.payload };
     case 'START_NAVIGATION':
-      return { ...state, navigationSteps: action.payload, navigationIndex: 0 };
+      return { ...state, navigationSteps: action.steps, path: action.path, navigationIndex: 0 };
     case 'END_NAVIGATION':
-      return { ...state, navigationSteps: [], navigationIndex: -1 };
+      return { ...state, navigationSteps: [], path: [], navigationIndex: -1 };
     case 'NEXT_INSTRUCTION':
       return { ...state, navigationIndex: state.navigationIndex + 1 };
     default:
@@ -52,7 +48,7 @@ const reducer = (state: FlowState, action: FlowAction): FlowState => {
  * @param permissionsGranted whether necessary permissions are granted
  * @param preferences user preferences including locale settings
  * @param loadPreferences function to reload user preferences
- * @returns state and control functions for the flow
+ * @returns state and dispatch function for the flow
  */
 export function useFlowReducer(
   permissionsGranted: boolean,
@@ -63,9 +59,17 @@ export function useFlowReducer(
   const locale = getLocale(preferences);
 
   useEffect(() => {
-    loadPreferences();
-    const isFirstTime = preferences.isFirstTime ?? true;
-    handlePermissions(isFirstTime, permissionsGranted, dispatch);
+    if (preferences) {
+      // handle permission changes
+      const isFirsTime = preferences.isFirstTime ?? true;
+      const newState = permissionsGranted ? (isFirsTime ? 'config' : 'start') : 'not-allowed';
+      const newStep = permissionsGranted && !isFirsTime ? flow.start : flow.config;
+      const newConversationStatus = permissionsGranted ? 'speak' : null;
+
+      dispatch({ type: 'SET_APP_STATE', payload: newState });
+      dispatch({ type: 'SET_CURRENT_STEP', payload: newStep });
+      dispatch({ type: 'SET_CONVERSATION_STATUS', payload: newConversationStatus });
+    }
   }, [permissionsGranted]);
 
   useEffect(() => {
@@ -88,5 +92,5 @@ export function useFlowReducer(
     speakNavigation(navigationSteps, navigationIndex, locale, dispatch);
   }, [state.navigationIndex]);
 
-  return { state, finish: () => endNavigation(dispatch) };
+  return { state, dispatch };
 }

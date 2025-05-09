@@ -6,9 +6,9 @@ import { useFlowReducer } from '~/utils/flow';
 export default function Home() {
   const permissionsGranted = usePermissions();
   const { preferences, loadPreferences } = usePreferencesContext();
-  const { state, finish } = useFlowReducer(permissionsGranted, preferences, loadPreferences);
+  const { state, dispatch } = useFlowReducer(permissionsGranted, preferences, loadPreferences);
 
   if (state.appState === 'not-allowed') return <PermissionView />;
-  if (state.appState === 'navigate') return <NavigationView state={state} finish={finish} />;
+  if (state.appState === 'navigate') return <NavigationView state={state} dispatch={dispatch} />;
   return <ConversationView state={state} />;
 }

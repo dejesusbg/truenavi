@@ -1,3 +1,6 @@
+import { Dispatch } from 'react';
+import { NodeProps } from '~/services';
+
 // states
 export const validAppStates = ['not-allowed', 'config', 'start', 'navigate'];
 export type AppState = 'not-allowed' | InputAppState | 'navigate';
@@ -20,6 +23,7 @@ export interface InstructionStep {
 export interface NavigationStep {
   id: string;
   value: string;
+  node?: NodeProps;
 }
 
 // flow
@@ -31,6 +35,7 @@ export interface FlowState {
   hideInput: boolean;
   navigationSteps: NavigationStep[];
   navigationIndex: number;
+  path: NodeProps[];
   destination: string;
 }
 
@@ -41,7 +46,9 @@ export type FlowAction =
   | { type: 'SET_CURRENT_STEP'; payload: ConversationStep }
   | { type: 'SET_USER_INPUT'; payload: string }
   | { type: 'HIDE_INPUT'; payload: boolean }
-  | { type: 'START_NAVIGATION'; payload: NavigationStep[] }
+  | { type: 'START_NAVIGATION'; steps: NavigationStep[]; path: NodeProps[] }
   | { type: 'END_NAVIGATION' }
   | { type: 'NEXT_INSTRUCTION' }
   | { type: 'SET_DESTINATION'; payload: string };
+
+export type FlowDispatch = Dispatch<FlowAction>;
