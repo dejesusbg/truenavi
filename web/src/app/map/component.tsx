@@ -1,5 +1,5 @@
 'use client';
-import { Modal, ToolButton } from '@/components';
+import { Button, Modal, ToolButton } from '@/components';
 import { createEdge, createNode, deleteEdge, deleteNode, getGraph, GraphProps } from '@/services';
 import L, { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -97,7 +97,7 @@ const MapComponent = () => {
 
   // create a new node
   const handleCreateNode = async () => {
-    if (tempNodeCoords) {
+    if (tempNodeCoords && tempNodeName.length <= 24) {
       tempNodeName
         ? await createNode(tempNodeCoords, tempNodeName)
         : await createNode(tempNodeCoords);
@@ -105,6 +105,8 @@ const MapComponent = () => {
       setTempNodeName('');
       setTempNodeCoords(null);
       fetchData();
+    } else {
+      alert('the node name cannot exceed 24 characters');
     }
   };
 
@@ -263,12 +265,13 @@ const MapComponent = () => {
               placeholder="enter node name"
               autoFocus
             />
-            <button
+            <Button
               type="submit"
-              className="px-4 py-2 text-white rounded-md bg-primary"
-              onClick={handleCreateNode}>
+              onClick={handleCreateNode}
+              variant="secondary"
+              disabled={tempNodeName.length > 24}>
               create
-            </button>
+            </Button>
           </div>
           {tempNodeCoords && (
             <div className="text-xs text-foreground-muted">

@@ -34,7 +34,6 @@ function getTurnDirection(bearing1: number, bearing2: number): string {
   else return 'u-turn';
 }
 
-// TODO: add special nodes id to check on them and follow navigation flow
 async function getRoute(destination: string, preferences: PreferencesProps) {
   const places = await getPlaces();
 
@@ -87,7 +86,6 @@ async function getRoute(destination: string, preferences: PreferencesProps) {
   }
 
   steps.push(navigationStep('end', destination));
-  console.log(steps);
   return { steps, path, edges };
 }
 
@@ -106,7 +104,7 @@ export function speakNavigation(
   speak(t(instructionText, locale), locale, {
     onDone: () => {
       if (index < steps.length - 1) {
-        // TODO: check actual navigation flow to go to next instruction
+        // TODO: check actual navigation flow and nodes to go to next instruction
         setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), 3000);
       } else {
         endNavigation(dispatch);

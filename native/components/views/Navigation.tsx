@@ -60,7 +60,7 @@ export function NavigationView({ state, dispatch }: { state: FlowState; dispatch
             />
             {points.map(
               (point, index) =>
-                (path[index].name || node?._id === path[index]._id) && (
+                (index === 0 || index + 1 === points.length || node?._id === path[index]._id) && (
                   <Marker key={index} coordinate={point} title={path[index].name} />
                 )
             )}
