@@ -71,6 +71,15 @@ const MapComponent = () => {
   const [tempNodeCoords, setTempNodeCoords] = useState<number[] | null>(null);
   const [selectedNodesId, setSelectedNodesId] = useState<string[]>([]);
 
+  // change selected tool with key shortcuts
+  const handleKeyDown = (e: any) => {
+    const { key } = e;
+    if (key === 'Escape' && !isModalOpen) handleToolSelect(selectedTool as string);
+    if (key === 'n') handleToolSelect('add_node');
+    if (key === 'c') handleToolSelect('add_connection');
+    if (key === 'h') handleToolSelect('hide_intermediate');
+  };
+
   // fetch nodes and edges
   const fetchData = async () => {
     const res = await getGraph();
@@ -79,6 +88,9 @@ const MapComponent = () => {
 
   useEffect(() => {
     fetchData();
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // handle tool selection - reset node selection when changing tools
@@ -255,7 +267,7 @@ const MapComponent = () => {
         }}
         title="add new node"
         size="small">
-        <div className="gap-4 pt-2">
+        <form onSubmit={(e) => e.preventDefault()} className="gap-4 pt-2">
           <div className="flex-row gap-4">
             <input
               type="text"
@@ -278,7 +290,7 @@ const MapComponent = () => {
               location: {tempNodeCoords[0].toFixed(6)}, {tempNodeCoords[1].toFixed(6)}
             </div>
           )}
-        </div>
+        </form>
       </Modal>
     </div>
   );
