@@ -75,6 +75,7 @@ export const direction: Record<string, InstructionStep> = {
   'u-turn': instructionStep('u-turn-right', 'please, make a u-turn'),
   straight: instructionStep('arrow-upward', 'go straight'),
   reroute: instructionStep('auto-awesome', 'hold up, rerouting quickly'),
-  weather: instructionStep('cloud', 'rain chance of'),
+  rain: instructionStep('umbrella', 'rain chance of'),
+  temperature: instructionStep('cloud', 'current temperature'),
   end: instructionStep('place', 'you have arrived to'),
 };

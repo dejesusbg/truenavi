@@ -36,10 +36,6 @@ export function NavigationView({ state, dispatch }: { state: FlowState; dispatch
   const { id, value, node } = navigationSteps[navigationIndex];
   const { icon, output } = direction[id];
 
-  useEffect(() => {
-    Location.getCurrentPositionAsync();
-  }, []);
-
   const points = path.map((edge) => ({
     latitude: edge.coordinates[0],
     longitude: edge.coordinates[1],

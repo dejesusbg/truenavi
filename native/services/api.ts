@@ -36,7 +36,7 @@ export const deviceId = async (): Promise<string> => {
     await AsyncStorage.setItem('device-id', newId);
     return newId;
   } catch (error) {
-    console.error('[AsyncStorage] Error during setting up:', error);
+    console.error('[AsyncStorage] Error during setting:', error);
     return '';
   }
 };

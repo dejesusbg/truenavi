@@ -1,4 +1,11 @@
-import { calculateRoute, EdgeProps, getPlaces, NodeProps, PreferencesProps } from '~/services';
+import {
+  calculateRoute,
+  EdgeProps,
+  getPlaces,
+  getWeather,
+  NodeProps,
+  PreferencesProps,
+} from '~/services';
 import { speak } from '~/utils/audio';
 import t, { Locale } from '~/utils/text';
 import { direction, flow, navigationNode, navigationStep } from './steps';
@@ -44,8 +51,9 @@ async function getRoute(destination: string, preferences: PreferencesProps) {
   let steps = [navigationStep('start', destination)];
 
   if (preferences.weather) {
-    // TODO: get actual rain chance
-    steps.push(navigationStep('weather', '20 percent'));
+    const { temperature, rain } = await getWeather();
+    steps.push(navigationStep('temperature', `${temperature} celsius`));
+    steps.push(navigationStep('rain', `${rain} percent`));
   }
 
   let edges: EdgeProps[] = [],
@@ -120,6 +128,7 @@ export async function startNavigation(
   dispatch: FlowDispatch
 ) {
   const { steps, path, edges } = await getRoute(destination, preferences);
+  console.log(path);
   setTimeout(() => {
     if (edges.length) {
       dispatch({ type: 'SET_DESTINATION', payload: destination });
