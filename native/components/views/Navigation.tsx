@@ -102,6 +102,17 @@ export function NavigationView({ state, dispatch }: { state: FlowState; dispatch
                 anchor={{ x: 0.2, y: 0.2 }}
               />
             )}
+
+            {/* current segment markers */}
+            {currentSegment.map((node, index) => (
+              <MapMarker
+                key={index}
+                coordinate={node}
+                iconSource={require('assets/marker-location.png')}
+                style={styles.markerLocation}
+                anchor={{ x: 0.2, y: 0.2 }}
+              />
+            ))}
           </Map>
 
           {/* destination */}
