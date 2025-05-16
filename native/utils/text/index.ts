@@ -16,8 +16,8 @@ const translationMap: Record<Locale, Record<string, string>> = {
       'abre los ajustes para activar los permisos necesarios para que truenavi funcione',
     "where are we headed?\nlet me know and i'll find the best route":
       '¿a dónde vamos hoy?\ndime y encontraré la mejor ruta para ti',
-    'already here,\nplease choose a different destination':
-      'ya estás aquí,\npor favor elige un destino distinto',
+    'no valid route,\nplease choose a different destination':
+      'ruta no encontrada,\npor favor elige un destino distinto',
     'calculating your route and starting navigation now':
       'calculando tu ruta e iniciando la navegación ahora',
     "let's set up the app,\nwould you like to switch to spanish?":
@@ -45,6 +45,7 @@ const translationMap: Record<Locale, Record<string, string>> = {
     speak: 'habla',
 
     // navigation
+    'starting from': 'empezando desde',
     'going to': 'en camino a',
     'please, turn to the left': 'haz un giro a la izquierda',
     'please, turn to the right': 'haz un giro a la derecha',
@@ -58,7 +59,7 @@ const translationMap: Record<Locale, Record<string, string>> = {
     'rain chance of': 'posibilidad de lluvia',
     'hold up, rerouting quickly': 'recalculando tu ruta rapidamente',
     'you have arrived to': 'has llegado a',
-    celcius: 'grados',
+    celsius: 'grados',
     percent: 'por ciento',
     meters: 'metros',
   },

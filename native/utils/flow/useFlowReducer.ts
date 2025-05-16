@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { PreferencesProps, getLocale } from '~/services';
-import { listenConversation, speakConversation } from './conversation';
+import { handlePermissions, listenConversation, speakConversation } from './conversation';
 import { speakNavigation } from './navigation';
 import { flow } from './steps';
 import { FlowAction, FlowState } from './types';
@@ -43,12 +43,16 @@ const reducer = (state: FlowState, action: FlowAction): FlowState => {
 };
 
 /**
- * custom hook to manage conversation and navigation flow
+ * Custom hook that manages the flow state and side effects for the application's conversation and navigation logic.
  *
- * @param permissionsGranted whether necessary permissions are granted
- * @param preferences user preferences including locale settings
- * @param loadPreferences function to reload user preferences
- * @returns state and dispatch function for the flow
+ * @param permissionsGranted - Indicates whether the required permissions have been granted.
+ * @param preferences - User preferences including language, weather, and first-time usage flags.
+ * @param loadPreferences - Async function to reload user preferences.
+ * @returns An object containing the current flow state and a dispatch function to update the state.
+ *
+ * @remarks
+ * - Handles permission checks and updates the flow state accordingly.
+ * - Manages conversation (speak/listen) and navigation flow based on the current state or mode.
  */
 export function useFlowReducer(
   permissionsGranted: boolean,
@@ -56,41 +60,26 @@ export function useFlowReducer(
   loadPreferences: () => Promise<any>
 ) {
   const [state, dispatch] = useReducer(reducer, defaultState);
-  const locale = getLocale(preferences);
+  const { isFirstTime, spanish, weather } = preferences;
+  const locale = getLocale(spanish!);
 
   useEffect(() => {
     if (preferences) {
-      // handle permission changes
-      const isFirsTime = preferences.isFirstTime ?? true;
-      const newState = permissionsGranted ? (isFirsTime ? 'config' : 'start') : 'not-allowed';
-      const newStep = permissionsGranted && !isFirsTime ? flow.start : flow.config;
-      const newConversationStatus = permissionsGranted ? 'speak' : null;
-
-      dispatch({ type: 'SET_APP_STATE', payload: newState });
-      dispatch({ type: 'SET_CURRENT_STEP', payload: newStep });
-      dispatch({ type: 'SET_CONVERSATION_STATUS', payload: newConversationStatus });
+      handlePermissions(permissionsGranted, isFirstTime!, dispatch);
     }
   }, [permissionsGranted]);
 
   useEffect(() => {
-    const { appState, conversationStatus, currentStep, userInput } = state;
-    if (appState === 'navigate') return;
-
-    // handle conversation flow (skip if in navigation mode)
-    if (conversationStatus === 'speak') {
-      speakConversation(currentStep, locale, dispatch);
-    } else if (conversationStatus === 'listen') {
-      listenConversation(appState, currentStep, userInput, preferences, loadPreferences, dispatch);
+    if (state.appState === 'navigate' && state.navigationIndex >= 0) {
+      speakNavigation(state, locale, dispatch);
+    } else {
+      if (state.conversationStatus === 'speak') {
+        speakConversation(state, locale, dispatch);
+      } else if (state.conversationStatus === 'listen') {
+        listenConversation(state, weather!, loadPreferences, dispatch);
+      }
     }
-  }, [state.conversationStatus, state.currentStep]);
-
-  useEffect(() => {
-    const { appState, navigationSteps, navigationIndex } = state;
-    if (appState !== 'navigate' || navigationIndex < 0) return;
-
-    // handle navigation flow (only when in navigate state and we have steps)
-    speakNavigation(navigationSteps, navigationIndex, locale, dispatch);
-  }, [state.navigationIndex]);
+  }, [state.conversationStatus, state.currentStep, state.navigationIndex]);
 
   return { state, dispatch };
 }

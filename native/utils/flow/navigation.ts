@@ -1,18 +1,20 @@
-import {
-  calculateRoute,
-  EdgeProps,
-  getPlaces,
-  getWeather,
-  NodeProps,
-  PreferencesProps,
-} from '~/services';
+import { getCurrentPositionAsync, LocationObject } from 'expo-location';
+import { calculateRoute, findClosest, findPlace, getWeather } from '~/services';
 import { speak } from '~/utils/audio';
 import t, { Locale } from '~/utils/text';
-import { direction, flow, navigationNode, navigationStep } from './steps';
-import { FlowDispatch, NavigationStep } from './types';
+import { direction, flow, navigationStep } from './steps';
+import { FlowDispatch, FlowState } from './types';
 
-// function to calculate bearing between two coordinates
-function getBearing(start: [number, number], end: [number, number]): number {
+/**
+ * Calculates the initial bearing (forward azimuth) in degrees from the start point to the end point.
+ *
+ * The bearing is measured clockwise from true north and normalized to a value between 0 and 360 degrees.
+ *
+ * @param start - The starting point as a tuple of [latitude, longitude] in decimal degrees.
+ * @param end - The ending point as a tuple of [latitude, longitude] in decimal degrees.
+ * @returns The initial bearing from the start point to the end point, in degrees.
+ */
+function calculateBearing(start: [number, number], end: [number, number]): number {
   const DEG_TO_RAD = Math.PI / 180;
   const lat1 = start[0] * DEG_TO_RAD;
   const lon1 = start[1] * DEG_TO_RAD;
@@ -24,72 +26,113 @@ function getBearing(start: [number, number], end: [number, number]): number {
   const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
   const bearing = Math.atan2(y, x);
 
-  return ((bearing * 180) / Math.PI + 360) % 360; // normalize to 0-360 degrees
+  // normalize to 0-360 degrees
+  return ((bearing * 180) / Math.PI + 360) % 360;
 }
 
-// function to determine turn direction based on bearing change
-function getTurnDirection(bearing1: number, bearing2: number): string {
+/**
+ * Determines the turn direction between two bearings.
+ *
+ * Calculates the angular difference between `bearing1` and `bearing2` and returns a string
+ * indicating the type of turn: 'straight', 'slight-right', 'slight-left', 'right', 'left',
+ * 'sharp-right', 'sharp-left', or 'u-turn'.
+ *
+ * @param bearing1 - The initial bearing in degrees (0-359).
+ * @param bearing2 - The target bearing in degrees (0-359).
+ * @returns A string representing the turn direction.
+ */
+function determineTurnDirection(bearing1: number, bearing2: number): string {
   let change = (bearing2 - bearing1 + 360) % 360;
   if (change > 180) change -= 360;
 
   const absChange = Math.abs(change);
+  const isRight = change > 0;
 
   if (absChange < 20) return 'straight';
-  else if (absChange < 45) return change > 0 ? 'slight-right' : 'slight-left';
-  else if (absChange < 100) return change > 0 ? 'right' : 'left';
-  else if (absChange < 160) return change > 0 ? 'sharp-right' : 'sharp-left';
-  else return 'u-turn';
+  if (absChange < 45) return isRight ? 'slight-right' : 'slight-left';
+  if (absChange < 100) return isRight ? 'right' : 'left';
+  if (absChange < 160) return isRight ? 'sharp-right' : 'sharp-left';
+  return 'u-turn';
 }
 
-async function getRoute(destination: string, preferences: PreferencesProps) {
-  const places = await getPlaces();
+/**
+ * Calculates a navigation route from the user's current position to a specified destination.
+ * Optionally includes weather information in the navigation steps.
+ *
+ * @param destination - The name of the destination place to navigate to.
+ * @param includeWeather - Whether to include weather information in the navigation steps.
+ * @returns An object containing the navigation steps, path, and edges for the route.
+ *          If the route cannot be calculated, returns an empty route object.
+ *
+ * @remarks
+ * - The function retrieves the user's current position and finds the closest start node.
+ * - If weather information is requested, it fetches and appends temperature and rain data to the steps.
+ * - The route is calculated between the start and end nodes, and navigation instructions are generated for each segment.
+ * - Steps include origin, start, straight segments, turns, weather (if requested), and end.
+ */
 
-  // TODO: get actual nearest node as start
-  const start = places.find((place) => place.name === 'entrada');
-  const end = places.find((place) => place.name === destination);
+async function getRoute(destination: string, includeWeather: boolean) {
+  const emptyRoute = { steps: [], path: [], edges: [] };
 
-  let steps = [navigationStep('start', destination)];
+  console.log('[Route] Getting current position');
+  // const location = await getCurrentPositionAsync(); // production
+  const location = {
+    coords: { latitude: 11.224301653902437, longitude: -74.18565012507534 },
+  } as LocationObject; // development
 
-  if (preferences.weather) {
-    const { temperature, rain } = await getWeather();
+  // find start and end nodes
+  const start = await findClosest(location.coords);
+  const end = await findPlace(destination);
+  if (!start || !end) return emptyRoute;
+
+  // initialize navigation steps
+  let steps = [navigationStep('origin', start.name!), navigationStep('start', destination)];
+
+  // add weather information if requested
+  if (includeWeather) {
+    console.log('[Route] Fetching weather');
+    const { temperature, rain } = await getWeather(location.coords);
     steps.push(navigationStep('temperature', `${temperature} celsius`));
     steps.push(navigationStep('rain', `${rain} percent`));
   }
 
-  let edges: EdgeProps[] = [],
-    path: NodeProps[] = [];
+  // calculate the route
+  console.log('[Route] Calculating route');
+  const route = await calculateRoute(start._id, end._id);
+  if (!route.success || !route.data) return emptyRoute;
 
-  if (start && end && start !== end) {
-    const route = await calculateRoute(start._id, end._id);
+  const { edges, path } = route.data;
 
-    if (route.success && route.data) {
-      ({ edges, path } = route.data);
+  // add first straight section
+  steps.push(navigationStep('straight', `${edges[0].distance} meters`, path[0], path[1]));
 
-      steps.push(navigationStep('straight', `${edges[0].distance} meters`));
+  // process each path segment to build navigation instructions
+  for (let i = 1; i < path.length - 1; i++) {
+    const prevNode = path[i - 1].coordinates;
+    const currentNode = path[i].coordinates;
+    const nextNode = path[i + 1].coordinates;
 
-      // loop through the edges and calculate each step
-      for (let i = 1; i < path.length - 1; i++) {
-        const a = path[i - 1].coordinates;
-        const b = path[i].coordinates;
-        const c = path[i + 1] ? path[i + 1].coordinates : path[i].coordinates;
+    const incomingBearing = calculateBearing(prevNode, currentNode);
+    const outgoingBearing = calculateBearing(currentNode, nextNode);
+    const turnDirection = determineTurnDirection(incomingBearing, outgoingBearing);
+    const distance = edges[i].distance;
 
-        const bearing1 = getBearing(a, b);
-        const bearing2 = getBearing(b, c);
+    // add turn instruction if not going straight
+    if (turnDirection !== 'straight') {
+      steps.push(navigationStep(turnDirection, '', path[i]));
+    }
 
-        const direction = getTurnDirection(bearing1, bearing2);
-        const distance = edges[i].distance;
+    // update distance for next straight segment
+    const lastStep = steps[steps.length - 1];
 
-        if (direction !== 'straight') steps.push(navigationNode(direction, path[i]));
-
-        // update last step distance if it was straight - otherwise add a straight step
-        const lastStep = steps[steps.length - 1];
-        if (lastStep.id === 'straight' && lastStep.value) {
-          const newDistance = parseInt(lastStep.value.split(' ')[0]) + distance;
-          lastStep.value = `${newDistance} meters`;
-        } else {
-          steps.push(navigationStep('straight', `${distance} meters`));
-        }
-      }
+    if (lastStep.id === 'straight') {
+      // combine with previous straight segment
+      const currentDistance = parseInt(lastStep.value.split(' ')[0]);
+      lastStep.value = `${currentDistance + distance} meters`;
+      lastStep.end = path[i + 1];
+    } else {
+      // add new straight segment
+      steps.push(navigationStep('straight', `${distance} meters`, path[i], path[i + 1]));
     }
   }
 
@@ -98,20 +141,16 @@ async function getRoute(destination: string, preferences: PreferencesProps) {
 }
 
 // handle navigation instructions
-export function speakNavigation(
-  steps: NavigationStep[],
-  index: number,
-  locale: Locale,
-  dispatch: FlowDispatch
-) {
-  const { id, value } = steps[index];
+export function speakNavigation(state: FlowState, locale: Locale, dispatch: FlowDispatch) {
+  const { navigationSteps, navigationIndex } = state;
+  const { id, value } = navigationSteps[navigationIndex];
   const instructionText = `${t(direction[id].output, locale)} ${t(value, locale)}`;
 
   console.log(`[Navigation] ${instructionText}`);
 
   speak(t(instructionText, locale), locale, {
     onDone: () => {
-      if (index < steps.length - 1) {
+      if (navigationIndex < navigationSteps.length - 1) {
         // TODO: check actual navigation flow and nodes to go to next instruction
         setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), 3000);
       } else {
@@ -124,20 +163,21 @@ export function speakNavigation(
 // initialize navigation flow
 export async function startNavigation(
   destination: string,
-  preferences: PreferencesProps,
+  weather: boolean,
   dispatch: FlowDispatch
 ) {
-  const { steps, path, edges } = await getRoute(destination, preferences);
-  console.log(path);
+  const { steps, path, edges } = await getRoute(destination, weather);
   setTimeout(() => {
     if (edges.length) {
+      // valid route exists - begin navigation
       dispatch({ type: 'SET_DESTINATION', payload: destination });
       dispatch({ type: 'SET_APP_STATE', payload: 'navigate' });
       dispatch({ type: 'SET_CONVERSATION_STATUS', payload: null });
       dispatch({ type: 'START_NAVIGATION', steps, path });
     } else {
+      // no valid route - fallback to conversation
       dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'speak' });
-      dispatch({ type: 'SET_CURRENT_STEP', payload: flow.same_destination });
+      dispatch({ type: 'SET_CURRENT_STEP', payload: flow.no_route });
     }
   }, 3000);
 }

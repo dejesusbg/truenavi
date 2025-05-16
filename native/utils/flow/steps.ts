@@ -14,12 +14,13 @@ function instructionStep(icon: string, output: string): InstructionStep {
   return { icon, output };
 }
 
-export function navigationStep(id: string, value: string): NavigationStep {
-  return { id, value };
-}
-
-export function navigationNode(id: string, node: NodeProps): NavigationStep {
-  return { id, value: '', node };
+export function navigationStep(
+  id: string,
+  value: string,
+  start?: NodeProps,
+  end?: NodeProps
+): NavigationStep {
+  return { id, value, start, end };
 }
 
 // conversation flow
@@ -29,9 +30,9 @@ export const flow: Record<string, ConversationStep> = {
     "where are we headed?\nlet me know and i'll find the best route",
     'start_nav'
   ),
-  same_destination: conversationStep(
-    'gps-fixed',
-    'already here,\nplease choose a different destination',
+  no_route: conversationStep(
+    'gps-not-fixed',
+    'no valid route,\nplease choose a different destination',
     'start_nav'
   ),
   start_nav: conversationStep(
@@ -65,6 +66,7 @@ export const flow: Record<string, ConversationStep> = {
 
 // navigation directions
 export const direction: Record<string, InstructionStep> = {
+  origin: instructionStep('home', 'starting from'),
   start: instructionStep('explore', 'going to'),
   left: instructionStep('turn-left', 'please, turn to the left'),
   right: instructionStep('turn-right', 'please, turn to the right'),

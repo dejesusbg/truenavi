@@ -2,10 +2,13 @@ import { Dispatch } from 'react';
 import { NodeProps } from '~/services';
 
 // states
-export const validAppStates = ['not-allowed', 'config', 'start', 'navigate'];
 export type AppState = 'not-allowed' | InputAppState | 'navigate';
 export type InputAppState = 'config' | 'start';
 export type ConversationStatus = 'speak' | 'listen' | null;
+
+export function isAppState(x: string): x is AppState {
+  return x === 'not-allowed' || x === 'navigate' || x === 'config' || x === 'start';
+}
 
 // steps
 export interface ConversationStep {
@@ -23,7 +26,8 @@ export interface InstructionStep {
 export interface NavigationStep {
   id: string;
   value: string;
-  node?: NodeProps;
+  start?: NodeProps;
+  end?: NodeProps;
 }
 
 // flow
