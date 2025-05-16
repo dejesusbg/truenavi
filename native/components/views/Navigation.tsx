@@ -1,77 +1,122 @@
-import * as Location from 'expo-location';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import Map, { LatLng, Marker, Polyline } from 'react-native-maps';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
 import { direction, endNavigation, FlowDispatch, FlowState } from '~/utils/flow';
 
-function getRegion(points: LatLng[]) {
-  const minLatitude = Math.min(...points.map((point) => point.latitude));
-  const maxLatitude = Math.max(...points.map((point) => point.latitude));
-  const minLongitude = Math.min(...points.map((point) => point.longitude));
-  const maxLongitude = Math.max(...points.map((point) => point.longitude));
+// function to calculate map region based on path to ensure it's visible
+function calculateRegion(points: LatLng[]) {
+  const latitudes = points.map((point) => point.latitude);
+  const longitudes = points.map((point) => point.longitude);
 
-  // calculate the center of the region
-  const centerLatitude = (minLatitude + maxLatitude) / 2;
-  const centerLongitude = (minLongitude + maxLongitude) / 2;
+  const minLat = Math.min(...latitudes);
+  const maxLat = Math.max(...latitudes);
+  const minLong = Math.min(...longitudes);
+  const maxLong = Math.max(...longitudes);
 
-  // calculate the deltas
-  const latitudeDelta = maxLatitude - minLatitude;
-  const longitudeDelta = maxLongitude - minLongitude;
-
-  // construct the region object
   return {
-    latitude: centerLatitude,
-    longitude: centerLongitude,
-    latitudeDelta: latitudeDelta * 1.25,
-    longitudeDelta: longitudeDelta * 1.25,
+    latitude: (minLat + maxLat) / 2,
+    longitude: (minLong + maxLong) / 2,
+    latitudeDelta: (maxLat - minLat) * 1.25,
+    longitudeDelta: (maxLong - minLong) * 1.25,
   };
 }
 
+function MapMarker({ coordinate, title, iconSource, style, anchor = { x: 0.5, y: 0.9 } }: any) {
+  return (
+    <Marker coordinate={coordinate} title={title} anchor={anchor}>
+      <Image source={iconSource} style={style} resizeMode="center" resizeMethod="resize" />
+    </Marker>
+  );
+}
+
 export function NavigationView({ state, dispatch }: { state: FlowState; dispatch: FlowDispatch }) {
-  const onPress = () => endNavigation(dispatch);
   const { navigationSteps, navigationIndex, destination, path } = state;
-  const { id, value, node } = navigationSteps[navigationIndex];
+  const { id, value, start, end } = navigationSteps[navigationIndex];
   const { icon, output } = direction[id];
 
+  // convert path to map coordinates
   const points = path.map((edge) => ({
     latitude: edge.coordinates[0],
     longitude: edge.coordinates[1],
+    ...edge,
   }));
 
-  const region = getRegion(points);
+  // get current location if available
+  const currentLocation =
+    start && !end ? { latitude: start.coordinates[0], longitude: start.coordinates[1] } : null;
+
+  // get current segment if available
+  const currentSegment =
+    start && end
+      ? [
+          { latitude: start.coordinates[0], longitude: start.coordinates[1] },
+          { latitude: end.coordinates[0], longitude: end.coordinates[1] },
+        ]
+      : [];
+
+  // choose region based on available data
+  const region = calculateRegion(
+    currentLocation ? [currentLocation] : currentSegment.length ? currentSegment : points
+  );
+
+  const onPress = () => endNavigation(dispatch);
 
   return (
     <ScreenView title="navigation" icons={[{ name: 'close', onPress }]}>
       <View style={styles.container}>
         <View style={styles.mapContainer}>
-          <Map style={styles.map} region={region} showsBuildings={false} showsUserLocation>
+          <Map style={styles.map} region={region} showsUserLocation>
+            {/* path polyline */}
             <Polyline
-              style={styles.line}
               coordinates={points}
-              strokeColor="#3365a6"
+              strokeColor="rgba(51,101,166,0.8)"
               strokeWidth={8}
+              zIndex={1}
+              lineDashPattern={[2.5, 5]}
             />
-            {points.map(
-              (point, index) =>
-                (index === 0 || index + 1 === points.length || node?._id === path[index]._id) && (
-                  <Marker key={index} coordinate={point} title={path[index].name} />
-                )
+
+            {/* start marker */}
+            <MapMarker
+              coordinate={points[0]}
+              title={points[0].name}
+              iconSource={require('assets/marker-pin.png')}
+              style={styles.markerPin}
+            />
+
+            {/* end marker */}
+            <MapMarker
+              coordinate={points[points.length - 1]}
+              title={points[points.length - 1].name}
+              iconSource={require('assets/marker-pin.png')}
+              style={styles.markerPin}
+            />
+
+            {/* current location marker */}
+            {currentLocation && (
+              <MapMarker
+                coordinate={currentLocation}
+                iconSource={require('assets/marker-location.png')}
+                style={styles.markerLocation}
+                anchor={{ x: 0.2, y: 0.2 }}
+              />
             )}
           </Map>
-          <View style={styles.destinationOverlay}>
+
+          {/* destination */}
+          <View style={styles.destinationBanner}>
             <MaterialIcons name="navigation" style={styles.destinationIcon} />
             <Text style={styles.destinationText}>{destination}</Text>
           </View>
         </View>
 
-        <View style={styles.instructionContainer}>
-          <View style={styles.instructionIconContainer}>
+        {/* navigation instructions */}
+        <View style={styles.instructionCard}>
+          <View style={styles.instructionIconWrapper}>
             <MaterialIcons name={icon} style={styles.instructionIcon} />
           </View>
-          <View style={styles.instructionTextContainer}>
+          <View style={styles.instructionContent}>
             <Text style={styles.instructionText}>{output}</Text>
             {value && <Text style={styles.valueText}>{value}</Text>}
           </View>
@@ -97,10 +142,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  line: {
-    zIndex: 9999,
+  markerPin: {
+    height: 36,
+    width: 36,
   },
-  destinationOverlay: {
+  markerLocation: {
+    height: 12,
+    width: 12,
+  },
+  destinationBanner: {
     position: 'absolute',
     bottom: -1,
     left: 0,
@@ -121,14 +171,14 @@ const styles = StyleSheet.create({
     color: Theme.white,
     fontWeight: '600',
   },
-  instructionContainer: {
+  instructionCard: {
     backgroundColor: Theme.container,
     borderRadius: 16,
     padding: 16,
     gap: 16,
     flexDirection: 'row',
   },
-  instructionIconContainer: {
+  instructionIconWrapper: {
     width: 64,
     height: 64,
     borderRadius: 32,
@@ -140,7 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Theme.white,
   },
-  instructionTextContainer: {
+  instructionContent: {
     flex: 1,
   },
   instructionText: {
