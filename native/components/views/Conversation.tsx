@@ -8,7 +8,6 @@ import Theme from '../theme';
 
 export function ConversationView({ state }: { state: FlowState }) {
   const router = useRouter();
-  const onPress = () => router.push('/settings');
   const [iconText, setIconText] = useState(['more-horiz', 'listen']);
   const { hideInput, currentStep, conversationStatus, userInput } = state;
   const { icon, output } = currentStep;
@@ -24,6 +23,7 @@ export function ConversationView({ state }: { state: FlowState }) {
   }, [conversationStatus]);
 
   const [statusIcon, statusText] = iconText;
+  const onPress = () => router.push('/settings');
 
   return (
     <ScreenView title="truenavi" icons={[{ name: 'settings', onPress }]}>
@@ -34,6 +34,7 @@ export function ConversationView({ state }: { state: FlowState }) {
           <Text style={styles.sectionText}>{output}</Text>
         </View>
 
+        {/* separator */}
         <View style={styles.separator} />
 
         {/* user's answer input */}
@@ -41,6 +42,8 @@ export function ConversationView({ state }: { state: FlowState }) {
           <Text style={hideInput ? styles.sectionWaitText : styles.sectionText}>
             {hideInput ? 'waiting' : userInput}
           </Text>
+
+          {/* status indicatior */}
           <View style={styles.statusIndicator}>
             <MaterialIcons name={statusIcon} style={styles.statusIcon} />
             <Text style={styles.statusText}>{statusText}</Text>

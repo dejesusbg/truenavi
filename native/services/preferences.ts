@@ -14,6 +14,6 @@ export async function resetPreferences() {
   await updatePreferences({ spanish: true, weather: true, vibration: true, isFirstTime: true });
 }
 
-export function getLocale(preferences: PreferencesProps): Locale {
-  return preferences.spanish ? 'es-CO' : 'en-GB';
+export function getLocale(spanish: boolean): Locale {
+  return spanish ? 'es-CO' : 'en-GB';
 }

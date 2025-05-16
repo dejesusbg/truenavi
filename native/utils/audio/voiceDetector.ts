@@ -1,5 +1,5 @@
 import { Audio } from 'expo-av';
-import { getPlacesNames } from '~/services';
+import { getPlaces } from '~/services';
 import { InputAppState } from '~/utils/flow';
 import { commonInputs, normalize } from '~/utils/text';
 
@@ -61,7 +61,7 @@ export async function simulateInput(type: InputAppState): Promise<string> {
   }
 
   if (type === 'start') {
-    commonInputs.place = await getPlacesNames();
+    commonInputs.place = await getPlaces();
     pool = [...commonInputs.place, ...commonInputs.config];
   }
 
