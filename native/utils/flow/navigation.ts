@@ -83,7 +83,7 @@ async function getRoute(destination: string, includeWeather: boolean) {
   // find start and end nodes
   const start = await findClosest(location.coords);
   const end = await findPlace(destination);
-  if (!start || !end) return emptyRoute;
+  if (!start || !end || start === end) return emptyRoute;
 
   // initialize navigation steps
   let steps = [navigationStep('origin', start.name!), navigationStep('start', destination)];
