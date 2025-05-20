@@ -6,13 +6,15 @@ export interface PreferencesContextType {
   loadPreferences: () => Promise<any>;
 }
 
+const emptyPreferences = { spanish: true, weather: true, vibration: true, isFirstTime: true };
+
 const PreferencesContext = createContext<PreferencesContextType>({
-  preferences: { spanish: true, weather: true, vibration: true, isFirstTime: true },
+  preferences: emptyPreferences,
   loadPreferences: async () => Promise.resolve(),
 });
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [preferences, setPreferences] = useState<PreferencesProps>({});
+  const [preferences, setPreferences] = useState<PreferencesProps>(emptyPreferences);
 
   const loadPreferences = async (): Promise<PreferencesResponse> => {
     const res = await getPreferences();

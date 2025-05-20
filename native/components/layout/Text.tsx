@@ -34,7 +34,7 @@ export function Text({ children, ...props }: TextProps) {
 
   return (
     <BaseText TextComponent={RNText} {...props}>
-      {typeof children === 'string' ? t(children, getLocale(preferences.isFirstTime!)) : children}
+      {typeof children === 'string' ? t(children, getLocale(preferences.spanish!)) : children}
     </BaseText>
   );
 }

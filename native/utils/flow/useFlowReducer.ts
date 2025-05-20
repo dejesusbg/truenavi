@@ -1,7 +1,8 @@
 import { useEffect, useReducer } from 'react';
-import { PreferencesProps, getLocale } from '~/services';
-import { handlePermissions, listenConversation, speakConversation } from './conversation';
-import { speakNavigation } from './navigation';
+import usePreferencesContext from '~/context/PreferencesProvider';
+import { getLocale } from '~/services';
+import { awaitListening, handlePermissions, speakStepOutput } from './conversation';
+import { speakNavigationInstruction } from './navigation';
 import { flow } from './steps';
 import { FlowAction, FlowState } from './types';
 
@@ -54,32 +55,37 @@ const reducer = (state: FlowState, action: FlowAction): FlowState => {
  * - Handles permission checks and updates the flow state accordingly.
  * - Manages conversation (speak/listen) and navigation flow based on the current state or mode.
  */
-export function useFlowReducer(
-  permissionsGranted: boolean,
-  preferences: PreferencesProps,
-  loadPreferences: () => Promise<any>
-) {
+export function useFlowReducer(permissionsGranted: boolean) {
   const [state, dispatch] = useReducer(reducer, defaultState);
-  const { isFirstTime, spanish, weather } = preferences;
-  const locale = getLocale(spanish!);
+  const { preferences, loadPreferences } = usePreferencesContext();
 
   useEffect(() => {
-    if (preferences) {
-      handlePermissions(permissionsGranted, isFirstTime!, dispatch);
-    }
+    loadPreferences();
+  }, []);
+
+  useEffect(() => {
+    handlePermissions(permissionsGranted, preferences.isFirstTime!, dispatch);
   }, [permissionsGranted]);
 
   useEffect(() => {
-    if (state.appState === 'navigate' && state.navigationIndex >= 0) {
-      speakNavigation(state, locale, dispatch);
-    } else {
-      if (state.conversationStatus === 'speak') {
-        speakConversation(state, locale, dispatch);
-      } else if (state.conversationStatus === 'listen') {
-        listenConversation(state, weather!, loadPreferences, dispatch);
-      }
+    // only run if appState is 'navigate'
+    if (state.appState !== 'navigate') return;
+
+    const locale = getLocale(preferences.spanish!);
+    if (state.navigationIndex >= 0) speakNavigationInstruction(state, locale, dispatch);
+  }, [state.navigationIndex]);
+
+  useEffect(() => {
+    // only run if appState is 'start' || 'config'
+    if (state.appState === 'navigate') return;
+
+    if (state.conversationStatus === 'speak') {
+      const locale = getLocale(preferences.spanish!);
+      speakStepOutput(state, locale, dispatch);
+    } else if (state.conversationStatus === 'listen') {
+      awaitListening(state, preferences.weather!, loadPreferences, dispatch);
     }
-  }, [state.conversationStatus, state.currentStep, state.navigationIndex]);
+  }, [state.conversationStatus, state.currentStep]);
 
   return { state, dispatch };
 }
