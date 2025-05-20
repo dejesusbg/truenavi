@@ -1,10 +1,5 @@
 export type Locale = 'es-CO' | 'en-GB';
-
-export const commonInputs: Record<string, string[]> = {
-  config: ['configurar', 'settings', 'setup'],
-  yes: ['yes', 'sí', 'yeah', 'ok', 'okay'],
-  no: ['no', 'nope', 'no way', 'negative', 'no gracias'],
-};
+export * from '~/utils/text/commonInputs';
 
 const translationMap: Record<Locale, Record<string, string>> = {
   'en-GB': {
