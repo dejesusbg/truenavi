@@ -56,3 +56,8 @@ export type FlowAction =
   | { type: 'SET_DESTINATION'; payload: string };
 
 export type FlowDispatch = Dispatch<FlowAction>;
+
+export interface FlowReducer {
+  state: FlowState;
+  dispatch: FlowDispatch;
+}

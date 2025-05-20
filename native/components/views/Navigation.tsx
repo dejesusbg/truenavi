@@ -3,7 +3,7 @@ import Map, { LatLng, Marker, Polyline } from 'react-native-maps';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
-import { direction, endNavigation, FlowDispatch, FlowState } from '~/utils/flow';
+import { direction, endNavigation, FlowReducer } from '~/utils/flow';
 
 // function to calculate map region based on path to ensure it's visible
 function calculateRegion(points: LatLng[]) {
@@ -31,7 +31,7 @@ function MapMarker({ coordinate, title, iconSource, style, anchor = { x: 0.5, y:
   );
 }
 
-export function NavigationView({ state, dispatch }: { state: FlowState; dispatch: FlowDispatch }) {
+export function NavigationView({ state, dispatch }: FlowReducer) {
   const { navigationSteps, navigationIndex, destination, path } = state;
   const { id, value, start, end } = navigationSteps[navigationIndex];
   const { icon, output } = direction[id];

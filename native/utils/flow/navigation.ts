@@ -1,4 +1,4 @@
-import { getCurrentPositionAsync, LocationObject } from 'expo-location';
+import { LocationObject } from 'expo-location';
 import { calculateRoute, findClosest, findPlace, getWeather } from '~/services';
 import { speak } from '~/utils/audio';
 import t, { Locale } from '~/utils/text';
@@ -41,7 +41,7 @@ function calculateBearing(start: [number, number], end: [number, number]): numbe
  * @param bearing2 - The target bearing in degrees (0-359).
  * @returns A string representing the turn direction.
  */
-function determineTurnDirection(bearing1: number, bearing2: number): string {
+function getTurnDirection(bearing1: number, bearing2: number): string {
   let change = (bearing2 - bearing1 + 360) % 360;
   if (change > 180) change -= 360;
 
@@ -71,7 +71,7 @@ function determineTurnDirection(bearing1: number, bearing2: number): string {
  * - Steps include origin, start, straight segments, turns, weather (if requested), and end.
  */
 
-async function getRoute(destination: string, includeWeather: boolean) {
+async function calculateNavigationRoute(destination: string, includeWeather: boolean) {
   const emptyRoute = { steps: [], path: [], edges: [] };
 
   console.log('[Route] Getting current position');
@@ -114,7 +114,7 @@ async function getRoute(destination: string, includeWeather: boolean) {
 
     const incomingBearing = calculateBearing(prevNode, currentNode);
     const outgoingBearing = calculateBearing(currentNode, nextNode);
-    const turnDirection = determineTurnDirection(incomingBearing, outgoingBearing);
+    const turnDirection = getTurnDirection(incomingBearing, outgoingBearing);
     const distance = edges[i].distance;
 
     // add turn instruction if not going straight
@@ -141,7 +141,11 @@ async function getRoute(destination: string, includeWeather: boolean) {
 }
 
 // handle navigation instructions
-export function speakNavigation(state: FlowState, locale: Locale, dispatch: FlowDispatch) {
+export function speakNavigationInstruction(
+  state: FlowState,
+  locale: Locale,
+  dispatch: FlowDispatch
+) {
   const { navigationSteps, navigationIndex } = state;
   const { id, value } = navigationSteps[navigationIndex];
   const instructionText = `${t(direction[id].output, locale)} ${t(value, locale)}`;
@@ -166,7 +170,7 @@ export async function startNavigation(
   weather: boolean,
   dispatch: FlowDispatch
 ) {
-  const { steps, path, edges } = await getRoute(destination, weather);
+  const { steps, path, edges } = await calculateNavigationRoute(destination, weather);
   setTimeout(() => {
     if (edges.length) {
       // valid route exists - begin navigation
