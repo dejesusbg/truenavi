@@ -1,7 +1,8 @@
 import { useEffect, useReducer } from 'react';
 import usePreferencesContext from '~/context/PreferencesProvider';
+import { usePermissions } from '~/hooks/usePermissions';
 import { getLocale } from '~/services';
-import { awaitListening, handlePermissions, speakStepOutput } from './conversation';
+import { handlePermissions, speakStepOutput } from './conversation';
 import { speakNavigationInstruction } from './navigation';
 import { flow } from './steps';
 import { FlowAction, FlowState } from './types';
@@ -44,20 +45,19 @@ const reducer = (state: FlowState, action: FlowAction): FlowState => {
 };
 
 /**
- * Custom hook that manages the flow state and side effects for the application's conversation and navigation logic.
+ * Custom hook that manages the flow state and side effects for the application.
  *
- * @param permissionsGranted - Indicates whether the required permissions have been granted.
- * @param preferences - User preferences including language, weather, and first-time usage flags.
- * @param loadPreferences - Async function to reload user preferences.
  * @returns An object containing the current flow state and a dispatch function to update the state.
  *
  * @remarks
- * - Handles permission checks and updates the flow state accordingly.
- * - Manages conversation (speak/listen) and navigation flow based on the current state or mode.
+ * - Loads user preferences on mount.
+ * - Handles permission changes and updates the flow state accordingly.
+ * - Triggers speech output or navigation instructions based on the current state.
  */
-export function useFlowReducer(permissionsGranted: boolean) {
-  const [state, dispatch] = useReducer(reducer, defaultState);
+export function useFlowReducer() {
+  const permissionsGranted = usePermissions();
   const { preferences, loadPreferences } = usePreferencesContext();
+  const [state, dispatch] = useReducer(reducer, defaultState);
 
   useEffect(() => {
     loadPreferences();
@@ -68,24 +68,14 @@ export function useFlowReducer(permissionsGranted: boolean) {
   }, [permissionsGranted]);
 
   useEffect(() => {
-    // only run if appState is 'navigate'
-    if (state.appState !== 'navigate') return;
-
     const locale = getLocale(preferences.spanish!);
-    if (state.navigationIndex >= 0) speakNavigationInstruction(state, locale, dispatch);
-  }, [state.navigationIndex]);
 
-  useEffect(() => {
-    // only run if appState is 'start' || 'config'
-    if (state.appState === 'navigate') return;
-
-    if (state.conversationStatus === 'speak') {
-      const locale = getLocale(preferences.spanish!);
+    if (state.appState !== 'navigate' && state.conversationStatus === 'speak') {
       speakStepOutput(state, locale, dispatch);
-    } else if (state.conversationStatus === 'listen') {
-      awaitListening(state, preferences.weather!, loadPreferences, dispatch);
+    } else if (state.appState === 'navigate' && state.navigationIndex >= 0) {
+      speakNavigationInstruction(state, locale, dispatch);
     }
-  }, [state.conversationStatus, state.currentStep]);
+  }, [state.conversationStatus, state.currentStep, state.navigationIndex]);
 
   return { state, dispatch };
 }
