@@ -28,14 +28,14 @@ export const htmlContent = `
             // only process the final result once
             if (isFinal && !isProcessingFinal) {
               isProcessingFinal = true;
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'result', transcript }));
+              window.ReactNativeWebView.postMessage(JSON.stringify({ transcript }));
               recognition.stop();
             }
           };
 
           recognition.onend = function() {
             if (!isProcessingFinal && hasStarted) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'result', transcript: '' }));
+              window.ReactNativeWebView.postMessage(JSON.stringify({ transcript: '' }));
             }
             isProcessingFinal = false;
             hasStarted = false;

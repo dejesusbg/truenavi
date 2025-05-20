@@ -3,7 +3,7 @@ import WebView from 'react-native-webview';
 import usePreferencesContext from '~/context/PreferencesProvider';
 import { getLocale } from '~/services';
 import { htmlContent } from '~/utils/audio';
-import { FlowReducer, processTranscript } from '~/utils/flow';
+import { FlowReducer, listenTranscript } from '~/utils/flow';
 
 export interface SpeechActions {
   start: () => void;
@@ -11,8 +11,7 @@ export interface SpeechActions {
 }
 
 export const SpeechWebView = forwardRef(({ state, dispatch }: FlowReducer, ref) => {
-  const { preferences } = usePreferencesContext();
-  const locale = getLocale(preferences.spanish!);
+  const { preferences, loadPreferences } = usePreferencesContext();
   const webviewRef = useRef<WebView>(null);
 
   const actions = (): SpeechActions => ({
@@ -23,15 +22,19 @@ export const SpeechWebView = forwardRef(({ state, dispatch }: FlowReducer, ref) 
   useImperativeHandle(ref, actions);
 
   useEffect(() => {
+    const locale = getLocale(preferences.spanish!);
     webviewRef.current?.postMessage(locale);
-  }, [locale]);
+  }, [preferences]);
+
+  const onMessage = (e: any) =>
+    listenTranscript(state, dispatch, preferences, loadPreferences, e.nativeEvent.data);
 
   return (
     <WebView
       ref={webviewRef}
       originWhitelist={['*']}
       source={{ html: htmlContent }}
-      onMessage={(e: any) => processTranscript(state, dispatch, e.nativeEvent.data)}
+      onMessage={onMessage}
       javaScriptEnabled
       containerStyle={{ position: 'absolute', width: 0, height: 0 }}
     />

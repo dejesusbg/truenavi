@@ -1,4 +1,4 @@
-import { getPlaces } from '~/services';
+import { getPlaces, PreferencesProps } from '~/services';
 import { getLevenshtein } from '~/utils/audio';
 import { speak } from '~/utils/audio/speech';
 import t, { commonInputs, Locale, normalize } from '~/utils/text';
@@ -28,36 +28,56 @@ export function handlePermissions(granted: boolean, isFirstTime: boolean, dispat
 }
 
 /**
- * Handles the processing of a transcript message within a conversational flow.
+ * Handles the processing of a transcript message within a conversation flow.
  *
- * This function parses the incoming transcript data, normalizes and processes the user input,
- * updates the application state via dispatch actions, and determines the next step in the flow.
- * It also manages UI feedback timing and error handling.
+ * This function parses the incoming transcript data, determines the next application state,
+ * processes user input, updates the conversation state, and manages navigation or step transitions.
+ * It also loads dynamic data (such as places), updates preferences, and provides visual feedback
+ * through delayed state transitions.
  *
- * @param state - The current flow state object.
- * @param dispatch - The dispatch function to update flow state.
- * @param data - The raw data containing the transcript, expected to be a JSON string.
+ * @param state - The current flow state of the conversation.
+ * @param dispatch - The dispatch function to update the flow state.
+ * @param preferences - The user's preferences used in the flow.
+ * @param loadPreferences - A function to reload or refresh user preferences.
+ * @param data - The raw transcript data as a JSON string.
  */
-export async function processTranscript(state: FlowState, dispatch: FlowDispatch, data: string) {
+export async function listenTranscript(
+  state: FlowState,
+  dispatch: FlowDispatch,
+  preferences: PreferencesProps,
+  loadPreferences: () => Promise<any>,
+  data: string
+) {
   try {
     const { transcript } = JSON.parse(data);
-    const { currentStep, appState } = state;
+    const { currentStep, appState, userInput } = state;
 
-    // handle final result
-    console.log('[Listen] Finishing with:', transcript);
+    // determine next app state based on flow definition
+    const newState = isAppState(currentStep.nextId) ? currentStep.nextId : appState;
+
+    // special case: navigate state triggers navigation flow
+    if (newState === 'navigate') {
+      return startNavigation(userInput, preferences.weather!, dispatch);
+    }
 
     // load places dinamically
     commonInputs.place = await getPlaces();
 
     // process input and identify next action
     const normalizedInput = normalize(transcript);
-    const input = await resolveUserInput(normalizedInput, appState as InputAppState);
+    const [input, parsedInput] = resolveUserInput(normalizedInput, appState as InputAppState);
 
-    dispatch({ type: 'SET_USER_INPUT', payload: normalizedInput });
+    console.log(
+      `[Conversation] ${currentStep.output.replace(/\n/g, ' ')} -> (${parsedInput}) ${input}`
+    );
+
+    dispatch({ type: 'SET_APP_STATE', payload: newState });
+    dispatch({ type: 'SET_USER_INPUT', payload: input });
     dispatch({ type: 'HIDE_INPUT', payload: false });
 
     // get next step based on processed input
-    const nextStep = await processConversationInput(input, currentStep, dispatch);
+    const nextStep = await processConversationInput(parsedInput, currentStep, dispatch);
+    await loadPreferences();
 
     const moveToNextStep = () => {
       dispatch({ type: 'HIDE_INPUT', payload: true });
@@ -68,21 +88,25 @@ export async function processTranscript(state: FlowState, dispatch: FlowDispatch
     // add small delay for visual feedback if we have valid input
     normalizedInput ? setTimeout(moveToNextStep, 3000) : moveToNextStep();
   } catch (err) {
-    console.error('[Listen] Error handling message:', err);
+    console.error('[Conversation] Error handling transcript:', err);
   }
 }
 
 /**
- * Processes the user's transcript input and attempts to match it to a set of available commands
- * based on the current input type. It first checks for exact matches, and if none are found,
- * uses the Levenshtein distance algorithm to find the closest match. If a sufficiently close match
- * is found, it parses and returns the result; otherwise, it returns null.
+ * Resolves the user's input transcript to a recognized command or input based on the current application state.
  *
- * @param transcript - The user's spoken or typed input to be processed.
- * @param appState - The current state of input, determining which commands are available.
- * @returns A parsed result based on the matched command, which can be a string, boolean, or null if no match is found.
+ * This function attempts to match the provided transcript against a set of available commands determined by the `appState`.
+ * It first checks for exact matches, and if none are found, it uses the Levenshtein distance algorithm to find the closest match.
+ * If a sufficiently close match is found (distance < 5), it returns the matched command and its parsed input.
+ * Otherwise, it returns the original transcript and `null`.
+ *
+ * @param transcript - The user's input as a string.
+ * @param appState - The current input state of the application, used to determine available commands.
+ * @returns A tuple containing the matched command (or original transcript) and the parsed input, or `null` if no match is found.
  */
-async function resolveUserInput(transcript: string, appState: InputAppState): Promise<Input> {
+function resolveUserInput(transcript: string, appState: InputAppState): [string, Input] {
+  if (!transcript) return [transcript, null];
+
   // define available commands based on input type
   const availableCommands = {
     config: [...commonInputs.yes, ...commonInputs.no],
@@ -94,7 +118,7 @@ async function resolveUserInput(transcript: string, appState: InputAppState): Pr
   // first check for exact matches
   for (const match of potentialMatches) {
     if (transcript.includes(match)) {
-      return parseMatchInput(match, appState);
+      return [transcript, parseMatchInput(match, appState)];
     }
   }
 
@@ -111,12 +135,12 @@ async function resolveUserInput(transcript: string, appState: InputAppState): Pr
   }
 
   // only use fuzzy match if score is good enough
-  if (bestScore < 5) {
-    return parseMatchInput(bestMatch, appState);
+  if (bestScore < 4) {
+    return [bestMatch, parseMatchInput(bestMatch, appState)];
   }
 
   // no good match found
-  return null;
+  return [transcript, null];
 }
 
 /**
@@ -160,8 +184,6 @@ export async function processConversationInput(
   currentStep: ConversationStep,
   dispatch: FlowDispatch
 ): Promise<ConversationStep> {
-  console.log(`[Conversation] ${currentStep.output.replace(/\n/g, ' ')} -> ${userInput}`);
-
   // handle special cases
   if (userInput === null) {
     return { ...flow.fallback, action: currentStep.action, nextId: currentStep.nextId };
@@ -187,39 +209,4 @@ export async function processConversationInput(
 export function speakStepOutput(state: FlowState, locale: Locale, dispatch: FlowDispatch) {
   const listen = () => dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'listen' });
   speak(t(state.currentStep.output, locale), locale, { onDone: listen });
-}
-
-/**
- * Waits for the conversation status to change from 'listen', then updates the app state and loads user preferences.
- *
- * @param state - The current flow state, including step, app state, and past user input.
- * @param weather - Indicates whether weather information should be considered in the flow.
- * @param loadPreferences - An async function to load user preferences.
- * @param dispatch - The dispatch function to update the flow state.
- * @returns A promise that resolves when the app state is updated and preferences are loaded.
- */
-export async function awaitListening(
-  state: FlowState,
-  weather: boolean,
-  loadPreferences: () => Promise<any>,
-  dispatch: FlowDispatch
-) {
-  const { currentStep, appState, userInput } = state;
-
-  // determine next app state based on flow definition
-  const newState = isAppState(currentStep.nextId) ? currentStep.nextId : appState;
-
-  // special case: navigate state triggers navigation flow
-  if (newState === 'navigate') {
-    return startNavigation(userInput, weather, dispatch);
-  }
-
-  // wait until conversation status changes from listening
-  while (state.conversationStatus === 'listen') {
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-
-  // update app state and load preferences
-  dispatch({ type: 'SET_APP_STATE', payload: newState });
-  await loadPreferences();
 }
