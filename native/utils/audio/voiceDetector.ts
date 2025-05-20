@@ -1,70 +1,94 @@
-import { Audio } from 'expo-av';
-import { getPlaces } from '~/services';
-import { InputAppState } from '~/utils/flow';
-import { commonInputs, normalize } from '~/utils/text';
+export const htmlContent = `
+<!DOCTYPE html>
+  <html>
+  <head></head>
+  <meta charset="utf-8">
+  <body>
+      <script>
+        let recognition;
+        let isProcessingFinal = false;
+        let hasStarted = false;
+        
+        if ('webkitSpeechRecognition' in window) {
+          recognition = new webkitSpeechRecognition();
+          recognition.continuous = true; 
+          recognition.lang = 'en-US';
 
-const SILENCE_THRESHOLD = 60;
-const SILENCE_TIMEOUT_MS = 1500;
-const MAX_LISTEN_DURATION_MS = 10000;
+          recognition.onresult = function(event) {
+            let transcript = '';
+            let isFinal = false;
 
-export async function listen(type: InputAppState): Promise<string> {
-  try {
-    await setupAudio();
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              transcript += event.results[i][0].transcript;
+              if (event.results[i].isFinal) {
+                isFinal = true;
+              }
+            }
+            
+            // only process the final result once
+            if (isFinal && !isProcessingFinal) {
+              isProcessingFinal = true;
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'result', transcript }));
+              recognition.stop();
+            }
+          };
 
-    const { recording } = await Audio.Recording.createAsync(
-      Audio.RecordingOptionsPresets.HIGH_QUALITY
-    );
+          recognition.onend = function() {
+            if (!isProcessingFinal && hasStarted) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'result', transcript: '' }));
+            }
+            isProcessingFinal = false;
+            hasStarted = false;
+          };
 
-    return await new Promise<string>((resolve) => {
-      let silenceTimer: NodeJS.Timeout | null = null;
-
-      const stop = async () => {
-        silenceTimer && clearTimeout(silenceTimer);
-        clearTimeout(timeoutTimer);
-        recording.stopAndUnloadAsync().then(() => resolve(simulateInput(type)));
-      };
-
-      const timeoutTimer = setTimeout(stop, MAX_LISTEN_DURATION_MS);
-
-      recording.setOnRecordingStatusUpdate((status: any) => {
-        const metering = status.metering;
-        if (!status.isRecording) return;
-
-        if (metering < SILENCE_THRESHOLD) {
-          if (!silenceTimer) silenceTimer = setTimeout(stop, SILENCE_TIMEOUT_MS);
-        } else {
-          silenceTimer && clearTimeout(silenceTimer);
-          silenceTimer = null;
+          recognition.onerror = function() {
+            isProcessingFinal = false;
+            hasStarted = false;
+          };
         }
-      });
-    });
-  } catch (error) {
-    console.error('[Listen] Error during listening:', error);
-    return '';
+
+        document.addEventListener('message', function(event) {
+          if (!recognition) return;
+
+          const data = event.data;
+          if (data === 'start' && !hasStarted) {
+            hasStarted = true;
+            isProcessingFinal = false;
+            recognition.start();
+          } else if (data === 'stop') {
+            recognition.stop();
+            hasStarted = false;
+            isProcessingFinal = false;
+          } else {
+            recognition.lang = data
+          }
+        });
+      </script>
+  </body>
+  </html>
+`;
+
+export function getLevenshtein(a: string, b: string): number {
+  const matrix = [];
+
+  // initialize matrix
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  // fill matrix
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1, // insertion
+          matrix[i - 1][j] + 1 // deletion
+        );
+      }
+    }
   }
-}
 
-async function setupAudio() {
-  try {
-    await Audio.setAudioModeAsync({ staysActiveInBackground: false });
-  } catch (error) {
-    console.error('[Audio] Error during setup:', error);
-  }
-}
-
-// TODO: implement actual speech to text and get rid of this
-export async function simulateInput(type: InputAppState): Promise<string> {
-  let pool: string[] = ['pan con queso']; // placeholder for not recognized input
-
-  if (type === 'config') {
-    pool = [...commonInputs.yes, ...commonInputs.no];
-  }
-
-  if (type === 'start') {
-    commonInputs.place = await getPlaces();
-    pool = [...commonInputs.place, ...commonInputs.config];
-  }
-
-  const random = pool[Math.floor(Math.random() * pool.length)];
-  return normalize(random);
+  return matrix[b.length][a.length];
 }

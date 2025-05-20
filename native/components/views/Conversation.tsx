@@ -1,16 +1,17 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { ScreenView, Text } from '~/components/layout';
-import { FlowState } from '~/utils/flow';
+import { ScreenView, SpeechActions, SpeechWebView, Text } from '~/components/layout';
+import { FlowReducer } from '~/utils/flow';
 import Theme from '../theme';
 
-export function ConversationView({ state }: { state: FlowState }) {
+export function ConversationView({ state, dispatch }: FlowReducer) {
   const router = useRouter();
   const [iconText, setIconText] = useState(['more-horiz', 'listen']);
   const { hideInput, currentStep, conversationStatus, userInput } = state;
   const { icon, output } = currentStep;
+  const speechRef = useRef<SpeechActions | null>(null);
 
   useEffect(() => {
     const statusMap = {
@@ -20,6 +21,10 @@ export function ConversationView({ state }: { state: FlowState }) {
     };
 
     setIconText(statusMap[conversationStatus || 'default']);
+
+    if (!speechRef.current) return;
+    if (conversationStatus === 'listen') speechRef.current.start();
+    if (conversationStatus === 'speak') speechRef.current.stop();
   }, [conversationStatus]);
 
   const [statusIcon, statusText] = iconText;
@@ -28,6 +33,9 @@ export function ConversationView({ state }: { state: FlowState }) {
   return (
     <ScreenView title="truenavi" icons={[{ name: 'settings', onPress }]}>
       <View style={styles.container}>
+        {/* webview for speech recognition */}
+        <SpeechWebView ref={speechRef} state={state} dispatch={dispatch} />
+
         {/* assistant's question */}
         <View style={styles.subContainer}>
           <MaterialIcons style={styles.sectionIcon} name={icon} />
