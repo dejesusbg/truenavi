@@ -20,7 +20,8 @@ function isAppState(x: string): x is AppState {
  * @param loadPreferences - An async function that loads user preferences and returns them.
  * @param dispatch - A function to dispatch actions to update the application's flow state.
  *
- * The function determines the next application state and step based on whether permissions are granted and if it is the user's first time.
+ * The function determines the next application state and step based on whether permissions are
+ * granted and if it is the user's first time.
  * It dispatches actions to update the app state, current step, and conversation status.
  */
 export async function handlePermissions(
@@ -38,7 +39,8 @@ export async function handlePermissions(
 }
 
 /**
- * Speaks the output of a conversation step in the specified locale and dispatches an action to set the conversation status to 'listen' when done.
+ * Speaks the output of a conversation step in the specified locale and dispatches an action to set
+ * the conversation status to 'listen' when done.
  *
  * @param state - The current conversation flow state containing the step output to be spoken.
  * @param locale - The locale to use for translation and speech synthesis.
@@ -52,8 +54,10 @@ export function speakStepOutput(state: FlowState, locale: Locale, dispatch: Flow
 /**
  * Handles the processing of a transcript message within a conversation flow.
  *
- * This function parses the incoming transcript data, determines the next application state, processes user input, updates the conversation state, and manages navigation or step transitions.
- * It also loads dynamic data (such as places), updates preferences, and provides visual feedback through delayed state transitions.
+ * This function parses the incoming transcript data, determines the next application state,
+ * processes user input, updates the conversation state, and manages navigation or step transitions.
+ * It also loads dynamic data (such as places), updates preferences, and provides visual feedback
+ * through delayed state transitions.
  *
  * @param state - The current flow state of the conversation.
  * @param dispatch - The dispatch function to update the flow state.
@@ -115,10 +119,13 @@ export async function listenTranscript(
 /**
  * Resolves the user's input transcript to a recognized command or input based on the current application state.
  *
- * This function attempts to match the provided transcript against a set of available commands determined by the `appState`.
- * It first checks for exact matches, and if none are found, it uses the Levenshtein distance algorithm to find the closest match.
- * If a sufficiently close match is found (distance < 5), it returns the matched command and its parsed input.
- * Otherwise, it returns the original transcript and `null`.
+ * This function attempts to match the provided transcript against a set of available commands
+ * determined by the `appState`.
+ * - It first checks for exact matches, and if none are found, it uses the Levenshtein distance
+ * algorithm to find the closest match.
+ * - If a sufficiently close match is found (distance < 5), it returns the matched command and its
+ * parsed input.
+ * - Otherwise, it returns the original transcript and `null`.
  *
  * @param transcript - The user's input as a string.
  * @param appState - The current input state of the application, used to determine available commands.

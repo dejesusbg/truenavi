@@ -36,7 +36,9 @@ function calculateBearing(start: [number, number], end: [number, number]): numbe
 /**
  * Determines the turn direction between two bearings.
  *
- * Calculates the angular difference between `bearing1` and `bearing2` and returns a string indicating the type of turn: `straight`, `slight-right`, `slight-left`, `right`, `left`,`sharp-right`, `sharp-left`, or `u-turn`.
+ * Calculates the angular difference between `bearing1` and `bearing2` and returns a string
+ * indicating the type of turn: `straight`, `slight-right`, `slight-left`, `right`, `left`,
+ * `sharp-right`, `sharp-left`, or `u-turn`.
  *
  * @param bearing1 - The initial bearing in degrees (0-359).
  * @param bearing2 - The target bearing in degrees (0-359).
@@ -142,8 +144,10 @@ async function calculateNavigationRoute(destination: string, includeWeather: boo
 /**
  * Speaks the current navigation instruction based on the provided flow state and locale.
  *
- * This function retrieves the current navigation step, constructs the instruction text using localized strings, and uses the `speak` function to vocalize the instruction.
- * After the instruction is spoken, it either advances to the next instruction or ends the navigation, depending on the current navigation index.
+ * This function retrieves the current navigation step, constructs the instruction text using
+ * localized strings, and uses the `speak` function to vocalize the instruction.
+ * After the instruction is spoken, it either advances to the next instruction or ends the
+ * navigation, depending on the current navigation index.
  *
  * @param state - The current flow state containing navigation steps and index.
  * @param locale - The locale to use for localization of instruction text.
@@ -175,7 +179,8 @@ export function speakNavigationInstruction(
 /**
  * Starts the navigation process to a specified destination, optionally considering weather conditions.
  *
- * This function calculates the navigation route asynchronously and, after a delay, dispatches actions to update the application state based on whether a valid route was found.
+ * This function calculates the navigation route asynchronously and, after a delay, dispatches
+ * actions to update the application state based on whether a valid route was found.
  *
  * @param destination - The target destination for navigation.
  * @param weather - Whether to consider weather conditions in route calculation.

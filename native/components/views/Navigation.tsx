@@ -37,7 +37,8 @@ function MapMarker({ coordinate, title, iconSource, style, anchor = { x: 0.5, y:
 }
 
 /**
- * Renders the navigation view, displaying a map with the current navigation path, markers for start, end, and current location, as well as navigation instructions and destination information.
+ * Renders the navigation view, displaying a map with the current navigation path, markers for
+ * start, end, and current location, as well as navigation instructions and destination information.
  *
  * @param state - The navigation state, including steps, current index, destination, and path.
  * @param dispatch - The dispatch function for navigation actions.

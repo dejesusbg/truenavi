@@ -49,7 +49,10 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange }: SettingsIt
 /**
  * Renders the Settings screen, allowing users to view and modify application preferences.
  *
- * This component displays a list of toggle switches for user preferences (such as weather, language, and vibration), as well as links to legal documents (terms and conditions, data policy). It also provides an option to reset all preferences and displays the device identifier at the bottom of the screen.
+ * This component displays a list of toggle switches for user preferences (such as weather,
+ * language, and vibration), as well as links to legal documents (terms and conditions, data
+ * policy). It also provides an option to reset all preferences and displays the device identifier
+ * at the bottom of the screen.
  *
  * Preferences are loaded and updated using the `usePreferences` hook. The device identifier is fetched asynchronously on mount.
  */

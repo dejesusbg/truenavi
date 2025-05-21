@@ -53,7 +53,9 @@ export async function findPlace(name: string): Promise<NodeProps | undefined> {
 /**
  * Finds the closest node to the given coordinates.
  *
- * Retrieves a list of nodes, filters out those without a name, and calculates the Euclidean distance between each node's coordinates and the provided coordinates. Returns the node that is closest to the specified location.
+ * Retrieves a list of nodes, filters out those without a name, and calculates the Euclidean
+ * distance between each node's coordinates and the provided coordinates. Returns the node that is
+ * closest to the specified location.
  *
  * @param coords - The coordinates to compare against, containing latitude and longitude.
  * @returns A promise that resolves to the closest node (`NodeProps`) or `undefined` if no nodes are found or retrieval fails.

@@ -1,12 +1,16 @@
 /**
- * This HTML sets up a simple page that uses the `webkitSpeechRecognition` API to perform continuous speech recognition. It listens for messages from the React Native WebView to start or stop recognition, and posts back the recognized transcript (or an empty string if nothing is recognized).
+ * This HTML sets up a simple page that uses the `webkitSpeechRecognition` API to perform
+ * continuous speech recognition. It listens for messages from the React Native WebView to start or
+ * stop recognition, and posts back the recognized transcript (or an empty string if nothing is
+ * recognized).
  *
  * - When a final result is detected, it sends the transcript to the React Native WebView and stops recognition.
  * - If stopped without a final result, it sends an empty transcript.
  * - Handles recognition errors and resets state accordingly.
  *
  * @remarks
- * This HTML is intended to be injected into a WebView in a React Native application, and communicates with the native side via `window.ReactNativeWebView.postMessage`.
+ * This HTML is intended to be injected into a WebView in a React Native application, and
+ * communicates with the native side via `window.ReactNativeWebView.postMessage`.
  */
 export const htmlContent = `
 <!DOCTYPE html>
