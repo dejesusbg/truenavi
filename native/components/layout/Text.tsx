@@ -5,7 +5,9 @@ import {
   TextInputProps,
   TextProps,
   TextStyle,
+  View,
 } from 'react-native';
+import Theme from '~/components/theme';
 import usePreferencesContext from '~/context/PreferencesProvider';
 import { getLocale } from '~/services';
 import t from '~/utils/text';
@@ -32,6 +34,16 @@ function BaseText({ TextComponent, children, style, ...props }: BaseTextProps) {
 export function Text({ children, ...props }: TextProps) {
   const { preferences } = usePreferencesContext();
 
+  if (preferences === null) {
+    return (
+      <View style={[styles.skeleton]}>
+        <View style={[styles.skeletonChildren]}>
+          <BaseText TextComponent={RNText}>{children}</BaseText>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <BaseText TextComponent={RNText} {...props}>
       {typeof children === 'string' ? t(children, getLocale(preferences.spanish!)) : children}
@@ -46,3 +58,8 @@ export function TextInput({ children, ...props }: TextInputProps) {
     </BaseText>
   );
 }
+
+const styles = StyleSheet.create({
+  skeleton: { backgroundColor: Theme.container, borderRadius: 16 },
+  skeletonChildren: { opacity: 0 },
+});
