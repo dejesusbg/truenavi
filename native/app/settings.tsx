@@ -41,6 +41,8 @@ export default function Settings() {
   const { preferences, loadPreferences } = usePreferences();
   const [identifier, setIdentifier] = useState('');
 
+  if (preferences === null) return null;
+
   useEffect(() => {
     const getIdentifier = async () => {
       const id = await deviceId();
@@ -52,12 +54,12 @@ export default function Settings() {
 
   const handleChange = async (key: keyof PreferencesProps, value: boolean) => {
     await updatePreferences({ ...preferences, [key]: value });
-    loadPreferences();
+    await loadPreferences();
   };
 
   const handleReset = async () => {
     await resetPreferences();
-    loadPreferences();
+    await loadPreferences();
   };
 
   const settingsData = {

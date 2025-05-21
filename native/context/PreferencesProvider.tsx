@@ -2,19 +2,17 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { getPreferences, PreferencesProps, PreferencesResponse } from '~/services';
 
 export interface PreferencesContextType {
-  preferences: PreferencesProps;
+  preferences: PreferencesProps | null;
   loadPreferences: () => Promise<any>;
 }
 
-const emptyPreferences = { spanish: true, weather: true, vibration: true, isFirstTime: true };
-
 const PreferencesContext = createContext<PreferencesContextType>({
-  preferences: emptyPreferences,
+  preferences: null,
   loadPreferences: async () => Promise.resolve(),
 });
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [preferences, setPreferences] = useState<PreferencesProps>(emptyPreferences);
+  const [preferences, setPreferences] = useState<PreferencesProps | null>(null);
 
   const loadPreferences = async (): Promise<PreferencesResponse> => {
     const res = await getPreferences();

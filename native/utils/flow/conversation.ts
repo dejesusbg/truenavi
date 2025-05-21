@@ -9,16 +9,21 @@ import { ConversationStep, FlowDispatch, FlowState, InputAppState, isAppState } 
 type Input = string | boolean | null;
 
 /**
- * Handles the application flow based on permission status and whether it is the user's first time.
+ * Handles permission logic and updates the application state accordingly.
  *
- * @param granted - Indicates if the required permissions have been granted.
- * @param isFirstTime - Indicates if this is the user's first time performing the action.
- * @param dispatch - The dispatch function to update the application state.
+ * @param granted - Indicates whether the required permission has been granted.
+ * @param loadPreferences - An async function that loads user preferences and returns them.
+ * @param dispatch - A function to dispatch actions to update the application's flow state.
  *
- * Dispatches actions to update the app state, current step, and conversation status
- * according to the permission and first-time status.
+ * The function determines the next application state and step based on whether permissions are granted and if it is the user's first time.
+ * It dispatches actions to update the app state, current step, and conversation status.
  */
-export function handlePermissions(granted: boolean, isFirstTime: boolean, dispatch: FlowDispatch) {
+export async function handlePermissions(
+  granted: boolean,
+  loadPreferences: () => Promise<any>,
+  dispatch: FlowDispatch
+) {
+  const { isFirstTime } = await loadPreferences();
   const newState = granted ? (isFirstTime ? 'config' : 'start') : 'not-allowed';
   const newStep = granted && !isFirstTime ? flow.start : flow.config;
 
@@ -57,7 +62,7 @@ export async function listenTranscript(
 
     // special case: navigate state triggers navigation flow
     if (newState === 'navigate') {
-      return startNavigation(userInput, preferences.weather!, dispatch);
+      return startNavigation(userInput, preferences.weather, dispatch);
     }
 
     // load places dinamically

@@ -60,15 +60,12 @@ export function useFlowReducer() {
   const [state, dispatch] = useReducer(reducer, defaultState);
 
   useEffect(() => {
-    loadPreferences();
-  }, []);
-
-  useEffect(() => {
-    handlePermissions(permissionsGranted, preferences.isFirstTime!, dispatch);
+    handlePermissions(permissionsGranted, loadPreferences, dispatch);
   }, [permissionsGranted]);
 
   useEffect(() => {
-    const locale = getLocale(preferences.spanish!);
+    if (preferences === null) return;
+    const locale = getLocale(preferences.spanish);
 
     if (state.appState !== 'navigate' && state.conversationStatus === 'speak') {
       speakStepOutput(state, locale, dispatch);

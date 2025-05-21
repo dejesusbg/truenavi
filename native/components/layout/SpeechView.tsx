@@ -1,7 +1,6 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import WebView from 'react-native-webview';
 import usePreferencesContext from '~/context/PreferencesProvider';
-import { getLocale } from '~/services';
 import { htmlContent } from '~/utils/audio';
 import { FlowReducer, listenTranscript } from '~/utils/flow';
 
@@ -14,17 +13,14 @@ export const SpeechWebView = forwardRef(({ state, dispatch }: FlowReducer, ref) 
   const { preferences, loadPreferences } = usePreferencesContext();
   const webviewRef = useRef<WebView>(null);
 
+  if (preferences === null) return null;
+
   const actions = (): SpeechActions => ({
     start: () => webviewRef.current?.postMessage('start'),
     stop: () => webviewRef.current?.postMessage('stop'),
   });
 
   useImperativeHandle(ref, actions);
-
-  useEffect(() => {
-    const locale = getLocale(preferences.spanish!);
-    webviewRef.current?.postMessage(locale);
-  }, [preferences]);
 
   const onMessage = (e: any) =>
     listenTranscript(state, dispatch, preferences, loadPreferences, e.nativeEvent.data);
