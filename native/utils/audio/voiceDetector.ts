@@ -12,7 +12,7 @@ export const htmlContent = `
         if ('webkitSpeechRecognition' in window) {
           recognition = new webkitSpeechRecognition();
           recognition.continuous = true; 
-          recognition.lang = 'en-US';
+          recognition.lang = 'es-CO';
 
           recognition.onresult = function(event) {
             let transcript = '';
@@ -59,8 +59,6 @@ export const htmlContent = `
             recognition.stop();
             hasStarted = false;
             isProcessingFinal = false;
-          } else {
-            recognition.lang = data
           }
         });
       </script>
