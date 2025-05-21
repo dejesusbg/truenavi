@@ -2,9 +2,7 @@ export type Locale = 'es-CO' | 'en-GB';
 export * from '~/utils/text/commonInputs';
 
 const translationMap: Record<Locale, Record<string, string>> = {
-  'en-GB': {
-    'bienestar universitario': 'wellbeing building',
-  },
+  'en-GB': {},
   'es-CO': {
     // conversation
     'enable the necessary permissions in the settings so truenavi can function properly':
