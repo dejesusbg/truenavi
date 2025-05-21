@@ -1,9 +1,9 @@
 // model
 export interface PreferencesProps {
-  spanish?: boolean;
-  weather?: boolean;
-  vibration?: boolean;
-  isFirstTime?: boolean;
+  spanish: boolean;
+  weather: boolean;
+  vibration: boolean;
+  isFirstTime: boolean;
 }
 
 export interface NodeProps {

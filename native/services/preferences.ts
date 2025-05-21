@@ -1,12 +1,12 @@
 import { Locale } from '~/utils/text';
 import { api } from './api';
-import { PreferencesProps, PreferencesResponse } from './types';
+import { PreferencesResponse } from './types';
 
 export async function getPreferences() {
   return await api.get<PreferencesResponse>('preferences');
 }
 
-export async function updatePreferences(preferences: PreferencesProps) {
+export async function updatePreferences(preferences: Record<string, boolean>) {
   return await api.put<PreferencesResponse>('preferences', preferences);
 }
 
