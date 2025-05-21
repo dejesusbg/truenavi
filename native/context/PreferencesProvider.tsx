@@ -11,6 +11,17 @@ const PreferencesContext = createContext<PreferencesContextType>({
   loadPreferences: async () => Promise.resolve(),
 });
 
+/**
+ * Provides the Preferences context to its child components.
+ *
+ * This provider is responsible for loading and storing user preferences,
+ * making them accessible throughout the component tree via the PreferencesContext.
+ * It fetches preferences asynchronously on mount and exposes both the current preferences
+ * and a function to reload them.
+ *
+ * @param children - The React node(s) that will have access to the preferences context.
+ * @returns A context provider wrapping the given children.
+ */
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<PreferencesProps | null>(null);
 

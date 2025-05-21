@@ -10,6 +10,13 @@ export interface HeaderProps {
   icons?: { name: string; onPress?: () => void }[];
 }
 
+/**
+ * Renders a customizable header component with an optional title, back button, and action icons.
+ *
+ * @param title - The title text to display in the header.
+ * @param icons - An array of icon objects to display on the right side of the header. Each icon object should have a `name` (icon name) and an `onPress` handler.
+ * @param goBack - If true, displays a back button on the left side of the header that navigates back when pressed.
+ */
 export function Header({ title, icons, goBack = false }: HeaderProps) {
   const router = useRouter();
 

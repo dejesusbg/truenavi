@@ -36,7 +36,8 @@ export default function App() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: Theme.background },
-          }}></Stack>
+          }}
+        />
       </SafeAreaProvider>
     </PreferencesProvider>
   );

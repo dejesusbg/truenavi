@@ -5,6 +5,9 @@ import t, { Locale } from '~/utils/text';
 import { direction, flow, navigationStep } from './steps';
 import { FlowDispatch, FlowState } from './types';
 
+const NAVIGATION_DELAY = 3000; // delay for visual feedback
+const DEFAULT_INITIAL_LOCATION = { latitude: 11.224301653902437, longitude: -74.18565012507534 };
+
 /**
  * Calculates the initial bearing (forward azimuth) in degrees from the start point to the end point.
  *
@@ -33,9 +36,7 @@ function calculateBearing(start: [number, number], end: [number, number]): numbe
 /**
  * Determines the turn direction between two bearings.
  *
- * Calculates the angular difference between `bearing1` and `bearing2` and returns a string
- * indicating the type of turn: 'straight', 'slight-right', 'slight-left', 'right', 'left',
- * 'sharp-right', 'sharp-left', or 'u-turn'.
+ * Calculates the angular difference between `bearing1` and `bearing2` and returns a string indicating the type of turn: `straight`, `slight-right`, `slight-left`, `right`, `left`,`sharp-right`, `sharp-left`, or `u-turn`.
  *
  * @param bearing1 - The initial bearing in degrees (0-359).
  * @param bearing2 - The target bearing in degrees (0-359).
@@ -76,9 +77,7 @@ async function calculateNavigationRoute(destination: string, includeWeather: boo
 
   console.log('[Route] Getting current position');
   // const location = await getCurrentPositionAsync(); // production
-  const location = {
-    coords: { latitude: 11.224301653902437, longitude: -74.18565012507534 },
-  } as LocationObject; // development
+  const location = { coords: DEFAULT_INITIAL_LOCATION } as LocationObject; // development
 
   // find start and end nodes
   const start = await findClosest(location.coords);
@@ -140,7 +139,16 @@ async function calculateNavigationRoute(destination: string, includeWeather: boo
   return { steps, path, edges };
 }
 
-// handle navigation instructions
+/**
+ * Speaks the current navigation instruction based on the provided flow state and locale.
+ *
+ * This function retrieves the current navigation step, constructs the instruction text using localized strings, and uses the `speak` function to vocalize the instruction.
+ * After the instruction is spoken, it either advances to the next instruction or ends the navigation, depending on the current navigation index.
+ *
+ * @param state - The current flow state containing navigation steps and index.
+ * @param locale - The locale to use for localization of instruction text.
+ * @param dispatch - The dispatch function to update the flow state.
+ */
 export function speakNavigationInstruction(
   state: FlowState,
   locale: Locale,
@@ -156,7 +164,7 @@ export function speakNavigationInstruction(
     onDone: () => {
       if (navigationIndex < navigationSteps.length - 1) {
         // TODO: check actual navigation flow and nodes to go to next instruction
-        setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), 3000);
+        setTimeout(() => dispatch({ type: 'NEXT_INSTRUCTION' }), NAVIGATION_DELAY);
       } else {
         endNavigation(dispatch);
       }
@@ -164,7 +172,17 @@ export function speakNavigationInstruction(
   });
 }
 
-// initialize navigation flow
+/**
+ * Starts the navigation process to a specified destination, optionally considering weather conditions.
+ *
+ * This function calculates the navigation route asynchronously and, after a delay, dispatches actions to update the application state based on whether a valid route was found.
+ *
+ * @param destination - The target destination for navigation.
+ * @param weather - Whether to consider weather conditions in route calculation.
+ * @param dispatch - The dispatch function to update the navigation flow state.
+ *
+ * @returns A promise that resolves when the navigation process has been initiated.
+ */
 export async function startNavigation(
   destination: string,
   weather: boolean,
@@ -183,15 +201,25 @@ export async function startNavigation(
       dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'speak' });
       dispatch({ type: 'SET_CURRENT_STEP', payload: flow.no_route });
     }
-  }, 3000);
+  }, NAVIGATION_DELAY);
 }
 
-// end navigation and return to conversation (delay)
+/**
+ * Ends the current navigation flow after a 3-second delay.
+ *
+ * This function dispatches a series of actions to reset the navigation state:
+ * - Sets the current step to the start of the flow.
+ * - Sets the application state to 'start'.
+ * - Sets the conversation status to 'speak'.
+ * - Dispatches the 'END_NAVIGATION' action.
+ *
+ * @param dispatch - The dispatch function used to send actions to the flow reducer.
+ */
 export function endNavigation(dispatch: FlowDispatch) {
   setTimeout(() => {
     dispatch({ type: 'SET_CURRENT_STEP', payload: flow.start });
     dispatch({ type: 'SET_APP_STATE', payload: 'start' });
     dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'speak' });
     dispatch({ type: 'END_NAVIGATION' });
-  }, 3000);
+  }, NAVIGATION_DELAY);
 }

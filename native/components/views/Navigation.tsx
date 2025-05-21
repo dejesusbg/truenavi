@@ -5,7 +5,12 @@ import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
 import { direction, endNavigation, FlowReducer } from '~/utils/flow';
 
-// function to calculate map region based on path to ensure it's visible
+/**
+ * Calculates the center region and deltas for a set of geographical points.
+ *
+ * @param points - An array of objects representing latitude and longitude coordinates.
+ * @returns An object containing the center latitude and longitude, as well as the latitudeDelta and longitudeDelta (expanded by 25% to provide padding around the region).
+ */
 function calculateRegion(points: LatLng[]) {
   const latitudes = points.map((point) => point.latitude);
   const longitudes = points.map((point) => point.longitude);
@@ -31,6 +36,20 @@ function MapMarker({ coordinate, title, iconSource, style, anchor = { x: 0.5, y:
   );
 }
 
+/**
+ * Renders the navigation view, displaying a map with the current navigation path, markers for start, end, and current location, as well as navigation instructions and destination information.
+ *
+ * @param state - The navigation state, including steps, current index, destination, and path.
+ * @param dispatch - The dispatch function for navigation actions.
+ *
+ * @remarks
+ * - The navigation path is a polyline on the map.
+ * - Markers are for the start and end points of the route.
+ * - It shows the user's current location and the current navigation segment, if available.
+ * - The component visualizes the destination banner with an icon and destination name.
+ * - Also the current navigation instruction, including an icon, instruction text, and value.
+ * - The user can end navigation by pressing the close icon.
+ */
 export function NavigationView({ state, dispatch }: FlowReducer) {
   const { navigationSteps, navigationIndex, destination, path } = state;
   const { id, value, start, end } = navigationSteps[navigationIndex];

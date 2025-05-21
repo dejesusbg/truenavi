@@ -3,6 +3,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ScreenView, Text } from '~/components/layout';
 import Theme from '~/components/theme';
 
+/**
+ * Displays a view prompting the user to enable necessary permissions for the app to function properly.
+ *
+ * This component shows an icon and a message, and provides a button that opens the device settings where the user can enable the required permissions (such as location access).
+ */
 export function PermissionView() {
   return (
     <ScreenView>

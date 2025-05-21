@@ -15,6 +15,15 @@ interface SettingsItemProps {
   onValueChange?: (value: boolean) => void;
 }
 
+/**
+ * Renders a single settings item with an icon, title, and either a switch or a chevron.
+ *
+ * @param icon - The name of the MaterialIcon to display on the left.
+ * @param title - The title text for the setting.
+ * @param isSwitch - If true, displays a Switch component; otherwise, displays a chevron icon.
+ * @param value - The current value of the switch (if `isSwitch` is true).
+ * @param onValueChange - Callback function called when the switch value changes (if `isSwitch` is true).
+ */
 function SettingItem({ icon, title, isSwitch, value, onValueChange }: SettingsItemProps) {
   return (
     <TouchableOpacity style={styles.settingItem}>
@@ -37,6 +46,13 @@ function SettingItem({ icon, title, isSwitch, value, onValueChange }: SettingsIt
   );
 }
 
+/**
+ * Renders the Settings screen, allowing users to view and modify application preferences.
+ *
+ * This component displays a list of toggle switches for user preferences (such as weather, language, and vibration), as well as links to legal documents (terms and conditions, data policy). It also provides an option to reset all preferences and displays the device identifier at the bottom of the screen.
+ *
+ * Preferences are loaded and updated using the `usePreferences` hook. The device identifier is fetched asynchronously on mount.
+ */
 export default function Settings() {
   const { preferences, loadPreferences } = usePreferences();
   const [identifier, setIdentifier] = useState('');

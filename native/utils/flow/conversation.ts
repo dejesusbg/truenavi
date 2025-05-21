@@ -4,9 +4,14 @@ import { speak } from '~/utils/audio/speech';
 import t, { commonInputs, Locale, normalize } from '~/utils/text';
 import { startNavigation } from './navigation';
 import { flow } from './steps';
-import { ConversationStep, FlowDispatch, FlowState, InputAppState, isAppState } from './types';
+import { AppState, ConversationStep, FlowDispatch, FlowState, Input, InputAppState } from './types';
 
-type Input = string | boolean | null;
+const LEVENSHTEIN_THRESHOLD = 4; // threshold for fuzzy matching
+const CONVERSATION_DELAY = 3000; // delay for visual feedback
+
+function isAppState(x: string): x is AppState {
+  return x === 'not-allowed' || x === 'navigate' || x === 'config' || x === 'start';
+}
 
 /**
  * Handles permission logic and updates the application state accordingly.
@@ -33,12 +38,22 @@ export async function handlePermissions(
 }
 
 /**
+ * Speaks the output of a conversation step in the specified locale and dispatches an action to set the conversation status to 'listen' when done.
+ *
+ * @param state - The current conversation flow state containing the step output to be spoken.
+ * @param locale - The locale to use for translation and speech synthesis.
+ * @param dispatch - The dispatch function to update the conversation flow state.
+ */
+export function speakStepOutput(state: FlowState, locale: Locale, dispatch: FlowDispatch) {
+  const listen = () => dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'listen' });
+  speak(t(state.currentStep.output, locale), locale, { onDone: listen });
+}
+
+/**
  * Handles the processing of a transcript message within a conversation flow.
  *
- * This function parses the incoming transcript data, determines the next application state,
- * processes user input, updates the conversation state, and manages navigation or step transitions.
- * It also loads dynamic data (such as places), updates preferences, and provides visual feedback
- * through delayed state transitions.
+ * This function parses the incoming transcript data, determines the next application state, processes user input, updates the conversation state, and manages navigation or step transitions.
+ * It also loads dynamic data (such as places), updates preferences, and provides visual feedback through delayed state transitions.
  *
  * @param state - The current flow state of the conversation.
  * @param dispatch - The dispatch function to update the flow state.
@@ -65,7 +80,7 @@ export async function listenTranscript(
       return startNavigation(userInput, preferences.weather, dispatch);
     }
 
-    // load places dinamically
+    // load places dynamically
     commonInputs.place = await getPlaces();
 
     // process input and identify next action
@@ -91,7 +106,7 @@ export async function listenTranscript(
     };
 
     // add small delay for visual feedback if we have valid input
-    normalizedInput ? setTimeout(moveToNextStep, 3000) : moveToNextStep();
+    normalizedInput ? setTimeout(moveToNextStep, CONVERSATION_DELAY) : moveToNextStep();
   } catch (err) {
     console.error('[Conversation] Error handling transcript:', err);
   }
@@ -140,7 +155,7 @@ function resolveUserInput(transcript: string, appState: InputAppState): [string,
   }
 
   // only use fuzzy match if score is good enough
-  if (bestScore < 4) {
+  if (bestScore < LEVENSHTEIN_THRESHOLD) {
     return [bestMatch, parseMatchInput(bestMatch, appState)];
   }
 
@@ -184,7 +199,7 @@ function parseMatchInput(match: string, appState: InputAppState): Input {
  * - If `userInput` is `'config'`, dispatches a state change and returns the config step.
  * - Otherwise, executes the current step's action and returns the next step.
  */
-export async function processConversationInput(
+async function processConversationInput(
   userInput: Input,
   currentStep: ConversationStep,
   dispatch: FlowDispatch
@@ -202,16 +217,4 @@ export async function processConversationInput(
   // execute action with the parsed input and return the next step in the flow
   await currentStep.action(userInput);
   return flow[currentStep.nextId] || currentStep;
-}
-
-/**
- * Speaks the output of a conversation step in the specified locale and dispatches an action to set the conversation status to 'listen' when done.
- *
- * @param state - The current conversation flow state containing the step output to be spoken.
- * @param locale - The locale to use for translation and speech synthesis.
- * @param dispatch - The dispatch function to update the conversation flow state.
- */
-export function speakStepOutput(state: FlowState, locale: Locale, dispatch: FlowDispatch) {
-  const listen = () => dispatch({ type: 'SET_CONVERSATION_STATUS', payload: 'listen' });
-  speak(t(state.currentStep.output, locale), locale, { onDone: listen });
 }

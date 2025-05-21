@@ -5,16 +5,13 @@ import { NodeProps } from '~/services';
 export type AppState = 'not-allowed' | InputAppState | 'navigate';
 export type InputAppState = 'config' | 'start';
 export type ConversationStatus = 'speak' | 'listen' | null;
-
-export function isAppState(x: string): x is AppState {
-  return x === 'not-allowed' || x === 'navigate' || x === 'config' || x === 'start';
-}
+export type Input = string | boolean | null;
 
 // steps
 export interface ConversationStep {
   icon: string;
   output: string;
-  action: (input: any) => Promise<any>;
+  action: (input: Input) => Promise<any>;
   nextId: string;
 }
 

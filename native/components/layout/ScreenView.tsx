@@ -4,6 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Theme from '~/components/theme';
 import { Header, HeaderProps } from './Header';
 
+/**
+ * Renders a screen layout with a blurred background image, safe area insets, and a customizable header.
+ *
+ * @param title - The title to display in the header.
+ * @param icons - Optional icons to display in the header.
+ * @param goBack - Optional callback for the back navigation action.
+ * @param children - The content to render within the main area of the screen.
+ */
 export function ScreenView({ title, icons, children, goBack }: PropsWithChildren<HeaderProps>) {
   const insets = useSafeAreaInsets();
 

@@ -9,6 +9,18 @@ export interface SpeechActions {
   stop: () => void;
 }
 
+/**
+ * A forwardRef component that renders a hidden WebView for speech-related actions.
+ *
+ * @param state - The state from the flow reducer.
+ * @param dispatch - The dispatch from the flow reducer.
+ * @param ref - A ref to expose imperative speech actions (`start` and `stop`).
+ *
+ * @remarks
+ * - Uses the `usePreferencesContext` to access user preferences.
+ * - Exposes `start` and `stop` methods via the ref to control speech actions in the WebView.
+ * - Handles messages from the WebView to update the application state.
+ */
 export const SpeechWebView = forwardRef(({ state, dispatch }: FlowReducer, ref) => {
   const { preferences, loadPreferences } = usePreferencesContext();
   const webviewRef = useRef<WebView>(null);

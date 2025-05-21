@@ -58,10 +58,27 @@ const translationMap: Record<Locale, Record<string, string>> = {
   },
 };
 
+/**
+ * Normalizes a string by trimming whitespace from both ends and converting all characters to lowercase.
+ *
+ * @param input - The string to normalize.
+ * @returns The normalized string.
+ */
 export function normalize(input: string) {
   return input.trim().toLowerCase();
 }
 
+/**
+ * Translates a given sentence into the specified locale using a translation map.
+ *
+ * If a direct translation for the entire sentence exists, it returns that translation.
+ * Otherwise, it attempts to translate each word individually and reconstructs the sentence.
+ * If no translation is found for a word or the sentence, the original text is returned.
+ *
+ * @param sentence - The sentence to translate.
+ * @param locale - The target locale for translation.
+ * @returns The translated sentence, or the original sentence if no translation is found.
+ */
 export default function translate(sentence: string, locale: Locale): string {
   const translations = translationMap[locale];
   if (!translations) return sentence;

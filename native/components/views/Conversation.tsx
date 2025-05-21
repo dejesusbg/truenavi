@@ -6,6 +6,19 @@ import { ScreenView, SpeechActions, SpeechWebView, Text } from '~/components/lay
 import { FlowReducer } from '~/utils/flow';
 import Theme from '../theme';
 
+/**
+ * Renders the main conversation view for the assistant, handling both the assistant's output and user input.
+ *
+ * @param state - The current state of the conversation, including the current step, status, and user input.
+ * @param dispatch - The dispatch function to update the conversation state.
+ *
+ * @remarks
+ * - Displays the assistant's question and icon.
+ * - Shows the user's answer or a waiting indicator.
+ * - Integrates a speech recognition webview for voice input.
+ * - Updates status indicators and icons based on the conversation status.
+ * - Provides navigation to the settings screen.
+ */
 export function ConversationView({ state, dispatch }: FlowReducer) {
   const router = useRouter();
   const [iconText, setIconText] = useState(['more-horiz', 'listen']);
