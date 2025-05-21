@@ -63,6 +63,31 @@ function MapEvents({ onMapClick, selectedTool }: any) {
   return null;
 }
 
+/**
+ * MapComponent is a React functional component that provides an interactive map interface
+ * for visualizing and editing a graph structure consisting of nodes and edges.
+ *
+ * Features:
+ * - Displays nodes and edges on a map using Leaflet.
+ * - Allows users to:
+ *   - Add nodes by clicking on the map and entering a name.
+ *   - Create connections (edges) between nodes by selecting two nodes.
+ *   - Delete nodes and their connected edges.
+ *   - Delete edges directly.
+ *   - Hide or show intermediate (unnamed) nodes.
+ * - Supports keyboard shortcuts for tool selection:
+ *   - `n`: Add node tool
+ *   - `c`: Add connection tool
+ *   - `h`: Hide intermediate nodes tool
+ *   - `Escape`: Deselect current tool
+ * - Provides contextual status messages and a modal for node creation.
+ *
+ * States:
+ * - Manages graph data (`nodes`, `edges`), selected tool, modal state, temporary node data,
+ *   and selected nodes for edge creation.
+ *
+ * @component
+ */
 const MapComponent = () => {
   const [graph, setGraph] = useState<GraphProps>({ nodes: [], edges: [] });
   const [selectedTool, setSelectedTool] = useState<string | null>(null);

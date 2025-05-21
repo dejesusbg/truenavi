@@ -29,11 +29,25 @@ async function fetchData<T>(endpoint: string, method: string, body?: any): Promi
   }
 }
 
+/**
+ * Retrieves the authentication token from browser cookies.
+ *
+ * Parses the current document's cookies and returns the value of the
+ * `access_token` cookie if it exists, or `null` otherwise.
+ *
+ * @returns {string | null} The authentication token, or `null` if not found.
+ */
 export const authToken = (): string | null => {
   const cookies = parse(document.cookie);
   return cookies.access_token || null;
 };
 
+/**
+ * Sets the authentication token in browser cookies and redirects to the admin page.
+ *
+ * @param token - The authentication token to set.
+ * @param router - The router instance for navigation.
+ */
 authToken.set = (token: string, router: AppRouterInstance): void => {
   const options = {
     secure: process.env.NODE_ENV === 'production',
@@ -45,6 +59,10 @@ authToken.set = (token: string, router: AppRouterInstance): void => {
   router.push('/admin');
 };
 
+/**
+ * Clears the authentication token from browser cookies and redirects to the home page.
+ * @param router - The router instance for navigation.
+ */
 authToken.clear = (router: AppRouterInstance): void => {
   const options = {
     secure: process.env.NODE_ENV === 'production',

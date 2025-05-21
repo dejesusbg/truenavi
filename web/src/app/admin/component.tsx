@@ -7,6 +7,25 @@ import { MdClose, MdPersonAdd, MdSearch } from 'react-icons/md';
 const defaultAdmin: AdminProps = { _id: '', name: '', email: '', password: '' };
 type appState = 'view' | 'edit' | 'create';
 
+/**
+ * AdminComponent is a React functional component for managing administrator accounts.
+ *
+ * Features:
+ * - Displays a searchable list of administrators.
+ * - Allows creating, editing, and deleting admin users.
+ * - Provides a form for adding or updating admin details (name, email, password).
+ * - Supports switching between view, create, and edit modes.
+ * - Fetches and updates admin data from the backend.
+ *
+ * State:
+ * - `admins`: List of current administrators.
+ * - `formData`: Form state for admin details.
+ * - `currentId`: The ID of the admin being edited.
+ * - `mode`: Current UI mode ('view', 'create', or 'edit').
+ * - `searchQuery`: Search input for filtering admins.
+ *
+ * @component
+ */
 const AdminComponent = () => {
   const [admins, setAdmins] = useState<AdminProps[]>([]);
   const [formData, setFormData] = useState(defaultAdmin);

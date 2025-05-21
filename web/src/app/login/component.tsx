@@ -11,6 +11,18 @@ import {
   MdVisibilityOff,
 } from 'react-icons/md';
 
+/**
+ * LoginComponent renders the admin login form for the truenavi application.
+ *
+ * Features:
+ * - Email and password input fields with icons.
+ * - Password visibility toggle.
+ * - Loading indicator during login process.
+ * - Disables login button when fields are empty or loading.
+ * - Displays a security note for authorized personnel.
+ *
+ * @component
+ */
 const LoginComponent = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
