@@ -95,7 +95,11 @@ export async function listenTranscript(
       `[Conversation] ${currentStep.output.replace(/\n/g, ' ')} -> (${parsedInput}) ${input}`
     );
 
-    dispatch({ type: 'SET_APP_STATE', payload: newState });
+    // update app state and conversation status
+    if (parsedInput !== null) {
+      dispatch({ type: 'SET_APP_STATE', payload: newState });
+    }
+
     dispatch({ type: 'SET_USER_INPUT', payload: input });
     dispatch({ type: 'HIDE_INPUT', payload: false });
 
