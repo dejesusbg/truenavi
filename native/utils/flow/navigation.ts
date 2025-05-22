@@ -4,6 +4,7 @@ import { speak } from '~/utils/audio';
 import t, { Locale } from '~/utils/text';
 import { direction, flow, navigationStep } from './steps';
 import { FlowDispatch, FlowState } from './types';
+import { Vibration } from 'react-native';
 
 const NAVIGATION_DELAY = 3000; // delay for visual feedback
 const DEFAULT_INITIAL_LOCATION = { latitude: 11.224301653902437, longitude: -74.18565012507534 };
@@ -84,7 +85,7 @@ async function calculateNavigationRoute(destination: string, includeWeather: boo
   // find start and end nodes
   const start = await findClosest(location.coords);
   const end = await findPlace(destination);
-  if (!start || !end || start === end) return emptyRoute;
+  if (!start || !end || start._id === end._id) return emptyRoute;
 
   // initialize navigation steps
   let steps = [navigationStep('origin', start.name!), navigationStep('start', destination)];
@@ -156,6 +157,7 @@ async function calculateNavigationRoute(destination: string, includeWeather: boo
 export function speakNavigationInstruction(
   state: FlowState,
   locale: Locale,
+  doesVibrate: boolean,
   dispatch: FlowDispatch
 ) {
   const { navigationSteps, navigationIndex } = state;
@@ -163,6 +165,10 @@ export function speakNavigationInstruction(
   const instructionText = `${t(direction[id].output, locale)} ${t(value, locale)}`;
 
   console.log(`[Navigation] ${instructionText}`);
+
+  if (doesVibrate) {
+    Vibration.vibrate(400, false);
+  }
 
   speak(t(instructionText, locale), locale, {
     onDone: () => {

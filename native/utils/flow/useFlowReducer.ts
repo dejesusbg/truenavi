@@ -70,7 +70,7 @@ export function useFlowReducer() {
     if (state.appState !== 'navigate' && state.conversationStatus === 'speak') {
       speakStepOutput(state, locale, dispatch);
     } else if (state.appState === 'navigate' && state.navigationIndex >= 0) {
-      speakNavigationInstruction(state, locale, dispatch);
+      speakNavigationInstruction(state, locale, preferences.vibration, dispatch);
     }
   }, [state.conversationStatus, state.currentStep, state.navigationIndex]);
 
