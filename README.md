@@ -109,5 +109,7 @@ This will open the Expo developer tools in your browser. You can then:
 
 ## Screenshots
 
-![Home](./home.jpg)
-![Navigation](./navigation.jpg)
+<p>
+  <img src="./home.jpg" width="40%">
+  <img src="./navigation.jpg" width="40%">
+</p>
